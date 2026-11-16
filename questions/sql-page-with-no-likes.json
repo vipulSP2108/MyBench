@@ -1,0 +1,334 @@
+{
+  "question_id": "q_003_sql_page_with_no_likes",
+  "slug": "sql-page-with-no-likes",
+  "title": "Page With No Likes",
+  "difficulty": "Easy",
+  "company": "Facebook",
+  "premium": false,
+  "question": "Facebook community operations team is reviewing newly created business pages to identify inactive or unengaged pages.\n\nA page has zero engagement if no user has ever clicked 'Like' on it (it has no recorded rows in the `page_likes` table).\n\nWrite a query to find the `page_id` of all Facebook pages that have never received a like. Output the page IDs sorted in ascending order.",
+  "notes": [],
+  "tables": [
+    {
+      "table_name": "pages",
+      "columns": [
+        {
+          "column_name": "page_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "page_name",
+          "data_type": "VARCHAR(255)"
+        }
+      ]
+    },
+    {
+      "table_name": "page_likes",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "page_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "liked_date",
+          "data_type": "DATETIME"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "pages": [
+      {
+        "page_id": "20001",
+        "page_name": "SQL Solutions"
+      },
+      {
+        "page_id": "20045",
+        "page_name": "Brain Exercises"
+      },
+      {
+        "page_id": "20701",
+        "page_name": "Tips for Data Analysts"
+      }
+    ],
+    "page_likes": [
+      {
+        "user_id": "111",
+        "page_id": "20001",
+        "liked_date": "04/08/2022 00:00:00"
+      },
+      {
+        "user_id": "121",
+        "page_id": "20045",
+        "liked_date": "03/12/2022 00:00:00"
+      },
+      {
+        "user_id": "156",
+        "page_id": "20001",
+        "liked_date": "07/25/2022 00:00:00"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "page_id": "20701"
+    }
+  ],
+  "reference_sql": "SELECT p.page_id\nFROM pages p\nLEFT JOIN page_likes l ON p.page_id = l.page_id\nWHERE l.page_id IS NULL\nORDER BY p.page_id;",
+  "tags": [
+    "easy",
+    "ecommerce",
+    "facebook",
+    "social-media"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "pages": [
+          {
+            "page_id": "20001",
+            "page_name": "SQL Solutions"
+          },
+          {
+            "page_id": "20045",
+            "page_name": "Brain Exercises"
+          },
+          {
+            "page_id": "20701",
+            "page_name": "Tips for Data Analysts"
+          }
+        ],
+        "page_likes": [
+          {
+            "user_id": "111",
+            "page_id": "20001",
+            "liked_date": "04/08/2022 00:00:00"
+          },
+          {
+            "user_id": "121",
+            "page_id": "20045",
+            "liked_date": "03/12/2022 00:00:00"
+          },
+          {
+            "user_id": "156",
+            "page_id": "20001",
+            "liked_date": "07/25/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "page_id": 20701
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "pages": [
+          {
+            "page_id": "20001",
+            "page_name": "SQL Solutions"
+          },
+          {
+            "page_id": "20045",
+            "page_name": "Brain Exercises"
+          },
+          {
+            "page_id": "20701",
+            "page_name": "Tips for Data Analysts"
+          },
+          {
+            "page_id": 21001,
+            "page_name": "SQL Solutions"
+          },
+          {
+            "page_id": 21045,
+            "page_name": "Brain Exercises"
+          },
+          {
+            "page_id": 21701,
+            "page_name": "Tips for Data Analysts"
+          }
+        ],
+        "page_likes": [
+          {
+            "user_id": "111",
+            "page_id": "20001",
+            "liked_date": "04/08/2022 00:00:00"
+          },
+          {
+            "user_id": "121",
+            "page_id": "20045",
+            "liked_date": "03/12/2022 00:00:00"
+          },
+          {
+            "user_id": "156",
+            "page_id": "20001",
+            "liked_date": "07/25/2022 00:00:00"
+          },
+          {
+            "user_id": 1111,
+            "page_id": 21001,
+            "liked_date": "04/13/2022 00:00:00"
+          },
+          {
+            "user_id": 1121,
+            "page_id": 21045,
+            "liked_date": "03/17/2022 00:00:00"
+          },
+          {
+            "user_id": 1156,
+            "page_id": 21001,
+            "liked_date": "07/28/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "page_id": 20701
+        },
+        {
+          "page_id": 21701
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "pages": [
+          {
+            "page_id": "20001",
+            "page_name": "SQL Solutions"
+          },
+          {
+            "page_id": "20045",
+            "page_name": "Brain Exercises"
+          },
+          {
+            "page_id": "20701",
+            "page_name": "Tips for Data Analysts"
+          },
+          {
+            "page_id": 25001,
+            "page_name": "SQL Solutions"
+          }
+        ],
+        "page_likes": [
+          {
+            "user_id": "111",
+            "page_id": "20001",
+            "liked_date": "04/08/2022 00:00:00"
+          },
+          {
+            "user_id": "121",
+            "page_id": "20045",
+            "liked_date": "03/12/2022 00:00:00"
+          },
+          {
+            "user_id": "156",
+            "page_id": "20001",
+            "liked_date": "07/25/2022 00:00:00"
+          },
+          {
+            "user_id": 5111,
+            "page_id": 25001,
+            "liked_date": "04/08/2017 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "page_id": 20701
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "pages": [],
+        "page_likes": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_all_pages_have_likes",
+      "description": "Every page in the pages table has at least one like. Result must be empty.",
+      "input_data": {
+        "pages": [
+          {
+            "page_id": 1,
+            "page_name": "Page A"
+          },
+          {
+            "page_id": 2,
+            "page_name": "Page B"
+          }
+        ],
+        "page_likes": [
+          {
+            "user_id": 10,
+            "page_id": 1,
+            "liked_date": "2022-01-01"
+          },
+          {
+            "user_id": 11,
+            "page_id": 2,
+            "liked_date": "2022-01-02"
+          }
+        ]
+      },
+      "expected_output": [],
+      "category": "boundary"
+    },
+    {
+      "test_case_id": "tc_6_page_not_in_likes_table",
+      "description": "A page_id exists in pages but is completely absent from page_likes. Must appear in output.",
+      "input_data": {
+        "pages": [
+          {
+            "page_id": 100,
+            "page_name": "Orphan Page"
+          },
+          {
+            "page_id": 101,
+            "page_name": "Liked Page"
+          }
+        ],
+        "page_likes": [
+          {
+            "user_id": 50,
+            "page_id": 101,
+            "liked_date": "2022-06-01"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "page_id": 100
+        }
+      ],
+      "category": "edge"
+    }
+  ],
+  "order_sensitive": true,
+  "expected_output": [
+    {
+      "page_id": 20701
+    }
+  ]
+}

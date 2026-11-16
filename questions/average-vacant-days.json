@@ -1,0 +1,453 @@
+{
+  "question_id": "q_098_average_vacant_days",
+  "slug": "average-vacant-days",
+  "title": "Average Vacant Days",
+  "difficulty": "Hard",
+  "company": "Airbnb",
+  "premium": true,
+  "question": "Airbnb market managers analyze property utilization across different cities to help hosts optimize pricing.\n\nA property's **vacant days** in a year (assuming a standard 365-day year) is calculated as:\n• Vacant Days = 365 - Total Days Booked\n\nWrite a query to calculate the average number of vacant days per listing for each city in the year 2021. Round the average vacant days to 1 decimal place, and sort by city name.",
+  "notes": [],
+  "tables": [
+    {
+      "table_name": "bookings",
+      "columns": [
+        {
+          "column_name": "listing_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "checkin_date",
+          "data_type": "DATE"
+        },
+        {
+          "column_name": "checkout_date",
+          "data_type": "DATE"
+        }
+      ]
+    },
+    {
+      "table_name": "listings",
+      "columns": [
+        {
+          "column_name": "listing_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "is_active",
+          "data_type": "INT"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "bookings": [
+      {
+        "listing_id": 1,
+        "checkin_date": "08/17/2021 00:00:00",
+        "checkout_date": "08/19/2021 00:00:00"
+      },
+      {
+        "listing_id": 1,
+        "checkin_date": "08/19/2021 00:00:00",
+        "checkout_date": "08/25/2021 00:00:00"
+      },
+      {
+        "listing_id": 2,
+        "checkin_date": "08/19/2021 00:00:00",
+        "checkout_date": "09/22/2021 00:00:00"
+      },
+      {
+        "listing_id": 3,
+        "checkin_date": "12/23/2021 00:00:00",
+        "checkout_date": "01/05/2022 00:00:00"
+      }
+    ],
+    "listings": [
+      {
+        "listing_id": 1,
+        "is_active": 1
+      },
+      {
+        "listing_id": 2,
+        "is_active": 0
+      },
+      {
+        "listing_id": 3,
+        "is_active": 1
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "avg_vacant_days": 357
+    }
+  ],
+  "reference_sql": "SELECT \n  ROUND(AVG(365 - IFNULL(DATEDIFF(b.checkout_date, b.checkin_date), 0)), 1) AS avg_vacant_days\nFROM listings l\nLEFT JOIN bookings b ON l.listing_id = b.listing_id\nWHERE l.is_active = 1;",
+  "tags": [
+    "aggregation",
+    "airbnb",
+    "date-manipulation",
+    "hard",
+    "math"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "bookings": [
+          {
+            "listing_id": 1,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 1,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          },
+          {
+            "listing_id": 2,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "09/22/2021 00:00:00"
+          },
+          {
+            "listing_id": 3,
+            "checkin_date": "12/23/2021 00:00:00",
+            "checkout_date": "01/05/2022 00:00:00"
+          }
+        ],
+        "listings": [
+          {
+            "listing_id": 1,
+            "is_active": 1
+          },
+          {
+            "listing_id": 2,
+            "is_active": 0
+          },
+          {
+            "listing_id": 3,
+            "is_active": 1
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": 358.0
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "bookings": [
+          {
+            "listing_id": 1,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 1,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          },
+          {
+            "listing_id": 2,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "09/22/2021 00:00:00"
+          },
+          {
+            "listing_id": 3,
+            "checkin_date": "12/23/2021 00:00:00",
+            "checkout_date": "01/05/2022 00:00:00"
+          },
+          {
+            "listing_id": 1001,
+            "checkin_date": "08/22/2021 00:00:00",
+            "checkout_date": "08/24/2021 00:00:00"
+          },
+          {
+            "listing_id": 1001,
+            "checkin_date": "08/24/2021 00:00:00",
+            "checkout_date": "08/28/2021 00:00:00"
+          },
+          {
+            "listing_id": 1002,
+            "checkin_date": "08/24/2021 00:00:00",
+            "checkout_date": "09/27/2021 00:00:00"
+          },
+          {
+            "listing_id": 1003,
+            "checkin_date": "12/28/2021 00:00:00",
+            "checkout_date": "01/10/2022 00:00:00"
+          }
+        ],
+        "listings": [
+          {
+            "listing_id": 1,
+            "is_active": 1
+          },
+          {
+            "listing_id": 2,
+            "is_active": 0
+          },
+          {
+            "listing_id": 3,
+            "is_active": 1
+          },
+          {
+            "listing_id": 1001,
+            "is_active": 1
+          },
+          {
+            "listing_id": 1002,
+            "is_active": 0
+          },
+          {
+            "listing_id": 1003,
+            "is_active": 1
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": 358.3
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "bookings": [
+          {
+            "listing_id": 1,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 1,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          },
+          {
+            "listing_id": 2,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "09/22/2021 00:00:00"
+          },
+          {
+            "listing_id": 3,
+            "checkin_date": "12/23/2021 00:00:00",
+            "checkout_date": "01/05/2022 00:00:00"
+          },
+          {
+            "listing_id": 5001,
+            "checkin_date": "08/17/2016 00:00:00",
+            "checkout_date": "08/19/2016 00:00:00"
+          },
+          {
+            "listing_id": 5001,
+            "checkin_date": "08/19/2016 00:00:00",
+            "checkout_date": "08/25/2016 00:00:00"
+          }
+        ],
+        "listings": [
+          {
+            "listing_id": 1,
+            "is_active": 1
+          },
+          {
+            "listing_id": 2,
+            "is_active": 0
+          },
+          {
+            "listing_id": 3,
+            "is_active": 1
+          },
+          {
+            "listing_id": 5001,
+            "is_active": 1
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": 359.2
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "bookings": [],
+        "listings": []
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": null
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_ties_and_nulls",
+      "description": "Tied ranking metrics, unmatched join keys, and NULL values in nullable attributes",
+      "input_data": {
+        "bookings": [
+          {
+            "listing_id": 1,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 1,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          },
+          {
+            "listing_id": 2,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "09/22/2021 00:00:00"
+          },
+          {
+            "listing_id": 3,
+            "checkin_date": "12/23/2021 00:00:00",
+            "checkout_date": "01/05/2022 00:00:00"
+          },
+          {
+            "listing_id": 9001,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 9501,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          }
+        ],
+        "listings": [
+          {
+            "listing_id": 1,
+            "is_active": 1
+          },
+          {
+            "listing_id": 2,
+            "is_active": 0
+          },
+          {
+            "listing_id": 3,
+            "is_active": 1
+          },
+          {
+            "listing_id": 9001,
+            "is_active": 1
+          },
+          {
+            "listing_id": 9502,
+            "is_active": 0
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": 359.3
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_6_extreme_boundary",
+      "description": "Consecutive day sequences, month-end date rollovers, and high-frequency transactions",
+      "input_data": {
+        "bookings": [
+          {
+            "listing_id": 1,
+            "checkin_date": "08/17/2021 00:00:00",
+            "checkout_date": "08/19/2021 00:00:00"
+          },
+          {
+            "listing_id": 1,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "08/25/2021 00:00:00"
+          },
+          {
+            "listing_id": 2,
+            "checkin_date": "08/19/2021 00:00:00",
+            "checkout_date": "09/22/2021 00:00:00"
+          },
+          {
+            "listing_id": 3,
+            "checkin_date": "12/23/2021 00:00:00",
+            "checkout_date": "01/05/2022 00:00:00"
+          },
+          {
+            "listing_id": 8001,
+            "checkin_date": "08/18/2021 00:00:00",
+            "checkout_date": "08/20/2021 00:00:00"
+          },
+          {
+            "listing_id": 8001,
+            "checkin_date": "08/20/2021 00:00:00",
+            "checkout_date": "08/26/2021 00:00:00"
+          },
+          {
+            "listing_id": 8002,
+            "checkin_date": "08/20/2021 00:00:00",
+            "checkout_date": "09/23/2021 00:00:00"
+          },
+          {
+            "listing_id": 8003,
+            "checkin_date": "12/24/2021 00:00:00",
+            "checkout_date": "01/06/2022 00:00:00"
+          }
+        ],
+        "listings": [
+          {
+            "listing_id": 1,
+            "is_active": 1
+          },
+          {
+            "listing_id": 2,
+            "is_active": 0
+          },
+          {
+            "listing_id": 3,
+            "is_active": 1
+          },
+          {
+            "listing_id": 8001,
+            "is_active": 1
+          },
+          {
+            "listing_id": 8002,
+            "is_active": 0
+          },
+          {
+            "listing_id": 8003,
+            "is_active": 1
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "avg_vacant_days": 358.0
+        }
+      ],
+      "category": "boundary"
+    }
+  ],
+  "order_sensitive": false,
+  "expected_output": [
+    {
+      "avg_vacant_days": 358.0
+    }
+  ]
+}

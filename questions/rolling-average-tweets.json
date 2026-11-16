@@ -1,0 +1,516 @@
+{
+  "question_id": "q_038_rolling_average_tweets",
+  "slug": "rolling-average-tweets",
+  "title": "Tweets' Rolling Averages",
+  "difficulty": "Medium",
+  "company": "Twitter",
+  "premium": false,
+  "question": "Twitter engagement analysts measure tweeting momentum using a **3-day rolling average** for each user.\n\nFor each tweet date, the 3-day rolling average is the average tweet count across the current day and up to the 2 preceding days on record.\n\nWrite a query to calculate the 3-day rolling average of tweet counts for each user. Output the `user_id`, `tweet_date`, and the calculated `rolling_avg_3d` rounded to 2 decimal places. Order results by `user_id` and `tweet_date`.",
+  "notes": [
+    "A rolling average, also known as a moving average or running mean is a time-series technique that examines trends in data over a specified period of time.",
+    "In this case, we want to determine how the tweet count for each user changes over a 3-day period."
+  ],
+  "tables": [
+    {
+      "table_name": "tweets",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "tweet_date",
+          "data_type": "DATETIME"
+        },
+        {
+          "column_name": "tweet_count",
+          "data_type": "INT"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "tweets": [
+      {
+        "user_id": "111",
+        "tweet_date": "06/01/2022 00:00:00",
+        "tweet_count": "2"
+      },
+      {
+        "user_id": "111",
+        "tweet_date": "06/02/2022 00:00:00",
+        "tweet_count": "1"
+      },
+      {
+        "user_id": "111",
+        "tweet_date": "06/03/2022 00:00:00",
+        "tweet_count": "3"
+      },
+      {
+        "user_id": "111",
+        "tweet_date": "06/04/2022 00:00:00",
+        "tweet_count": "4"
+      },
+      {
+        "user_id": "111",
+        "tweet_date": "06/05/2022 00:00:00",
+        "tweet_count": "5"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "user_id": "111",
+      "tweet_date": "06/01/2022 00:00:00",
+      "rolling_avg_3d": "2.00"
+    },
+    {
+      "user_id": "111",
+      "tweet_date": "06/02/2022 00:00:00",
+      "rolling_avg_3d": "1.50"
+    },
+    {
+      "user_id": "111",
+      "tweet_date": "06/03/2022 00:00:00",
+      "rolling_avg_3d": "2.00"
+    },
+    {
+      "user_id": "111",
+      "tweet_date": "06/04/2022 00:00:00",
+      "rolling_avg_3d": "2.67"
+    },
+    {
+      "user_id": "111",
+      "tweet_date": "06/05/2022 00:00:00",
+      "rolling_avg_3d": "4.00"
+    }
+  ],
+  "reference_sql": "SELECT \n  user_id,\n  tweet_date,\n  ROUND(AVG(tweet_count) OVER (\n    PARTITION BY user_id \n    ORDER BY tweet_date \n    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\n  ), 2) AS rolling_avg_3d\nFROM tweets;",
+  "tags": [
+    "aggregation",
+    "date-manipulation",
+    "math",
+    "medium",
+    "social-media",
+    "twitter"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "tweets": [
+          {
+            "user_id": "111",
+            "tweet_date": "06/01/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/02/2022 00:00:00",
+            "tweet_count": "1"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/03/2022 00:00:00",
+            "tweet_count": "3"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/04/2022 00:00:00",
+            "tweet_count": "4"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/05/2022 00:00:00",
+            "tweet_count": "5"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-02",
+          "rolling_avg_3d": 1.5
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-03",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-04",
+          "rolling_avg_3d": 2.67
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-05",
+          "rolling_avg_3d": 4.0
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "tweets": [
+          {
+            "user_id": "111",
+            "tweet_date": "06/01/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/02/2022 00:00:00",
+            "tweet_count": "1"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/03/2022 00:00:00",
+            "tweet_count": "3"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/04/2022 00:00:00",
+            "tweet_count": "4"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/05/2022 00:00:00",
+            "tweet_count": "5"
+          },
+          {
+            "user_id": 1111,
+            "tweet_date": "06/06/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": 1111,
+            "tweet_date": "06/07/2022 00:00:00",
+            "tweet_count": "1"
+          },
+          {
+            "user_id": 1111,
+            "tweet_date": "06/08/2022 00:00:00",
+            "tweet_count": "3"
+          },
+          {
+            "user_id": 1111,
+            "tweet_date": "06/09/2022 00:00:00",
+            "tweet_count": "4"
+          },
+          {
+            "user_id": 1111,
+            "tweet_date": "06/10/2022 00:00:00",
+            "tweet_count": "5"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-02",
+          "rolling_avg_3d": 1.5
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-03",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-04",
+          "rolling_avg_3d": 2.67
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-05",
+          "rolling_avg_3d": 4.0
+        },
+        {
+          "user_id": 1111,
+          "tweet_date": "2022-06-06",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 1111,
+          "tweet_date": "2022-06-07",
+          "rolling_avg_3d": 1.5
+        },
+        {
+          "user_id": 1111,
+          "tweet_date": "2022-06-08",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 1111,
+          "tweet_date": "2022-06-09",
+          "rolling_avg_3d": 2.67
+        },
+        {
+          "user_id": 1111,
+          "tweet_date": "2022-06-10",
+          "rolling_avg_3d": 4.0
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "tweets": [
+          {
+            "user_id": "111",
+            "tweet_date": "06/01/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/02/2022 00:00:00",
+            "tweet_count": "1"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/03/2022 00:00:00",
+            "tweet_count": "3"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/04/2022 00:00:00",
+            "tweet_count": "4"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/05/2022 00:00:00",
+            "tweet_count": "5"
+          },
+          {
+            "user_id": 5111,
+            "tweet_date": "06/01/2017 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": 5111,
+            "tweet_date": "06/02/2017 00:00:00",
+            "tweet_count": "1"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-02",
+          "rolling_avg_3d": 1.5
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-03",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-04",
+          "rolling_avg_3d": 2.67
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-05",
+          "rolling_avg_3d": 4.0
+        },
+        {
+          "user_id": 5111,
+          "tweet_date": "2017-06-01",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 5111,
+          "tweet_date": "2017-06-02",
+          "rolling_avg_3d": 1.5
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "tweets": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_ties_and_nulls",
+      "description": "Tied ranking metrics, unmatched join keys, and NULL values in nullable attributes",
+      "input_data": {
+        "tweets": [
+          {
+            "user_id": "111",
+            "tweet_date": "06/01/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/02/2022 00:00:00",
+            "tweet_count": "1"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/03/2022 00:00:00",
+            "tweet_count": "3"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/04/2022 00:00:00",
+            "tweet_count": "4"
+          },
+          {
+            "user_id": "111",
+            "tweet_date": "06/05/2022 00:00:00",
+            "tweet_count": "5"
+          },
+          {
+            "user_id": 9111,
+            "tweet_date": "06/01/2022 00:00:00",
+            "tweet_count": "2"
+          },
+          {
+            "user_id": 9611,
+            "tweet_date": "06/02/2022 00:00:00",
+            "tweet_count": "1"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 9611,
+          "tweet_date": "2022-06-02",
+          "rolling_avg_3d": 1.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-02",
+          "rolling_avg_3d": 1.5
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-03",
+          "rolling_avg_3d": 2.0
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-04",
+          "rolling_avg_3d": 2.67
+        },
+        {
+          "user_id": 111,
+          "tweet_date": "2022-06-05",
+          "rolling_avg_3d": 4.0
+        },
+        {
+          "user_id": 9111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2.0
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_6_single_user_all_days",
+      "description": "One user tweets on 3 consecutive days. The 3-day rolling average for day 3 must equal the mean of all 3 days.",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": 1,
+            "user_id": 99,
+            "tweet_date": "2022-07-01",
+            "tweet_count": 6
+          },
+          {
+            "tweet_id": 2,
+            "user_id": 99,
+            "tweet_date": "2022-07-02",
+            "tweet_count": 3
+          },
+          {
+            "tweet_id": 3,
+            "user_id": 99,
+            "tweet_date": "2022-07-03",
+            "tweet_count": 9
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "tweet_date": "2022-07-01",
+          "user_id": 99,
+          "rolling_avg_3d": 6.0
+        },
+        {
+          "tweet_date": "2022-07-02",
+          "user_id": 99,
+          "rolling_avg_3d": 4.5
+        },
+        {
+          "tweet_date": "2022-07-03",
+          "user_id": 99,
+          "rolling_avg_3d": 6.0
+        }
+      ],
+      "category": "boundary"
+    }
+  ],
+  "order_sensitive": false,
+  "expected_output": [
+    {
+      "user_id": 111,
+      "tweet_date": "2022-06-01",
+      "rolling_avg_3d": 2.0
+    },
+    {
+      "user_id": 111,
+      "tweet_date": "2022-06-02",
+      "rolling_avg_3d": 1.5
+    },
+    {
+      "user_id": 111,
+      "tweet_date": "2022-06-03",
+      "rolling_avg_3d": 2.0
+    },
+    {
+      "user_id": 111,
+      "tweet_date": "2022-06-04",
+      "rolling_avg_3d": 2.67
+    },
+    {
+      "user_id": 111,
+      "tweet_date": "2022-06-05",
+      "rolling_avg_3d": 4.0
+    }
+  ]
+}

@@ -1,0 +1,789 @@
+{
+  "question_id": "q_063_user_session_activity",
+  "slug": "user-session-activity",
+  "title": "User Session Activity",
+  "difficulty": "Medium",
+  "company": "Twitter",
+  "premium": true,
+  "question": "Twitter platform analytics measures daily user engagement session length across device types.\n\nWrite a query to rank users within each session type based on their total session duration in descending order.\n\nOutput `user_id`, `session_type`, and the assigned `ranking` within that session category.",
+  "notes": [],
+  "tables": [
+    {
+      "table_name": "sessions",
+      "columns": [
+        {
+          "column_name": "session_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "session_type",
+          "data_type": "VARCHAR(255)"
+        },
+        {
+          "column_name": "duration",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "start_date",
+          "data_type": "DATE"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "sessions": [
+      {
+        "session_id": "1",
+        "user_id": "101",
+        "session_type": "Live",
+        "duration": "30",
+        "start_date": "01/05/2020"
+      },
+      {
+        "session_id": "2",
+        "user_id": "102",
+        "session_type": "Live",
+        "duration": "50",
+        "start_date": "01/06/2020"
+      },
+      {
+        "session_id": "3",
+        "user_id": "101",
+        "session_type": "Live",
+        "duration": "25",
+        "start_date": "01/20/2020"
+      },
+      {
+        "session_id": "4",
+        "user_id": "103",
+        "session_type": "Live",
+        "duration": "10",
+        "start_date": "01/22/2020"
+      },
+      {
+        "session_id": "5",
+        "user_id": "101",
+        "session_type": "Chat",
+        "duration": "40",
+        "start_date": "01/10/2020"
+      },
+      {
+        "session_id": "6",
+        "user_id": "102",
+        "session_type": "Chat",
+        "duration": "40",
+        "start_date": "01/12/2020"
+      },
+      {
+        "session_id": "7",
+        "user_id": "103",
+        "session_type": "Chat",
+        "duration": "15",
+        "start_date": "01/15/2020"
+      },
+      {
+        "session_id": "8",
+        "user_id": "102",
+        "session_type": "Live",
+        "duration": "99",
+        "start_date": "03/01/2020"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "user_id": "101",
+      "session_type": "Chat",
+      "ranking": "1"
+    },
+    {
+      "user_id": "102",
+      "session_type": "Chat",
+      "ranking": "1"
+    },
+    {
+      "user_id": "103",
+      "session_type": "Chat",
+      "ranking": "3"
+    },
+    {
+      "user_id": "101",
+      "session_type": "Live",
+      "ranking": "1"
+    },
+    {
+      "user_id": "102",
+      "session_type": "Live",
+      "ranking": "2"
+    },
+    {
+      "user_id": "103",
+      "session_type": "Live",
+      "ranking": "3"
+    }
+  ],
+  "reference_sql": "SELECT user_id,\n       session_type,\n       RANK() OVER (PARTITION BY session_type ORDER BY SUM(duration) DESC) AS ranking\nFROM sessions\nWHERE start_date >= '2020-01-01' AND start_date < '2020-02-01'\nGROUP BY user_id, session_type\nORDER BY session_type, ranking, user_id;",
+  "tags": [
+    "aggregation",
+    "date-manipulation",
+    "math",
+    "medium",
+    "ranking",
+    "twitter",
+    "window-function"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "sessions": [
+          {
+            "session_id": "1",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2020"
+          },
+          {
+            "session_id": "2",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/06/2020"
+          },
+          {
+            "session_id": "3",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/20/2020"
+          },
+          {
+            "session_id": "4",
+            "user_id": "103",
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/22/2020"
+          },
+          {
+            "session_id": "5",
+            "user_id": "101",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/10/2020"
+          },
+          {
+            "session_id": "6",
+            "user_id": "102",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/12/2020"
+          },
+          {
+            "session_id": "7",
+            "user_id": "103",
+            "session_type": "Chat",
+            "duration": "15",
+            "start_date": "01/15/2020"
+          },
+          {
+            "session_id": "8",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "99",
+            "start_date": "03/01/2020"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 101,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 103,
+          "session_type": "Chat",
+          "ranking": 3
+        },
+        {
+          "user_id": 101,
+          "session_type": "Live",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Live",
+          "ranking": 2
+        },
+        {
+          "user_id": 103,
+          "session_type": "Live",
+          "ranking": 3
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "sessions": [
+          {
+            "session_id": "1",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2020"
+          },
+          {
+            "session_id": "2",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/06/2020"
+          },
+          {
+            "session_id": "3",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/20/2020"
+          },
+          {
+            "session_id": "4",
+            "user_id": "103",
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/22/2020"
+          },
+          {
+            "session_id": "5",
+            "user_id": "101",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/10/2020"
+          },
+          {
+            "session_id": "6",
+            "user_id": "102",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/12/2020"
+          },
+          {
+            "session_id": "7",
+            "user_id": "103",
+            "session_type": "Chat",
+            "duration": "15",
+            "start_date": "01/15/2020"
+          },
+          {
+            "session_id": "8",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "99",
+            "start_date": "03/01/2020"
+          },
+          {
+            "session_id": 1001,
+            "user_id": 1101,
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/10/2020"
+          },
+          {
+            "session_id": 1002,
+            "user_id": 1102,
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/11/2020"
+          },
+          {
+            "session_id": 1003,
+            "user_id": 1101,
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/25/2020"
+          },
+          {
+            "session_id": 1004,
+            "user_id": 1103,
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/27/2020"
+          },
+          {
+            "session_id": 1005,
+            "user_id": 1101,
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/15/2020"
+          },
+          {
+            "session_id": 1006,
+            "user_id": 1102,
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/17/2020"
+          },
+          {
+            "session_id": 1007,
+            "user_id": 1103,
+            "session_type": "Chat",
+            "duration": "15",
+            "start_date": "01/20/2020"
+          },
+          {
+            "session_id": 1008,
+            "user_id": 1102,
+            "session_type": "Live",
+            "duration": "99",
+            "start_date": "03/06/2020"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 101,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 1101,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 1102,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 103,
+          "session_type": "Chat",
+          "ranking": 5
+        },
+        {
+          "user_id": 1103,
+          "session_type": "Chat",
+          "ranking": 5
+        },
+        {
+          "user_id": 101,
+          "session_type": "Live",
+          "ranking": 1
+        },
+        {
+          "user_id": 1101,
+          "session_type": "Live",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Live",
+          "ranking": 3
+        },
+        {
+          "user_id": 1102,
+          "session_type": "Live",
+          "ranking": 3
+        },
+        {
+          "user_id": 103,
+          "session_type": "Live",
+          "ranking": 5
+        },
+        {
+          "user_id": 1103,
+          "session_type": "Live",
+          "ranking": 5
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "sessions": [
+          {
+            "session_id": "1",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2020"
+          },
+          {
+            "session_id": "2",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/06/2020"
+          },
+          {
+            "session_id": "3",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/20/2020"
+          },
+          {
+            "session_id": "4",
+            "user_id": "103",
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/22/2020"
+          },
+          {
+            "session_id": "5",
+            "user_id": "101",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/10/2020"
+          },
+          {
+            "session_id": "6",
+            "user_id": "102",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/12/2020"
+          },
+          {
+            "session_id": "7",
+            "user_id": "103",
+            "session_type": "Chat",
+            "duration": "15",
+            "start_date": "01/15/2020"
+          },
+          {
+            "session_id": "8",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "99",
+            "start_date": "03/01/2020"
+          },
+          {
+            "session_id": 5001,
+            "user_id": 5101,
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2015"
+          },
+          {
+            "session_id": 5002,
+            "user_id": 5102,
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/06/2015"
+          },
+          {
+            "session_id": 5003,
+            "user_id": 5101,
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/20/2015"
+          },
+          {
+            "session_id": 5004,
+            "user_id": 5103,
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/22/2015"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 101,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 103,
+          "session_type": "Chat",
+          "ranking": 3
+        },
+        {
+          "user_id": 101,
+          "session_type": "Live",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Live",
+          "ranking": 2
+        },
+        {
+          "user_id": 103,
+          "session_type": "Live",
+          "ranking": 3
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "sessions": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_ties_and_nulls",
+      "description": "Tied ranking metrics, unmatched join keys, and NULL values in nullable attributes",
+      "input_data": {
+        "sessions": [
+          {
+            "session_id": "1",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2020"
+          },
+          {
+            "session_id": "2",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "50",
+            "start_date": "01/06/2020"
+          },
+          {
+            "session_id": "3",
+            "user_id": "101",
+            "session_type": "Live",
+            "duration": "25",
+            "start_date": "01/20/2020"
+          },
+          {
+            "session_id": "4",
+            "user_id": "103",
+            "session_type": "Live",
+            "duration": "10",
+            "start_date": "01/22/2020"
+          },
+          {
+            "session_id": "5",
+            "user_id": "101",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/10/2020"
+          },
+          {
+            "session_id": "6",
+            "user_id": "102",
+            "session_type": "Chat",
+            "duration": "40",
+            "start_date": "01/12/2020"
+          },
+          {
+            "session_id": "7",
+            "user_id": "103",
+            "session_type": "Chat",
+            "duration": "15",
+            "start_date": "01/15/2020"
+          },
+          {
+            "session_id": "8",
+            "user_id": "102",
+            "session_type": "Live",
+            "duration": "99",
+            "start_date": "03/01/2020"
+          },
+          {
+            "session_id": 9001,
+            "user_id": 9101,
+            "session_type": "Live",
+            "duration": "30",
+            "start_date": "01/05/2020"
+          },
+          {
+            "session_id": 9502,
+            "user_id": 9602,
+            "session_type": null,
+            "duration": "50",
+            "start_date": "01/06/2020"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 9602,
+          "session_type": null,
+          "ranking": 1
+        },
+        {
+          "user_id": 101,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Chat",
+          "ranking": 1
+        },
+        {
+          "user_id": 103,
+          "session_type": "Chat",
+          "ranking": 3
+        },
+        {
+          "user_id": 101,
+          "session_type": "Live",
+          "ranking": 1
+        },
+        {
+          "user_id": 102,
+          "session_type": "Live",
+          "ranking": 2
+        },
+        {
+          "user_id": 9101,
+          "session_type": "Live",
+          "ranking": 3
+        },
+        {
+          "user_id": 103,
+          "session_type": "Live",
+          "ranking": 4
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_6_sessions_outside_date_range",
+      "description": "Sessions exist before 2020-01-01 and after 2020-02-01. Only sessions within range count. If a user's only session is outside range, they should not appear.",
+      "input_data": {
+        "sessions": [
+          {
+            "user_id": 1,
+            "session_type": "view",
+            "start_date": "2019-12-31 23:59:00",
+            "duration": 999
+          },
+          {
+            "user_id": 2,
+            "session_type": "view",
+            "start_date": "2020-01-15 10:00:00",
+            "duration": 100
+          },
+          {
+            "user_id": 3,
+            "session_type": "view",
+            "start_date": "2020-02-01 00:01:00",
+            "duration": 200
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 2,
+          "session_type": "view",
+          "ranking": 1
+        }
+      ],
+      "category": "boundary"
+    },
+    {
+      "test_case_id": "tc_7_tied_rank_gap",
+      "description": "Two users have identical total duration for same session_type. RANK() gives both rank=1, next gets rank=3 (gap). DENSE_RANK would give 1,1,2.",
+      "input_data": {
+        "sessions": [
+          {
+            "user_id": 10,
+            "session_type": "send",
+            "start_date": "2020-01-10 10:00:00",
+            "duration": 300
+          },
+          {
+            "user_id": 20,
+            "session_type": "send",
+            "start_date": "2020-01-11 10:00:00",
+            "duration": 300
+          },
+          {
+            "user_id": 30,
+            "session_type": "send",
+            "start_date": "2020-01-12 10:00:00",
+            "duration": 100
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": 10,
+          "session_type": "send",
+          "ranking": 1
+        },
+        {
+          "user_id": 20,
+          "session_type": "send",
+          "ranking": 1
+        },
+        {
+          "user_id": 30,
+          "session_type": "send",
+          "ranking": 3
+        }
+      ],
+      "category": "edge"
+    }
+  ],
+  "order_sensitive": true,
+  "expected_output": [
+    {
+      "user_id": 101,
+      "session_type": "Chat",
+      "ranking": 1
+    },
+    {
+      "user_id": 102,
+      "session_type": "Chat",
+      "ranking": 1
+    },
+    {
+      "user_id": 103,
+      "session_type": "Chat",
+      "ranking": 3
+    },
+    {
+      "user_id": 101,
+      "session_type": "Live",
+      "ranking": 1
+    },
+    {
+      "user_id": 102,
+      "session_type": "Live",
+      "ranking": 2
+    },
+    {
+      "user_id": 103,
+      "session_type": "Live",
+      "ranking": 3
+    }
+  ]
+}

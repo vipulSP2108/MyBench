@@ -1,0 +1,214 @@
+{
+  "question_id": "q_057_alibaba_compressed_mode",
+  "slug": "alibaba-compressed-mode",
+  "title": "Compressed Mode",
+  "difficulty": "Medium",
+  "company": "Alibaba",
+  "premium": false,
+  "question": "Alibaba's inventory team wants to identify the **mode of order sizes**—the item count that appeared most frequently across all customer orders.\n\nIn the `items_per_order` table:\n• `item_count` is the quantity of items purchased.\n• `order_occurrences` is how many orders had that quantity.\n\nWrite a query to find the item count (or item counts) with the highest frequency of occurrences (`mode`). If multiple item counts tie for the highest frequency, display all tied item counts sorted in ascending order.",
+  "notes": [
+    "item_count: Represents the number of items sold in each order.",
+    "order_occurrences: Represents the frequency of orders with the corresponding number of items sold per order.",
+    "For example, if there are 800 orders with 3 items sold in each order, the record would have an item_count of 3 and an order_occurrences of 800.",
+    "Based on the example output, the order_occurrences value of 1000 corresponds to the highest frequency among all item counts. This means that item count of 2 has occurred 1000 times, making it the mode of order occurrences."
+  ],
+  "tables": [
+    {
+      "table_name": "items_per_order",
+      "columns": [
+        {
+          "column_name": "item_count",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "order_occurrences",
+          "data_type": "INT"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "items_per_order": [
+      {
+        "item_count": "1",
+        "order_occurrences": "500"
+      },
+      {
+        "item_count": "2",
+        "order_occurrences": "1000"
+      },
+      {
+        "item_count": "3",
+        "order_occurrences": "800"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "mode": "2"
+    }
+  ],
+  "reference_sql": "SELECT item_count AS mode\nFROM items_per_order\nWHERE order_occurrences = (SELECT MAX(order_occurrences) FROM items_per_order)\nORDER BY item_count;",
+  "tags": [
+    "aggregation",
+    "alibaba",
+    "ecommerce",
+    "medium"
+  ],
+  "related_questions": [
+    "alibaba-compressed-mean",
+    "alibaba-compressed-median"
+  ],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "items_per_order": [
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          },
+          {
+            "item_count": "3",
+            "order_occurrences": "800"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "mode": 2
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "items_per_order": [
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          },
+          {
+            "item_count": "3",
+            "order_occurrences": "800"
+          },
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          },
+          {
+            "item_count": "3",
+            "order_occurrences": "800"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "mode": 2
+        },
+        {
+          "mode": 2
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "items_per_order": [
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          },
+          {
+            "item_count": "3",
+            "order_occurrences": "800"
+          },
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "mode": 2
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "items_per_order": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_ties_and_nulls",
+      "description": "Tied ranking metrics, unmatched join keys, and NULL values in nullable attributes",
+      "input_data": {
+        "items_per_order": [
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          },
+          {
+            "item_count": "3",
+            "order_occurrences": "800"
+          },
+          {
+            "item_count": "1",
+            "order_occurrences": "500"
+          },
+          {
+            "item_count": "2",
+            "order_occurrences": "1000"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "mode": 2
+        },
+        {
+          "mode": 2
+        }
+      ],
+      "category": "edge"
+    }
+  ],
+  "order_sensitive": true,
+  "expected_output": [
+    {
+      "mode": 2
+    }
+  ]
+}

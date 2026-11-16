@@ -1,0 +1,546 @@
+{
+  "question_id": "q_016_sql_ibm_db2_product_analytics",
+  "slug": "sql-ibm-db2-product-analytics",
+  "title": "IBM db2 Product Analytics",
+  "difficulty": "Easy",
+  "company": "IBM",
+  "premium": false,
+  "question": "IBM Db2 database engineers track query workloads executed by employees across distinct development environments.\n\nWrite a query to calculate the count of unique SQL queries executed by each employee during the evaluation quarter (Q3 2023).\n\nOutput the employee `unique_queries` bucket (e.g. 0 queries, 1 query, 2 queries) and the number of employees who executed that number of queries. Order by query count.",
+  "notes": [
+    "Assume that the table below displays all queries made from July 1, 2023 to 31 July, 2023:",
+    "Assume that the table below displays all employees in the table:",
+    "The output indicates that 191 employees did not run any queries, 46 employees ran exactly 1 unique queries, 12 employees ran 2 unique queries, and so on."
+  ],
+  "tables": [
+    {
+      "table_name": "queries",
+      "columns": [
+        {
+          "column_name": "employee_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "query_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "query_starttime",
+          "data_type": "DATETIME"
+        },
+        {
+          "column_name": "execution_time",
+          "data_type": "INT"
+        }
+      ]
+    },
+    {
+      "table_name": "employees",
+      "columns": [
+        {
+          "column_name": "employee_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "full_name",
+          "data_type": "VARCHAR(255)"
+        },
+        {
+          "column_name": "gender",
+          "data_type": "VARCHAR(255)"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "queries": [
+      {
+        "employee_id": "226",
+        "query_id": "856987",
+        "query_starttime": "07/01/2023 01:04:43",
+        "execution_time": "2698"
+      },
+      {
+        "employee_id": "132",
+        "query_id": "286115",
+        "query_starttime": "07/01/2023 03:25:12",
+        "execution_time": "2705"
+      },
+      {
+        "employee_id": "221",
+        "query_id": "33683",
+        "query_starttime": "07/01/2023 04:34:38",
+        "execution_time": "91"
+      },
+      {
+        "employee_id": "240",
+        "query_id": "17745",
+        "query_starttime": "07/01/2023 14:33:47",
+        "execution_time": "2093"
+      },
+      {
+        "employee_id": "110",
+        "query_id": "413477",
+        "query_starttime": "07/02/2023 10:55:14",
+        "execution_time": "470"
+      }
+    ],
+    "employees": [
+      {
+        "employee_id": "1",
+        "full_name": "Judas Beardon",
+        "gender": "Male"
+      },
+      {
+        "employee_id": "2",
+        "full_name": "Lainey Franciotti",
+        "gender": "Female"
+      },
+      {
+        "employee_id": "3",
+        "full_name": "Ashbey Strahan",
+        "gender": "Male"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "unique_queries": "0",
+      "employee_count": "191"
+    },
+    {
+      "unique_queries": "1",
+      "employee_count": "46"
+    },
+    {
+      "unique_queries": "2",
+      "employee_count": "12"
+    },
+    {
+      "unique_queries": "3",
+      "employee_count": "1"
+    }
+  ],
+  "reference_sql": "WITH emp_query_counts AS (\n  SELECT e.employee_id, COUNT(DISTINCT q.query_id) AS unique_queries\n  FROM employees e\n  LEFT JOIN queries q ON e.employee_id = q.employee_id \n    AND q.query_starttime >= '2023-07-01' \n    AND q.query_starttime < '2023-10-01'\n  GROUP BY e.employee_id\n)\nSELECT unique_queries, COUNT(employee_id) AS employee_count\nFROM emp_query_counts\nGROUP BY unique_queries\nORDER BY unique_queries;",
+  "tags": [
+    "aggregation",
+    "easy",
+    "hr",
+    "ibm"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "queries": [
+          {
+            "employee_id": "226",
+            "query_id": "856987",
+            "query_starttime": "07/01/2023 01:04:43",
+            "execution_time": "2698"
+          },
+          {
+            "employee_id": "132",
+            "query_id": "286115",
+            "query_starttime": "07/01/2023 03:25:12",
+            "execution_time": "2705"
+          },
+          {
+            "employee_id": "221",
+            "query_id": "33683",
+            "query_starttime": "07/01/2023 04:34:38",
+            "execution_time": "91"
+          },
+          {
+            "employee_id": "240",
+            "query_id": "17745",
+            "query_starttime": "07/01/2023 14:33:47",
+            "execution_time": "2093"
+          },
+          {
+            "employee_id": "110",
+            "query_id": "413477",
+            "query_starttime": "07/02/2023 10:55:14",
+            "execution_time": "470"
+          }
+        ],
+        "employees": [
+          {
+            "employee_id": "1",
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          },
+          {
+            "employee_id": "2",
+            "full_name": "Lainey Franciotti",
+            "gender": "Female"
+          },
+          {
+            "employee_id": "3",
+            "full_name": "Ashbey Strahan",
+            "gender": "Male"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "unique_queries": 0,
+          "employee_count": 3
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "queries": [
+          {
+            "employee_id": "226",
+            "query_id": "856987",
+            "query_starttime": "07/01/2023 01:04:43",
+            "execution_time": "2698"
+          },
+          {
+            "employee_id": "132",
+            "query_id": "286115",
+            "query_starttime": "07/01/2023 03:25:12",
+            "execution_time": "2705"
+          },
+          {
+            "employee_id": "221",
+            "query_id": "33683",
+            "query_starttime": "07/01/2023 04:34:38",
+            "execution_time": "91"
+          },
+          {
+            "employee_id": "240",
+            "query_id": "17745",
+            "query_starttime": "07/01/2023 14:33:47",
+            "execution_time": "2093"
+          },
+          {
+            "employee_id": "110",
+            "query_id": "413477",
+            "query_starttime": "07/02/2023 10:55:14",
+            "execution_time": "470"
+          },
+          {
+            "employee_id": 1226,
+            "query_id": 857987,
+            "query_starttime": "07/06/2023 01:04:43",
+            "execution_time": "2698"
+          },
+          {
+            "employee_id": 1132,
+            "query_id": 287115,
+            "query_starttime": "07/06/2023 03:25:12",
+            "execution_time": "2705"
+          },
+          {
+            "employee_id": 1221,
+            "query_id": 34683,
+            "query_starttime": "07/06/2023 04:34:38",
+            "execution_time": "91"
+          },
+          {
+            "employee_id": 1240,
+            "query_id": 18745,
+            "query_starttime": "07/06/2023 14:33:47",
+            "execution_time": "2093"
+          },
+          {
+            "employee_id": 1110,
+            "query_id": 414477,
+            "query_starttime": "07/07/2023 10:55:14",
+            "execution_time": "470"
+          }
+        ],
+        "employees": [
+          {
+            "employee_id": "1",
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          },
+          {
+            "employee_id": "2",
+            "full_name": "Lainey Franciotti",
+            "gender": "Female"
+          },
+          {
+            "employee_id": "3",
+            "full_name": "Ashbey Strahan",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 1001,
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 1002,
+            "full_name": "Lainey Franciotti",
+            "gender": "Female"
+          },
+          {
+            "employee_id": 1003,
+            "full_name": "Ashbey Strahan",
+            "gender": "Male"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "unique_queries": 0,
+          "employee_count": 6
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "queries": [
+          {
+            "employee_id": "226",
+            "query_id": "856987",
+            "query_starttime": "07/01/2023 01:04:43",
+            "execution_time": "2698"
+          },
+          {
+            "employee_id": "132",
+            "query_id": "286115",
+            "query_starttime": "07/01/2023 03:25:12",
+            "execution_time": "2705"
+          },
+          {
+            "employee_id": "221",
+            "query_id": "33683",
+            "query_starttime": "07/01/2023 04:34:38",
+            "execution_time": "91"
+          },
+          {
+            "employee_id": "240",
+            "query_id": "17745",
+            "query_starttime": "07/01/2023 14:33:47",
+            "execution_time": "2093"
+          },
+          {
+            "employee_id": "110",
+            "query_id": "413477",
+            "query_starttime": "07/02/2023 10:55:14",
+            "execution_time": "470"
+          },
+          {
+            "employee_id": 5226,
+            "query_id": 861987,
+            "query_starttime": "07/01/2018 01:04:43",
+            "execution_time": "2698"
+          },
+          {
+            "employee_id": 5132,
+            "query_id": 291115,
+            "query_starttime": "07/01/2018 03:25:12",
+            "execution_time": "2705"
+          }
+        ],
+        "employees": [
+          {
+            "employee_id": "1",
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          },
+          {
+            "employee_id": "2",
+            "full_name": "Lainey Franciotti",
+            "gender": "Female"
+          },
+          {
+            "employee_id": "3",
+            "full_name": "Ashbey Strahan",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 5001,
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "unique_queries": 0,
+          "employee_count": 4
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "queries": [],
+        "employees": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_histogram_distribution",
+      "description": "Multi-bucket histogram distribution verifying distinct query counts, Q3 date boundaries, and zero-query employees",
+      "input_data": {
+        "employees": [
+          {
+            "employee_id": 1,
+            "full_name": "Judas Beardon",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 2,
+            "full_name": "Lainey Franciotti",
+            "gender": "Female"
+          },
+          {
+            "employee_id": 3,
+            "full_name": "Ashbey Strahan",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 4,
+            "full_name": "Dina Vance",
+            "gender": "Female"
+          },
+          {
+            "employee_id": 5,
+            "full_name": "Evan Stone",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 6,
+            "full_name": "Faye Clark",
+            "gender": "Female"
+          },
+          {
+            "employee_id": 7,
+            "full_name": "Gary Moore",
+            "gender": "Male"
+          },
+          {
+            "employee_id": 8,
+            "full_name": "Hannah Abbott",
+            "gender": "Female"
+          }
+        ],
+        "queries": [
+          {
+            "employee_id": 4,
+            "query_id": 101,
+            "query_starttime": "07/05/2023 10:00:00",
+            "execution_time": 120
+          },
+          {
+            "employee_id": 4,
+            "query_id": 101,
+            "query_starttime": "07/06/2023 11:00:00",
+            "execution_time": 130
+          },
+          {
+            "employee_id": 5,
+            "query_id": 102,
+            "query_starttime": "07/10/2023 09:15:00",
+            "execution_time": 200
+          },
+          {
+            "employee_id": 5,
+            "query_id": 103,
+            "query_starttime": "06/20/2023 14:00:00",
+            "execution_time": 90
+          },
+          {
+            "employee_id": 6,
+            "query_id": 104,
+            "query_starttime": "08/01/2023 12:00:00",
+            "execution_time": 300
+          },
+          {
+            "employee_id": 6,
+            "query_id": 105,
+            "query_starttime": "08/15/2023 15:30:00",
+            "execution_time": 450
+          },
+          {
+            "employee_id": 6,
+            "query_id": 106,
+            "query_starttime": "10/02/2023 08:00:00",
+            "execution_time": 500
+          },
+          {
+            "employee_id": 7,
+            "query_id": 107,
+            "query_starttime": "09/01/2023 10:00:00",
+            "execution_time": 210
+          },
+          {
+            "employee_id": 7,
+            "query_id": 108,
+            "query_starttime": "09/28/2023 16:45:00",
+            "execution_time": 320
+          },
+          {
+            "employee_id": 8,
+            "query_id": 109,
+            "query_starttime": "07/15/2023 08:30:00",
+            "execution_time": 110
+          },
+          {
+            "employee_id": 8,
+            "query_id": 110,
+            "query_starttime": "08/20/2023 11:20:00",
+            "execution_time": 180
+          },
+          {
+            "employee_id": 8,
+            "query_id": 111,
+            "query_starttime": "09/10/2023 17:00:00",
+            "execution_time": 250
+          },
+          {
+            "employee_id": 1,
+            "query_id": 901,
+            "query_starttime": "12/15/2022 10:00:00",
+            "execution_time": 60
+          }
+        ]
+      },
+      "category": "edge",
+      "expected_output": [
+        {
+          "unique_queries": 0,
+          "employee_count": 3
+        },
+        {
+          "unique_queries": 1,
+          "employee_count": 2
+        },
+        {
+          "unique_queries": 2,
+          "employee_count": 2
+        },
+        {
+          "unique_queries": 3,
+          "employee_count": 1
+        }
+      ]
+    }
+  ],
+  "order_sensitive": false,
+  "expected_output": [
+    {
+      "unique_queries": 0,
+      "employee_count": 3
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "question_id": "q_078_updated_status",
+  "slug": "updated-status",
+  "title": "Advertiser Status",
+  "difficulty": "Hard",
+  "company": "Facebook",
+  "premium": false,
+  "question": "Meta advertiser billing operations tracks daily transition changes in advertiser account payment status.\n\nAn advertiser's payment status updates daily based on whether a payment occurred on day T:\n• If an advertiser makes a payment on day T, their status transitions to `'EXISTING'` (or `'RESURRECT'` if their previous status was `'CHURN'`).\n• If an advertiser makes no payment on day T, their status transitions to `'CHURN'`.\n\nWrite a query to output each advertiser's `user_id` and their updated `status`, ordered by `user_id` in ascending order.",
+  "notes": [
+    "New: Advertisers who are newly registered and have made their first payment.",
+    "Existing: Advertisers who have made payments in the past and have recently made a current payment.",
+    "Churn: Advertisers who have made payments in the past but have not made any recent payment.",
+    "Resurrect: Advertisers who have not made a recent payment but may have made a previous payment and have made a payment again recently.",
+    "\"Current Status\" column: Represents the advertiser's current status.",
+    "\"Payment Status\" column: Represents the updated payment status based on the conditions",
+    "\"Payment on Day T\" column: Indicates whether the advertiser made a payment on a specific day (T) or not.",
+    "Rows 2, 4, 6, and 8: If an advertiser does not make a payment on day T, regardless of their previous status, their payment status transitions to \"CHURN\" as the updated status.",
+    "Rows 1, 3, 5, and 7: If an advertiser makes a payment on day T, the status is updated to either \"EXISTING\" or \"RESURRECT\" based on their previous status. If the previous status was \"CHURN,\" the updated status is \"RESURRECT.\" For any other previous status, the updated status is \"EXISTING.\"",
+    "The advertiser \"bing\" is classified as \"CHURN\" because no payment record is found in the daily_pay table.",
+    "The advertiser \"yahoo\" is labeled as \"EXISTING\" since they have made a recent payment, as indicated by the presence of their payment record.",
+    "Similarly, the advertiser \"alibaba\" is also classified as \"EXISTING\" due to their recent payment."
+  ],
+  "tables": [
+    {
+      "table_name": "advertiser",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "VARCHAR(255)"
+        },
+        {
+          "column_name": "status",
+          "data_type": "VARCHAR(255)"
+        }
+      ]
+    },
+    {
+      "table_name": "daily_pay",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "VARCHAR(255)"
+        },
+        {
+          "column_name": "paid",
+          "data_type": "DECIMAL(10,2)"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "advertiser": [
+      {
+        "user_id": "bing",
+        "status": "NEW"
+      },
+      {
+        "user_id": "yahoo",
+        "status": "NEW"
+      },
+      {
+        "user_id": "alibaba",
+        "status": "EXISTING"
+      }
+    ],
+    "daily_pay": [
+      {
+        "user_id": "yahoo",
+        "paid": "45.00"
+      },
+      {
+        "user_id": "alibaba",
+        "paid": "100.00"
+      },
+      {
+        "user_id": "target",
+        "paid": "13.00"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "user_id": "alibaba",
+      "new_status": "EXISTING"
+    },
+    {
+      "user_id": "bing",
+      "new_status": "CHURN"
+    },
+    {
+      "user_id": "target",
+      "new_status": "NEW"
+    },
+    {
+      "user_id": "yahoo",
+      "new_status": "EXISTING"
+    }
+  ],
+  "reference_sql": "SELECT \n  COALESCE(a.user_id, d.user_id) AS user_id,\n  CASE \n    WHEN a.status IS NULL THEN 'NEW'\n    WHEN d.paid IS NULL THEN 'CHURN'\n    WHEN a.status = 'CHURN' AND d.paid > 0 THEN 'RESURRECT'\n    ELSE 'EXISTING'\n  END AS new_status\nFROM advertiser a\nFULL OUTER JOIN daily_pay d ON a.user_id = d.user_id\nORDER BY user_id;",
+  "tags": [
+    "date-manipulation",
+    "facebook",
+    "finance",
+    "hard",
+    "social-media"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline: alibaba (EXISTING), bing (CHURN), target (NEW advertiser only in daily_pay), yahoo (EXISTING)",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "bing",
+            "status": "NEW"
+          },
+          {
+            "user_id": "yahoo",
+            "status": "NEW"
+          },
+          {
+            "user_id": "alibaba",
+            "status": "EXISTING"
+          }
+        ],
+        "daily_pay": [
+          {
+            "user_id": "yahoo",
+            "paid": "45.00"
+          },
+          {
+            "user_id": "alibaba",
+            "paid": "100.00"
+          },
+          {
+            "user_id": "target",
+            "paid": "13.00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": "alibaba",
+          "new_status": "EXISTING"
+        },
+        {
+          "user_id": "bing",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "target",
+          "new_status": "NEW"
+        },
+        {
+          "user_id": "yahoo",
+          "new_status": "EXISTING"
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_resurrect_and_new",
+      "description": "Tests RESURRECT (apple), NEW (spotify), EXISTING (meta), and CHURN (google, netflix)",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "apple",
+            "status": "CHURN"
+          },
+          {
+            "user_id": "google",
+            "status": "EXISTING"
+          },
+          {
+            "user_id": "meta",
+            "status": "NEW"
+          },
+          {
+            "user_id": "netflix",
+            "status": "CHURN"
+          }
+        ],
+        "daily_pay": [
+          {
+            "user_id": "apple",
+            "paid": "500.00"
+          },
+          {
+            "user_id": "spotify",
+            "paid": "150.00"
+          },
+          {
+            "user_id": "meta",
+            "paid": "200.00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": "apple",
+          "new_status": "RESURRECT"
+        },
+        {
+          "user_id": "google",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "meta",
+          "new_status": "EXISTING"
+        },
+        {
+          "user_id": "netflix",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "spotify",
+          "new_status": "NEW"
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_all_new_advertisers",
+      "description": "Tests multiple brand new advertisers paying for the first time + 1 churned brand_a",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "brand_a",
+            "status": "EXISTING"
+          }
+        ],
+        "daily_pay": [
+          {
+            "user_id": "brand_b",
+            "paid": "10.00"
+          },
+          {
+            "user_id": "brand_c",
+            "paid": "25.00"
+          },
+          {
+            "user_id": "brand_d",
+            "paid": "99.00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": "brand_a",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "brand_b",
+          "new_status": "NEW"
+        },
+        {
+          "user_id": "brand_c",
+          "new_status": "NEW"
+        },
+        {
+          "user_id": "brand_d",
+          "new_status": "NEW"
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_4_no_payments_all_churn",
+      "description": "Edge case: No payments in daily_pay, all advertisers transition to CHURN",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "alpha",
+            "status": "EXISTING"
+          },
+          {
+            "user_id": "beta",
+            "status": "NEW"
+          }
+        ],
+        "daily_pay": []
+      },
+      "expected_output": [
+        {
+          "user_id": "alpha",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "beta",
+          "new_status": "CHURN"
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_all_states_present",
+      "description": "One user per state transition: NEW (not in advertiser), CHURN (in advertiser but no payment), RESURRECT (was CHURN, now paid), EXISTING (was active, still paying).",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "A",
+            "status": "CHURN"
+          },
+          {
+            "user_id": "B",
+            "status": "EXISTING"
+          },
+          {
+            "user_id": "C",
+            "status": "NEW"
+          }
+        ],
+        "daily_pay": [
+          {
+            "user_id": "A",
+            "paid": 100
+          },
+          {
+            "user_id": "B",
+            "paid": 200
+          },
+          {
+            "user_id": "D",
+            "paid": 150
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": "A",
+          "new_status": "RESURRECT"
+        },
+        {
+          "user_id": "B",
+          "new_status": "EXISTING"
+        },
+        {
+          "user_id": "C",
+          "new_status": "CHURN"
+        },
+        {
+          "user_id": "D",
+          "new_status": "NEW"
+        }
+      ],
+      "category": "boundary"
+    },
+    {
+      "test_case_id": "tc_6_churn_user_zero_paid",
+      "description": "A user is in CHURN state and pays 0 this period. Zero-payment should NOT trigger RESURRECT.",
+      "input_data": {
+        "advertiser": [
+          {
+            "user_id": "X",
+            "status": "CHURN"
+          }
+        ],
+        "daily_pay": [
+          {
+            "user_id": "X",
+            "paid": 0
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "user_id": "X",
+          "new_status": "EXISTING"
+        }
+      ],
+      "category": "boundary"
+    },
+    {
+      "test_case_id": "tc_7_empty_advertisers",
+      "description": "Edge case: Empty advertiser and daily_pay tables",
+      "category": "edge",
+      "input_data": {
+        "advertiser": [],
+        "daily_pay": []
+      },
+      "expected_output": []
+    }
+  ],
+  "order_sensitive": true,
+  "expected_output": [
+    {
+      "user_id": "alibaba",
+      "new_status": "EXISTING"
+    },
+    {
+      "user_id": "bing",
+      "new_status": "CHURN"
+    },
+    {
+      "user_id": "target",
+      "new_status": "NEW"
+    },
+    {
+      "user_id": "yahoo",
+      "new_status": "EXISTING"
+    }
+  ]
+}

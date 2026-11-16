@@ -1,0 +1,354 @@
+{
+  "question_id": "q_001_sql_histogram_tweets",
+  "slug": "sql-histogram-tweets",
+  "title": "Histogram of Tweets",
+  "difficulty": "Easy",
+  "company": "Twitter",
+  "premium": false,
+  "question": "Twitter data infrastructure engineers analyze tweet distribution histograms across the user base for the year 2022.\n\nA tweet histogram groups users by the total number of tweets they published in 2022, and counts how many users fall into each tweet frequency bucket.\n\nWrite a query to calculate the tweet histogram. Output the tweet bucket (`tweet_bucket`, representing number of tweets posted) and the count of users in that bucket (`users_num`), ordered by `tweet_bucket` in ascending order.",
+  "notes": [
+    "Based on the example output, there are two users who posted only one tweet in 2022, and one user who posted two tweets in 2022. The query groups the users by the number of tweets they posted and displays the number of users in each group."
+  ],
+  "tables": [
+    {
+      "table_name": "tweets",
+      "columns": [
+        {
+          "column_name": "tweet_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "user_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "msg",
+          "data_type": "VARCHAR(255)"
+        },
+        {
+          "column_name": "tweet_date",
+          "data_type": "DATETIME"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "tweets": [
+      {
+        "tweet_id": "214252",
+        "user_id": "111",
+        "msg": "Am considering taking Tesla private at $420. Funding secured.",
+        "tweet_date": "12/30/2021 00:00:00"
+      },
+      {
+        "tweet_id": "739252",
+        "user_id": "111",
+        "msg": "Despite the constant negative press covfefe",
+        "tweet_date": "01/01/2022 00:00:00"
+      },
+      {
+        "tweet_id": "846402",
+        "user_id": "111",
+        "msg": "Excited to learn advanced SQL window functions today!",
+        "tweet_date": "02/14/2022 00:00:00"
+      },
+      {
+        "tweet_id": "241425",
+        "user_id": "254",
+        "msg": "If the salary is so competitive why won’t you tell me what it is?",
+        "tweet_date": "03/01/2022 00:00:00"
+      },
+      {
+        "tweet_id": "231574",
+        "user_id": "148",
+        "msg": "I no longer have a manager. I can't be managed",
+        "tweet_date": "03/23/2022 00:00:00"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "tweet_bucket": "1",
+      "users_num": "2"
+    },
+    {
+      "tweet_bucket": "2",
+      "users_num": "1"
+    }
+  ],
+  "reference_sql": "WITH user_tweets AS (\n  SELECT user_id, COUNT(tweet_id) AS tweet_count\n  FROM tweets\n  WHERE YEAR(tweet_date) = 2022\n  GROUP BY user_id\n)\nSELECT tweet_count AS tweet_bucket, COUNT(user_id) AS users_num\nFROM user_tweets\nGROUP BY tweet_count\nORDER BY tweet_bucket;",
+  "tags": [
+    "aggregation",
+    "easy",
+    "social-media",
+    "twitter"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": "214252",
+            "user_id": "111",
+            "msg": "Am considering taking Tesla private at $420. Funding secured.",
+            "tweet_date": "12/30/2021 00:00:00"
+          },
+          {
+            "tweet_id": "739252",
+            "user_id": "111",
+            "msg": "Despite the constant negative press covfefe",
+            "tweet_date": "01/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "846402",
+            "user_id": "111",
+            "msg": "Excited to learn advanced SQL window functions today!",
+            "tweet_date": "02/14/2022 00:00:00"
+          },
+          {
+            "tweet_id": "241425",
+            "user_id": "254",
+            "msg": "If the salary is so competitive why won’t you tell me what it is?",
+            "tweet_date": "03/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "231574",
+            "user_id": "148",
+            "msg": "I no longer have a manager. I can't be managed",
+            "tweet_date": "03/23/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "tweet_bucket": 1,
+          "users_num": 2
+        },
+        {
+          "tweet_bucket": 2,
+          "users_num": 1
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": "214252",
+            "user_id": "111",
+            "msg": "Am considering taking Tesla private at $420. Funding secured.",
+            "tweet_date": "12/30/2021 00:00:00"
+          },
+          {
+            "tweet_id": "739252",
+            "user_id": "111",
+            "msg": "Despite the constant negative press covfefe",
+            "tweet_date": "01/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "846402",
+            "user_id": "111",
+            "msg": "Excited to learn advanced SQL window functions today!",
+            "tweet_date": "02/14/2022 00:00:00"
+          },
+          {
+            "tweet_id": "241425",
+            "user_id": "254",
+            "msg": "If the salary is so competitive why won’t you tell me what it is?",
+            "tweet_date": "03/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "231574",
+            "user_id": "148",
+            "msg": "I no longer have a manager. I can't be managed",
+            "tweet_date": "03/23/2022 00:00:00"
+          },
+          {
+            "tweet_id": 215252,
+            "user_id": 1111,
+            "msg": "Am considering taking Tesla private at $420. Funding secured.",
+            "tweet_date": "12/28/2021 00:00:00"
+          },
+          {
+            "tweet_id": 740252,
+            "user_id": 1111,
+            "msg": "Despite the constant negative press covfefe",
+            "tweet_date": "01/06/2022 00:00:00"
+          },
+          {
+            "tweet_id": 847402,
+            "user_id": 1111,
+            "msg": "Excited to learn advanced SQL window functions today!",
+            "tweet_date": "02/19/2022 00:00:00"
+          },
+          {
+            "tweet_id": 242425,
+            "user_id": 1254,
+            "msg": "If the salary is so competitive why won’t you tell me what it is?",
+            "tweet_date": "03/06/2022 00:00:00"
+          },
+          {
+            "tweet_id": 232574,
+            "user_id": 1148,
+            "msg": "I no longer have a manager. I can't be managed",
+            "tweet_date": "03/28/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "tweet_bucket": 1,
+          "users_num": 4
+        },
+        {
+          "tweet_bucket": 2,
+          "users_num": 2
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": "214252",
+            "user_id": "111",
+            "msg": "Am considering taking Tesla private at $420. Funding secured.",
+            "tweet_date": "12/30/2021 00:00:00"
+          },
+          {
+            "tweet_id": "739252",
+            "user_id": "111",
+            "msg": "Despite the constant negative press covfefe",
+            "tweet_date": "01/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "846402",
+            "user_id": "111",
+            "msg": "Excited to learn advanced SQL window functions today!",
+            "tweet_date": "02/14/2022 00:00:00"
+          },
+          {
+            "tweet_id": "241425",
+            "user_id": "254",
+            "msg": "If the salary is so competitive why won’t you tell me what it is?",
+            "tweet_date": "03/01/2022 00:00:00"
+          },
+          {
+            "tweet_id": "231574",
+            "user_id": "148",
+            "msg": "I no longer have a manager. I can't be managed",
+            "tweet_date": "03/23/2022 00:00:00"
+          },
+          {
+            "tweet_id": 219252,
+            "user_id": 5111,
+            "msg": "Am considering taking Tesla private at $420. Funding secured.",
+            "tweet_date": "12/28/2016 00:00:00"
+          },
+          {
+            "tweet_id": 744252,
+            "user_id": 5111,
+            "msg": "Despite the constant negative press covfefe",
+            "tweet_date": "01/01/2017 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "tweet_bucket": 1,
+          "users_num": 2
+        },
+        {
+          "tweet_bucket": 2,
+          "users_num": 1
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "tweets": []
+      },
+      "expected_output": [],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_5_tweets_outside_year_excluded",
+      "description": "All tweets are from 2021 or 2023. Since query filters YEAR = 2022, result must be empty.",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": 100,
+            "user_id": 1,
+            "msg": "old tweet",
+            "tweet_date": "2021-12-31 23:59:59"
+          },
+          {
+            "tweet_id": 101,
+            "user_id": 2,
+            "msg": "new tweet",
+            "tweet_date": "2023-01-01 00:00:01"
+          }
+        ]
+      },
+      "expected_output": [],
+      "category": "boundary"
+    },
+    {
+      "test_case_id": "tc_6_single_tweet_per_user",
+      "description": "Every user tweeted exactly once in 2022. All must land in bucket tweet_bucket = 1.",
+      "input_data": {
+        "tweets": [
+          {
+            "tweet_id": 200,
+            "user_id": 10,
+            "msg": "a",
+            "tweet_date": "2022-05-01 12:00:00"
+          },
+          {
+            "tweet_id": 201,
+            "user_id": 20,
+            "msg": "b",
+            "tweet_date": "2022-06-01 12:00:00"
+          },
+          {
+            "tweet_id": 202,
+            "user_id": 30,
+            "msg": "c",
+            "tweet_date": "2022-07-01 12:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "tweet_bucket": 1,
+          "users_num": 3
+        }
+      ],
+      "category": "boundary"
+    }
+  ],
+  "order_sensitive": false,
+  "expected_output": [
+    {
+      "tweet_bucket": 1,
+      "users_num": 2
+    },
+    {
+      "tweet_bucket": 2,
+      "users_num": 1
+    }
+  ]
+}

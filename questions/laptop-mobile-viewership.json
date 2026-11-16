@@ -1,0 +1,253 @@
+{
+  "question_id": "q_005_laptop_mobile_viewership",
+  "slug": "laptop-mobile-viewership",
+  "title": "Laptop vs. Mobile Viewership",
+  "difficulty": "Easy",
+  "company": "NY Times",
+  "premium": false,
+  "question": "The New York Times digital audience team tracks readership distribution across device platforms.\n\nDevice categories are tracked as follows:\n• **Laptop viewership**: Views occurring on `'laptop'` devices.\n• **Mobile viewership**: The combined sum of views occurring on `'tablet'` and `'phone'` devices.\n\nWrite a query to calculate total viewership across both segments. Output the total laptop viewership as `laptop_views` and total mobile viewership as `mobile_views`.",
+  "notes": [
+    "Based on the example input, there are a total of 2 laptop views and 3 mobile views."
+  ],
+  "tables": [
+    {
+      "table_name": "viewership",
+      "columns": [
+        {
+          "column_name": "user_id",
+          "data_type": "INT"
+        },
+        {
+          "column_name": "device_type",
+          "data_type": "VARCHAR(50)"
+        },
+        {
+          "column_name": "view_time",
+          "data_type": "DATETIME"
+        }
+      ]
+    }
+  ],
+  "sample_data": {
+    "viewership": [
+      {
+        "user_id": "123",
+        "device_type": "tablet",
+        "view_time": "01/02/2022 00:00:00"
+      },
+      {
+        "user_id": "125",
+        "device_type": "laptop",
+        "view_time": "01/07/2022 00:00:00"
+      },
+      {
+        "user_id": "128",
+        "device_type": "laptop",
+        "view_time": "02/09/2022 00:00:00"
+      },
+      {
+        "user_id": "129",
+        "device_type": "phone",
+        "view_time": "02/09/2022 00:00:00"
+      },
+      {
+        "user_id": "145",
+        "device_type": "tablet",
+        "view_time": "02/24/2022 00:00:00"
+      }
+    ]
+  },
+  "sample_output": [
+    {
+      "laptop_views": "2",
+      "mobile_views": "3"
+    }
+  ],
+  "reference_sql": "SELECT \n  SUM(CASE WHEN device_type = 'laptop' THEN 1 ELSE 0 END) AS laptop_views,\n  SUM(CASE WHEN device_type IN ('tablet', 'phone') THEN 1 ELSE 0 END) AS mobile_views\nFROM viewership;",
+  "tags": [
+    "aggregation",
+    "date-manipulation",
+    "easy",
+    "ny times"
+  ],
+  "related_questions": [],
+  "sources": [],
+  "test_cases": [
+    {
+      "test_case_id": "tc_1_baseline",
+      "description": "Baseline sample input data from problem description",
+      "input_data": {
+        "viewership": [
+          {
+            "user_id": "123",
+            "device_type": "tablet",
+            "view_time": "01/02/2022 00:00:00"
+          },
+          {
+            "user_id": "125",
+            "device_type": "laptop",
+            "view_time": "01/07/2022 00:00:00"
+          },
+          {
+            "user_id": "128",
+            "device_type": "laptop",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "129",
+            "device_type": "phone",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "145",
+            "device_type": "tablet",
+            "view_time": "02/24/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "laptop_views": 2,
+          "mobile_views": 3
+        }
+      ],
+      "category": "normal"
+    },
+    {
+      "test_case_id": "tc_2_high_volume",
+      "description": "Multiple entities with scaled volume and multi-group distributions",
+      "input_data": {
+        "viewership": [
+          {
+            "user_id": "123",
+            "device_type": "tablet",
+            "view_time": "01/02/2022 00:00:00"
+          },
+          {
+            "user_id": "125",
+            "device_type": "laptop",
+            "view_time": "01/07/2022 00:00:00"
+          },
+          {
+            "user_id": "128",
+            "device_type": "laptop",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "129",
+            "device_type": "phone",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "145",
+            "device_type": "tablet",
+            "view_time": "02/24/2022 00:00:00"
+          },
+          {
+            "user_id": 1123,
+            "device_type": "tablet",
+            "view_time": "01/07/2022 00:00:00"
+          },
+          {
+            "user_id": 1125,
+            "device_type": "laptop",
+            "view_time": "01/12/2022 00:00:00"
+          },
+          {
+            "user_id": 1128,
+            "device_type": "laptop",
+            "view_time": "02/14/2022 00:00:00"
+          },
+          {
+            "user_id": 1129,
+            "device_type": "phone",
+            "view_time": "02/14/2022 00:00:00"
+          },
+          {
+            "user_id": 1145,
+            "device_type": "tablet",
+            "view_time": "02/28/2022 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "laptop_views": 4,
+          "mobile_views": 6
+        }
+      ],
+      "category": "volume"
+    },
+    {
+      "test_case_id": "tc_3_disqualifying_rows",
+      "description": "Dataset containing disqualifying rows, edge values, and cancelled/zero records",
+      "input_data": {
+        "viewership": [
+          {
+            "user_id": "123",
+            "device_type": "tablet",
+            "view_time": "01/02/2022 00:00:00"
+          },
+          {
+            "user_id": "125",
+            "device_type": "laptop",
+            "view_time": "01/07/2022 00:00:00"
+          },
+          {
+            "user_id": "128",
+            "device_type": "laptop",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "129",
+            "device_type": "phone",
+            "view_time": "02/09/2022 00:00:00"
+          },
+          {
+            "user_id": "145",
+            "device_type": "tablet",
+            "view_time": "02/24/2022 00:00:00"
+          },
+          {
+            "user_id": 5123,
+            "device_type": "tablet",
+            "view_time": "01/02/2017 00:00:00"
+          },
+          {
+            "user_id": 5125,
+            "device_type": "laptop",
+            "view_time": "01/07/2017 00:00:00"
+          }
+        ]
+      },
+      "expected_output": [
+        {
+          "laptop_views": 3,
+          "mobile_views": 4
+        }
+      ],
+      "category": "edge"
+    },
+    {
+      "test_case_id": "tc_4_empty_result",
+      "description": "Input where no rows satisfy problem criteria, verifying empty result handling",
+      "input_data": {
+        "viewership": []
+      },
+      "expected_output": [
+        {
+          "laptop_views": null,
+          "mobile_views": null
+        }
+      ],
+      "category": "edge"
+    }
+  ],
+  "order_sensitive": false,
+  "expected_output": [
+    {
+      "laptop_views": 2,
+      "mobile_views": 3
+    }
+  ]
+}
