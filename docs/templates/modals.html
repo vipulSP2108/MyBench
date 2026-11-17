@@ -1,0 +1,132 @@
+  <!-- Restore Confirmation Modal -->
+  <div id="restore-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card restore-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Restore from Backup</h3>
+        </div>
+        <button id="btn-close-restore-modal" class="btn-close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 20px;">
+        <div class="restore-meta-banner">
+          <div>
+            <div class="restore-file-name" id="restore-file-name">backup.json</div>
+            <div class="restore-file-date" id="restore-file-date">Exported: Oct 5, 2026</div>
+          </div>
+          <span class="badge-tag-rec" id="restore-file-type">Full Backup</span>
+        </div>
+
+        <h4 style="margin: 16px 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark-muted);">Backup Contents</h4>
+        <div class="restore-stats-grid">
+          <div class="restore-stat-item">
+            <span class="restore-stat-num" id="restore-count-solved">0</span>
+            <span class="restore-stat-lbl">Solved</span>
+          </div>
+          <div class="restore-stat-item">
+            <span class="restore-stat-num" id="restore-count-attempted">0</span>
+            <span class="restore-stat-lbl">Attempted</span>
+          </div>
+          <div class="restore-stat-item">
+            <span class="restore-stat-num" id="restore-count-starred">0</span>
+            <span class="restore-stat-lbl">Starred</span>
+          </div>
+          <div class="restore-stat-item">
+            <span class="restore-stat-num" id="restore-count-notes">0</span>
+            <span class="restore-stat-lbl">Notes</span>
+          </div>
+          <div class="restore-stat-item">
+            <span class="restore-stat-num" id="restore-count-drafts">0</span>
+            <span class="restore-stat-lbl">SQL Drafts</span>
+          </div>
+        </div>
+
+        <h4 style="margin: 20px 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dark-muted);">Restoration Strategy</h4>
+        <div class="restore-mode-options">
+          <label class="restore-radio-label">
+            <input type="radio" name="restore-mode" value="merge" checked>
+            <div class="restore-radio-text">
+              <strong style="display: block; font-size: 13px; color: var(--text-dark-main);">Merge with current data (Safe & Recommended)</strong>
+              <span style="font-size: 12px; color: var(--text-dark-muted);">Keep existing drafts, notes, and solved questions, and add any new items from the backup file.</span>
+            </div>
+          </label>
+          <label class="restore-radio-label">
+            <input type="radio" name="restore-mode" value="replace">
+            <div class="restore-radio-text">
+              <strong style="display: block; font-size: 13px; color: var(--text-dark-main);">Replace all local data</strong>
+              <span style="font-size: 12px; color: var(--text-dark-muted);">Overwrite your browser storage completely with the contents of this backup file.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 12px 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-light);">
+        <button id="btn-cancel-restore" class="btn-sm btn-secondary">Cancel</button>
+        <button id="btn-apply-restore" class="btn-sm btn-primary">Apply Restore</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div id="shortcuts-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card" style="max-width: 520px; width: 100%;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"/></svg>
+          <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Keyboard Shortcuts</h3>
+        </div>
+        <button id="btn-close-shortcuts-modal" class="btn-close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 22px;">
+        <div class="shortcuts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Submit Solution</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Cmd + Enter</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Quick Run Baseline</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Cmd + '</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Toggle Problem Bank</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Alt + Q</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Format SQL</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Cmd + Shift + F</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Previous Problem</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Alt + [</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Next Problem</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Alt + ]</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Toggle Comment</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Cmd + /</kbd>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border-light);">
+            <span style="color: var(--text-dark-secondary);">Interview Mode</span>
+            <kbd style="padding: 3px 6px; background: var(--bg-page); border: 1px solid var(--border-medium-light); border-radius: 4px; font-family: var(--font-mono); font-size: 11px;">Alt + M</kbd>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-notification" class="toast" style="display: none;"></div>
+
+  <!-- Autocomplete Suggestion Popup -->
+  <div id="editor-autocomplete-popup" class="editor-autocomplete-popup" style="display: none;"></div>
+
+  <!-- Global Drag and Drop Overlay -->
+  <div id="global-drag-overlay" class="global-drag-overlay" style="display: none;">
+    <div class="global-drag-box">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 12px auto; display: block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h3 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 600; color: #ffffff;">Drop SQLMaster Backup (.json) Here</h3>
+      <p style="margin: 0; font-size: 13px; color: #94a3b8;">Release to instantly restore all query drafts, notes, stars, and solved progress</p>
+    </div>
+  </div>
+

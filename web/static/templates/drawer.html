@@ -1,0 +1,103 @@
+  <!-- Problem List Slide-out Drawer / Overlay -->
+  <div id="drawer-backdrop" class="drawer-backdrop"></div>
+  <aside id="problem-drawer" class="problem-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title-row">
+        <div class="drawer-heading-wrap">
+          <span class="drawer-title">Question Bank</span>
+          <span id="question-count-badge" class="count-badge">100</span>
+        </div>
+        <button id="btn-close-drawer" class="btn-close-drawer" title="Close Drawer (Esc)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-search-wrap">
+        <input type="text" id="search-input" placeholder="Search questions, companies..." />
+        <button id="btn-clear-search" class="clear-search-btn" title="Clear search" style="display: none;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-filter-row">
+        <!-- Controls: Multi-Sort Dropdown -->
+        <div class="drawer-sort-row">
+          <select id="sort-select" class="control-select" title="Sort question list">
+            <option value="default">Sort: # Default (1–100)</option>
+            <option value="num-desc">Sort: # Reverse (100–1)</option>
+            <option value="diff-asc">Sort: Difficulty (Easy → Hard)</option>
+            <option value="diff-desc">Sort: Difficulty (Hard → Easy)</option>
+            <option value="title-asc">Sort: Title (A → Z)</option>
+            <option value="title-desc">Sort: Title (Z → A)</option>
+            <option value="company-asc">Sort: Company (A → Z)</option>
+            <option value="tests-desc">Sort: Most Test Cases</option>
+            <option value="status">Sort: Status (Solved → Attempted → Unsolved)</option>
+            <option value="unsolved-first">Sort: Unsolved First</option>
+            <option value="starred">Sort: Starred First</option>
+          </select>
+        </div>
+
+        <!-- Filter Rules Builder Panel (Primary Filtering System) -->
+        <div id="drawer-adv-filter-panel" class="adv-filter-panel">
+          <div class="adv-filter-head">
+            <div class="adv-filter-match-wrap">
+              <span class="adv-filter-label">Match</span>
+              <div class="adv-match-segmented">
+                <button type="button" class="adv-match-btn active" data-match="all">ALL</button>
+                <button type="button" class="adv-match-btn" data-match="any">ANY</button>
+              </div>
+              <span class="adv-filter-sublabel">of the rules:</span>
+            </div>
+            <div class="adv-filter-head-actions">
+              <button type="button" id="btn-minimize-adv-rules" class="btn-adv-minimize" title="Minimize / Expand filter rules">
+                <svg id="icon-minimize-adv-rules" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="adv-filter-body" class="adv-filter-body">
+            <div id="adv-rules-list" class="adv-rules-list">
+              <!-- Dynamically populated filter rule rows (Status, Difficulty, Topics, Company, Starred, Notes) -->
+            </div>
+
+            <div class="adv-filter-actions-row">
+              <button type="button" id="btn-add-filter-rule" class="btn-adv-add-rule" title="Add another filter rule">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Add Filter Rule</span>
+              </button>
+              <button type="button" id="btn-reset-adv-filter" class="btn-adv-reset" title="Reset all custom rules">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Scope Breakdown: Solved, Attempted, Unsolved stats in current filter -->
+        <div class="drawer-stats-summary" id="drawer-stats-summary">
+          <div class="drawer-stats-items">
+            <span class="dstat-pill solved" id="dstat-solved" title="Solved in this view">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <strong id="dstat-solved-count">0</strong> Solved
+            </span>
+            <span class="dstat-pill attempted" id="dstat-attempted" title="Attempted in this view">
+              <span class="dstat-dot"></span>
+              <strong id="dstat-attempted-count">0</strong> Attempted
+            </span>
+            <span class="dstat-pill unsolved" id="dstat-unsolved" title="Remaining to solve in this view">
+              <strong id="dstat-unsolved-count">0</strong> Unsolved
+            </span>
+          </div>
+          <div class="drawer-stats-progress-track" title="Solved progress in selected view">
+            <div class="drawer-stats-progress-fill solved" id="dstat-progress-solved" style="width: 0%;"></div>
+            <div class="drawer-stats-progress-fill attempted" id="dstat-progress-attempted" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="question-list" class="drawer-question-list">
+      <!-- Rendered dynamically -->
+    </div>
+  </aside>
+

@@ -533,7 +533,7 @@ export const HomePage = {
             </a>
           </td>
           <td>
-            <span class="doc-diff-pill ${diff}">${q.difficulty}</span>
+            <span class="doc-diff-pill ${diff}"><span class="diff-dot">●</span> ${q.difficulty}</span>
           </td>
           <td>
             <span class="doc-meta-pill">${escapeHTML(company)}</span>

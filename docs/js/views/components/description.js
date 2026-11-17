@@ -141,7 +141,16 @@ export const DescriptionComponent = {
     const diffPill = el("problem-diff-pill");
     if (diffPill) {
       diffPill.className = `doc-diff-pill ${q.difficulty.toLowerCase()}`;
-      diffPill.textContent = q.difficulty;
+      diffPill.innerHTML = `<span class="diff-dot">●</span> ${escapeHTML(q.difficulty)}`;
+    }
+
+    const editorDiffBadge = el("editor-diff-badge");
+    const editorDiffDiv = el("editor-diff-divider");
+    if (editorDiffBadge) {
+      editorDiffBadge.innerHTML = `<span class="diff-dot">●</span> ${escapeHTML(q.difficulty)}`;
+      editorDiffBadge.className = `editor-meta-badge diff-${q.difficulty.toLowerCase()}`;
+      editorDiffBadge.style.display = "inline-flex";
+      if (editorDiffDiv) editorDiffDiv.style.display = "inline";
     }
 
     const compPill = el("problem-company-pill");

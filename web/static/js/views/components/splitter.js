@@ -402,24 +402,43 @@ export const SplitterComponent = {
       });
     });
 
-    el("btn-maximize-desc")?.addEventListener("click", () => {
+    el("btn-maximize-desc")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       SplitterComponent.setDescMaximized(!state.layout.descMaximized);
     });
 
-    el("btn-collapse-editor")?.addEventListener("click", () => {
+    el("btn-collapse-editor")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       SplitterComponent.setTestcaseCollapsed(!state.layout.testcaseCollapsed);
     });
 
-    el("btn-maximize-editor")?.addEventListener("click", () => {
+    el("btn-maximize-editor")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       SplitterComponent.setEditorMaximized(!state.layout.editorMaximized);
     });
 
-    el("btn-toggle-testcase")?.addEventListener("click", () => {
+    el("btn-toggle-testcase")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       SplitterComponent.setTestcaseCollapsed(!state.layout.testcaseCollapsed);
     });
 
-    el("btn-expand-testcase")?.addEventListener("click", () => {
+    el("btn-expand-testcase")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       SplitterComponent.setTestcaseMaximized(!state.layout.testcaseMaximized);
+    });
+
+    // Single click on collapsed testcase header immediately restores panel
+    el("testcase-header")?.addEventListener("click", (e) => {
+      if (state.layout.testcaseCollapsed && !e.target.closest("button")) {
+        e.preventDefault();
+        e.stopPropagation();
+        SplitterComponent.setTestcaseCollapsed(false);
+      }
     });
   }
 };

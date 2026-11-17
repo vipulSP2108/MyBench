@@ -26,19 +26,42 @@ export const NavbarComponent = {
     if (themeSelect) {
       themeSelect.value = themeName;
     }
+
+    setTimeout(() => { if (state.editor) state.editor.refresh(); }, 50);
+    document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeName } }));
   },
 
   toggleTheme() {
     const next = state.theme === "dark" ? "light" : "dark";
+    if (next === "light" && state.codeTheme === "dark-syntax") {
+      state.codeTheme = "light-syntax";
+      state.settings.codeTheme = "light-syntax";
+      localStorage.setItem("sqlmaster_code_theme", "light-syntax");
+    } else if (next === "dark" && state.codeTheme === "light-syntax") {
+      state.codeTheme = "dark-syntax";
+      state.settings.codeTheme = "dark-syntax";
+      localStorage.setItem("sqlmaster_code_theme", "dark-syntax");
+    }
     NavbarComponent.applyTheme(next);
+    NavbarComponent.applyCodeTheme(state.codeTheme);
     showToast(`Switched to ${next === "dark" ? "Dark Mode" : "Light Mode"}`);
   },
 
   applyCodeTheme(themeName, isPlain = null) {
+    const validThemes = ["light-syntax", "green-syntax", "dark-syntax"];
     if (themeName) {
+      if (!validThemes.includes(themeName)) {
+        themeName = "light-syntax";
+      }
       state.codeTheme = themeName;
       state.settings.codeTheme = themeName;
       localStorage.setItem("sqlmaster_code_theme", themeName);
+    } else {
+      if (!validThemes.includes(state.codeTheme)) {
+        state.codeTheme = "light-syntax";
+        state.settings.codeTheme = state.codeTheme;
+        localStorage.setItem("sqlmaster_code_theme", state.codeTheme);
+      }
     }
 
     if (isPlain !== null) {
@@ -59,21 +82,21 @@ export const NavbarComponent = {
     const themeLabel = el("theme-btn-label");
     if (themeLabel) {
       const labelMap = {
-        leetcode: "LeetCode",
-        hackerrank: "HackerRank",
-        dracula: "Dracula"
+        "light-syntax": "Light Syntax",
+        "green-syntax": "Green Syntax",
+        "dark-syntax": "Dark Syntax"
       };
-      themeLabel.textContent = labelMap[state.codeTheme] || "LeetCode";
+      themeLabel.textContent = labelMap[state.codeTheme] || "Light Syntax";
     }
 
     const themeIndicator = el("editor-theme-indicator");
     if (themeIndicator) {
       const labelMap = {
-        leetcode: "LeetCode Style",
-        hackerrank: "HackerRank Style",
-        dracula: "Dracula Style"
+        "light-syntax": "Light Syntax",
+        "green-syntax": "Green Syntax",
+        "dark-syntax": "Dark Syntax"
       };
-      themeIndicator.textContent = labelMap[state.codeTheme] || "LeetCode Style";
+      themeIndicator.textContent = labelMap[state.codeTheme] || "Light Syntax";
     }
 
     const plainBadge = el("editor-plain-badge");
@@ -87,7 +110,7 @@ export const NavbarComponent = {
       plainBtn.classList.toggle("active", state.plainMode);
     }
     if (plainText) {
-      plainText.textContent = state.plainMode ? "Plain (ON)" : "Plain B&W";
+      plainText.textContent = state.plainMode ? "Interview Mode (ON)" : "Interview Mode";
     }
 
     document.querySelectorAll(".theme-menu-item").forEach(item => {
@@ -111,7 +134,8 @@ export const NavbarComponent = {
     if (next) {
       showToast(state.theme === "dark" ? "Interview Mode: Plain White text enabled (No syntax hints)" : "Interview Mode: Plain Black text enabled (No syntax hints)");
     } else {
-      showToast(`Syntax colors restored (${state.codeTheme === "leetcode" ? "LeetCode" : state.codeTheme === "hackerrank" ? "HackerRank" : "Dracula"})`);
+      const labelMap = { "light-syntax": "Light Syntax", "green-syntax": "Green Syntax", "dark-syntax": "Dark Syntax" };
+      showToast(`Syntax colors restored (${labelMap[state.codeTheme] || state.codeTheme})`);
     }
   },
 
@@ -121,6 +145,10 @@ export const NavbarComponent = {
     const textEl = el("solved-stats-text");
     if (textEl) {
       textEl.textContent = `${solvedCount} / ${total}`;
+    }
+    const pill = el("header-progress-pill");
+    if (pill) {
+      pill.title = `${solvedCount} of ${total} Questions Solved (${((solvedCount/total)*100).toFixed(0)}%) - Click to open Dashboard`;
     }
   }
 };

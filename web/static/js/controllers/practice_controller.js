@@ -75,7 +75,27 @@ FROM ${firstTbl};
         DescriptionComponent.renderQuestionDetail(state.currentQuestion);
         DrawerComponent.renderQuestionList();
         HomePage.renderHomeProblemsTable();
-        showToast("All Test Cases Passed! Question Solved!");
+        
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            const ctx = new AudioContext();
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = "sine";
+              osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+              gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + idx * 0.08 + 0.35);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(ctx.currentTime + idx * 0.08);
+              osc.stop(ctx.currentTime + idx * 0.08 + 0.35);
+            });
+          }
+        } catch (_) {}
+
+        showToast("🎉 All Test Cases Passed! Question Solved!");
       } else {
         state.emit("progressUpdated");
         DescriptionComponent.renderQuestionDetail(state.currentQuestion);

@@ -5,6 +5,7 @@
 
 import { state } from "../../models/state.js";
 import { Engine } from "../../models/engine.js";
+import { SchemaParser } from "../../models/schema_parser.js";
 import { el, escapeHTML, showToast } from "../../utils.js";
 
 export const TestcaseComponent = {
@@ -94,17 +95,47 @@ export const TestcaseComponent = {
         tableNames.forEach(tbl => {
           const rows = inputData[tbl] || [];
           const cols = (rows.length > 0) ? Object.keys(rows[0]) : (
-            (state.currentQuestion.tables || []).find(t => t.table_name === tbl)?.columns.map(c => c.column_name) || []
+            (state.currentQuestion?.tables || []).find(t => t.table_name === tbl)?.columns.map(c => c.column_name) || []
           );
 
-          let tableHeaderCols = cols.map(c => `<th>${escapeHTML(c)}</th>`).join("");
+          let tableHeaderCols = cols.map(c => {
+            const colType = SchemaParser.getColumnType(tbl, c, state.currentQuestion?.tables);
+            const norm = SchemaParser.normalizeType(colType);
+            const badgeClass = `tc-badge-${norm.baseType.toLowerCase()}`;
+            const typeLabel = norm.baseType + (norm.scale !== null && norm.scale !== undefined && norm.scale > 0 ? `(${norm.precision},${norm.scale})` : (norm.length ? `(${norm.length})` : ''));
+            return `<th>
+              <div class="tc-col-th-inner">
+                <span class="tc-col-name">${escapeHTML(c)}</span>
+                <span class="tc-col-type-badge ${badgeClass}" title="Column Type: ${escapeHTML(colType)}">${escapeHTML(typeLabel)}</span>
+              </div>
+            </th>`;
+          }).join("");
           tableHeaderCols += `<th style="width: 32px; text-align: center;"></th>`;
 
           let tableBodyRows = "";
           rows.forEach((r, rIdx) => {
             let rowCells = cols.map(c => {
-              const val = r[c] !== null && r[c] !== undefined ? String(r[c]) : "";
-              return `<td><input type="text" class="tc-cell-input" data-table="${escapeHTML(tbl)}" data-row="${rIdx}" data-col="${escapeHTML(c)}" value="${escapeHTML(val)}" placeholder="NULL" /></td>`;
+              const rawVal = r[c] !== null && r[c] !== undefined ? String(r[c]) : "";
+              const colType = SchemaParser.getColumnType(tbl, c, state.currentQuestion?.tables);
+              const parseRes = SchemaParser.parseColumnValue(rawVal, colType);
+              const hasErr = !parseRes.valid;
+              const errTooltip = hasErr ? escapeHTML(parseRes.error || "Invalid format") : "";
+              const errClass = hasErr ? "has-error" : "";
+
+              return `<td>
+                <div class="tc-cell-wrap">
+                  <input type="text"
+                         class="tc-cell-input ${errClass}"
+                         data-table="${escapeHTML(tbl)}"
+                         data-row="${rIdx}"
+                         data-col="${escapeHTML(c)}"
+                         data-type="${escapeHTML(colType)}"
+                         value="${escapeHTML(rawVal)}"
+                         placeholder="NULL"
+                         title="${errTooltip}" />
+                  ${hasErr ? `<span class="tc-cell-err-indicator" title="${errTooltip}">!</span>` : ""}
+                </div>
+              </td>`;
             }).join("");
             tableBodyRows += `
               <tr data-row-idx="${rIdx}">
@@ -148,7 +179,7 @@ export const TestcaseComponent = {
       <div class="tc-edit-container">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
           <span style="font-size: 0.78rem; color: var(--text-editor-muted); font-weight: 500;">
-            Modify input table rows or paste raw JSON. Ground-truth expected output is automatically calculated upon saving.
+            Modify input table rows or paste raw JSON. Type parsers automatically validate, format, and derive expected output upon saving.
           </span>
           <div style="display: flex; gap: 4px;">
             <button id="btn-tc-mode-table" class="tc-edit-action-btn ${isTable ? 'active' : ''}">Table Mode</button>
@@ -170,29 +201,63 @@ export const TestcaseComponent = {
   },
 
   attachTestCaseEditorListeners(activeTc, idx) {
-    el("btn-tc-mode-table")?.addEventListener("click", () => {
+    el("btn-tc-mode-table")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const jsonEl = el("tc-json-editor");
+      if (jsonEl) {
+        try {
+          const parsed = JSON.parse(jsonEl.value);
+          const validation = SchemaParser.validateAllTables(parsed, state.currentQuestion?.tables);
+          if (!validation.valid) {
+            const firstErr = validation.errors[0];
+            showToast(`Schema Mismatch: Table '${firstErr.table}', Row ${firstErr.row + 1}, Column '${firstErr.col}': ${firstErr.error}`);
+            return;
+          }
+          activeTc.input_data = validation.normalizedData;
+        } catch (err) {
+          showToast(`Invalid JSON syntax. Please correct JSON before switching to Table Mode.`);
+          return;
+        }
+      }
       state.testcaseEditMode = "table";
       TestcaseComponent.renderTestcasePanel(idx);
     });
 
-    el("btn-tc-mode-json")?.addEventListener("click", () => {
+    el("btn-tc-mode-json")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      document.querySelectorAll(".tc-cell-input").forEach(inp => {
+        const tbl = inp.dataset.table;
+        const rIdx = parseInt(inp.dataset.row, 10);
+        const col = inp.dataset.col;
+        if (tbl && activeTc.input_data[tbl] && activeTc.input_data[tbl][rIdx]) {
+          const colType = inp.dataset.type || SchemaParser.getColumnType(tbl, col, state.currentQuestion?.tables);
+          const parsed = SchemaParser.parseColumnValue(inp.value, colType);
+          activeTc.input_data[tbl][rIdx][col] = parsed.valid ? parsed.value : inp.value;
+        }
+      });
       state.testcaseEditMode = "json";
       TestcaseComponent.renderTestcasePanel(idx);
     });
 
-    el("btn-tc-cancel-edit")?.addEventListener("click", () => {
+    el("btn-tc-cancel-edit")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       state.editingTestCaseIndex = null;
       TestcaseComponent.renderTestcasePanel(idx);
     });
 
     document.querySelectorAll(".tc-btn-add-row").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const tbl = btn.dataset.table;
         if (!tbl || !activeTc.input_data[tbl]) return;
         const rows = activeTc.input_data[tbl];
         const newRow = {};
         const cols = rows.length > 0 ? Object.keys(rows[0]) : (
-          (state.currentQuestion.tables || []).find(t => t.table_name === tbl)?.columns.map(c => c.column_name) || []
+          (state.currentQuestion?.tables || []).find(t => t.table_name === tbl)?.columns.map(c => c.column_name) || []
         );
         cols.forEach(c => newRow[c] = null);
         rows.push(newRow);
@@ -201,7 +266,9 @@ export const TestcaseComponent = {
     });
 
     document.querySelectorAll(".tc-row-del-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const tbl = btn.dataset.table;
         const rIdx = parseInt(btn.dataset.row, 10);
         if (tbl && activeTc.input_data[tbl] && !isNaN(rIdx)) {
@@ -212,31 +279,140 @@ export const TestcaseComponent = {
     });
 
     document.querySelectorAll(".tc-cell-input").forEach(input => {
+      input.addEventListener("click", (e) => e.stopPropagation());
+      input.addEventListener("focus", (e) => e.stopPropagation());
+
       input.addEventListener("input", (e) => {
         const tbl = e.target.dataset.table;
         const rIdx = parseInt(e.target.dataset.row, 10);
         const col = e.target.dataset.col;
-        if (tbl && activeTc.input_data[tbl] && activeTc.input_data[tbl][rIdx]) {
-          const val = e.target.value.trim();
-          activeTc.input_data[tbl][rIdx][col] = val === "" ? null : val;
+        const colType = e.target.dataset.type || SchemaParser.getColumnType(tbl, col, state.currentQuestion?.tables);
+        const rawVal = e.target.value;
+
+        const res = SchemaParser.parseColumnValue(rawVal, colType);
+        const cellWrap = e.target.closest(".tc-cell-wrap");
+        let errBadge = cellWrap?.querySelector(".tc-cell-err-indicator");
+
+        if (!res.valid) {
+          e.target.classList.add("has-error");
+          e.target.title = res.error || "Invalid format";
+          if (!errBadge && cellWrap) {
+            errBadge = document.createElement("span");
+            errBadge.className = "tc-cell-err-indicator";
+            errBadge.textContent = "!";
+            cellWrap.appendChild(errBadge);
+          }
+          if (errBadge) errBadge.title = res.error || "Invalid format";
+          if (tbl && activeTc.input_data[tbl] && activeTc.input_data[tbl][rIdx]) {
+            activeTc.input_data[tbl][rIdx][col] = rawVal;
+          }
+        } else {
+          e.target.classList.remove("has-error");
+          e.target.title = "";
+          if (errBadge) errBadge.remove();
+
+          if (tbl && activeTc.input_data[tbl] && activeTc.input_data[tbl][rIdx]) {
+            activeTc.input_data[tbl][rIdx][col] = res.value;
+          }
+        }
+      });
+
+      input.addEventListener("blur", (e) => {
+        const tbl = e.target.dataset.table;
+        const rIdx = parseInt(e.target.dataset.row, 10);
+        const col = e.target.dataset.col;
+        const colType = e.target.dataset.type || SchemaParser.getColumnType(tbl, col, state.currentQuestion?.tables);
+        const rawVal = e.target.value;
+
+        const res = SchemaParser.parseColumnValue(rawVal, colType);
+        if (res.valid) {
+          e.target.classList.remove("has-error");
+          e.target.title = "";
+          const cellWrap = e.target.closest(".tc-cell-wrap");
+          cellWrap?.querySelector(".tc-cell-err-indicator")?.remove();
+
+          if (res.formatted !== undefined && rawVal.trim() !== "") {
+            e.target.value = res.formatted === "NULL" ? "" : res.formatted;
+          }
+          if (tbl && activeTc.input_data[tbl] && activeTc.input_data[tbl][rIdx]) {
+            activeTc.input_data[tbl][rIdx][col] = res.value;
+          }
         }
       });
     });
 
-    el("btn-tc-save-edit")?.addEventListener("click", async () => {
+    const jsonTextarea = el("tc-json-editor");
+    if (jsonTextarea) {
+      jsonTextarea.addEventListener("click", (e) => e.stopPropagation());
+      jsonTextarea.addEventListener("focus", (e) => e.stopPropagation());
+      jsonTextarea.addEventListener("input", (e) => {
+        try {
+          activeTc.input_data = JSON.parse(e.target.value);
+        } catch (err) {
+          // Keep typing
+        }
+      });
+    }
+
+    document.querySelector(".tc-edit-container")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    el("btn-tc-save-edit")?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const saveBtn = el("btn-tc-save-edit");
       if (saveBtn) saveBtn.disabled = true;
 
       try {
-        if (state.testcaseEditMode === "json") {
+        let candidateData = activeTc.input_data;
+        if (state.testcaseEditMode === "table") {
+          document.querySelectorAll(".tc-cell-input").forEach(inp => {
+            const tbl = inp.dataset.table;
+            const rIdx = parseInt(inp.dataset.row, 10);
+            const col = inp.dataset.col;
+            if (tbl && candidateData[tbl] && candidateData[tbl][rIdx]) {
+              candidateData[tbl][rIdx][col] = inp.value;
+            }
+          });
+        } else if (state.testcaseEditMode === "json") {
           const jsonEl = el("tc-json-editor");
           if (jsonEl) {
-            const parsed = JSON.parse(jsonEl.value);
-            activeTc.input_data = parsed;
+            try {
+              candidateData = JSON.parse(jsonEl.value);
+            } catch (jsonErr) {
+              showToast(`JSON Syntax Error: ${jsonErr.message}`);
+              if (saveBtn) saveBtn.disabled = false;
+              return;
+            }
           }
         }
+
+        // Validate all tables and columns against question schema
+        const validation = SchemaParser.validateAllTables(candidateData, state.currentQuestion?.tables);
+        if (!validation.valid) {
+          const firstErr = validation.errors[0];
+          const errorMsg = `Validation Error: Table '${firstErr.table}', Row ${firstErr.row + 1}, Column '${firstErr.col}': ${firstErr.error}`;
+          showToast(errorMsg);
+
+          // In table mode, focus and highlight the invalid cell
+          if (state.testcaseEditMode === "table") {
+            const badInput = document.querySelector(`.tc-cell-input[data-table="${firstErr.table}"][data-row="${firstErr.row}"][data-col="${firstErr.col}"]`);
+            if (badInput) {
+              badInput.classList.add("has-error");
+              badInput.focus();
+              badInput.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+          if (saveBtn) saveBtn.disabled = false;
+          return;
+        }
+
+        // Validated successfully! Save normalized data
+        activeTc.input_data = validation.normalizedData;
         activeTc.is_edited = true;
 
+        showToast("Validating and calculating expected output...");
         const d = await Engine.deriveExpectedOutput(state.currentQuestion.slug, activeTc.input_data);
         if (d.success) {
           activeTc.expected_output = d.expected_output;
@@ -444,17 +620,28 @@ export const TestcaseComponent = {
       ${outputSectionHtml}
     `;
 
-    el("btn-toggle-edit-tc")?.addEventListener("click", () => {
+    el("btn-toggle-edit-tc")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       state.editingTestCaseIndex = isEditing ? null : idx;
       TestcaseComponent.renderTestcasePanel(idx);
     });
 
-    el("btn-reset-tc")?.addEventListener("click", () => {
+    el("btn-reset-tc")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       TestcaseComponent.resetTestCaseToDefault(idx);
     });
 
-    el("btn-delete-tc")?.addEventListener("click", () => {
+    el("btn-delete-tc")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       TestcaseComponent.deleteCustomCase(idx);
+    });
+
+    resultsEl.addEventListener("click", (e) => {
+      // Prevent any clicks inside testcase console from bubbling up to editor-panel
+      e.stopPropagation();
     });
 
     if (isEditing) {

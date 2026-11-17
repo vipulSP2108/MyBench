@@ -31,7 +31,24 @@ export const TimerComponent = {
         return;
       }
       const isHidden = !popover || popover.style.display === "none";
-      if (popover) popover.style.display = isHidden ? "block" : "none";
+      if (popover) {
+        if (isHidden) {
+          const rect = triggerBtn.getBoundingClientRect();
+          const popoverWidth = 290;
+          let left = rect.left;
+          if (left + popoverWidth > window.innerWidth - 12) {
+            left = window.innerWidth - popoverWidth - 12;
+          }
+          if (left < 12) left = 12;
+          popover.style.position = "fixed";
+          popover.style.top = `${rect.bottom + 8}px`;
+          popover.style.left = `${left}px`;
+          popover.style.zIndex = "10050";
+          popover.style.display = "block";
+        } else {
+          popover.style.display = "none";
+        }
+      }
     });
 
     tileStopwatch?.addEventListener("click", () => {

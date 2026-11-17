@@ -1,0 +1,325 @@
+/* =====================================================================
+   SQLMaster Module: workspace.css — Workspace Layout & Splitter Resizers
+   ===================================================================== */
+
+/* ================= Main Views Wrapper ================= */
+.views-wrapper {
+  height: calc(100vh - 52px);
+  position: relative;
+  overflow: hidden;
+}
+
+.view-panel {
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view-panel.active {
+  display: flex;
+}
+
+#view-home.active,
+#view-notes.active,
+#view-settings.active {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-white);
+}
+
+/* ================= VIEW 1: SPLIT WORKSPACE (Image 2 Target Layout) ================= */
+.split-workspace {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ---------------- Collapsed Vertical Rail (Screenshot 2 Aesthetic) ---------------- */
+.desc-collapsed-rail {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 100%;
+  background: var(--bg-white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  z-index: 10;
+  user-select: none;
+  flex-shrink: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .desc-collapsed-rail {
+  background: var(--bg-card-light);
+  border-right-color: var(--border-light);
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .desc-collapsed-rail {
+  background: #0d1726;
+  border-right-color: rgba(56, 189, 248, 0.18);
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .desc-collapsed-rail {
+  background: #1e1e1e;
+  border-right-color: #2e2e2e;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .desc-collapsed-rail {
+  background: #21222c;
+  border-right-color: #44475a;
+}
+
+.rail-expand-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dark-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  transition: all 0.15s ease;
+}
+
+.rail-expand-btn:hover {
+  background: var(--bg-subtle-light);
+  color: var(--text-dark-main);
+  border-color: var(--border-light);
+}
+
+[data-theme="dark"] .rail-expand-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.rail-tabs-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  align-items: center;
+}
+
+.rail-tab-item {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark-muted);
+  transition: all 0.15s ease;
+}
+
+.rail-tab-text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}
+
+.rail-tab-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  border-radius: 0 2px 2px 0;
+  transition: background 0.15s ease;
+}
+
+.rail-tab-item:hover {
+  color: var(--text-dark-main);
+}
+
+[data-theme="dark"] .rail-tab-item:hover {
+  color: #ffffff;
+}
+
+.rail-tab-item.active {
+  color: var(--accent-blue);
+}
+
+.rail-tab-item.active .rail-tab-indicator {
+  background: var(--accent-blue);
+}
+
+[data-theme="dark"] .rail-tab-item.active {
+  color: #38bdf8;
+}
+
+[data-theme="dark"] .rail-tab-item.active .rail-tab-indicator {
+  background: #38bdf8;
+}
+
+/* ---------------- Left Panel: Problem Description (Light Theme) ---------------- */
+.description-panel {
+  flex: 0 0 auto;
+  width: 50%;
+  min-width: 160px;
+  max-width: calc(100% - 180px);
+  background: var(--bg-white);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.description-panel.maximized {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+  z-index: 20;
+}
+
+/* ---------------- Vertical Resizer Handle ---------------- */
+.split-resizer-v {
+  width: 10px;
+  margin: 0 -5px;
+  position: relative;
+  z-index: 30;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+  background: transparent;
+  touch-action: none;
+}
+
+/* Generous invisible grab target extending 8px on both sides (26px total hit area) */
+.split-resizer-v::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -8px;
+  right: -8px;
+  z-index: 1;
+  cursor: col-resize;
+}
+
+.resizer-v-bar {
+  position: relative;
+  z-index: 2;
+  width: 2px;
+  height: 100%;
+  background: var(--border-light);
+  pointer-events: none;
+  transition: background 0.15s ease, width 0.15s ease;
+}
+
+[data-theme="dark"] .resizer-v-bar {
+  background: var(--border-editor-subtle);
+}
+
+.split-resizer-v:hover .resizer-v-bar,
+.split-resizer-v.active .resizer-v-bar {
+  width: 4px;
+  background: #0284c7;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.5);
+}
+
+.panel-tab-bar {
+  height: 42px;
+  background: var(--bg-white);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  user-select: none;
+}
+
+.panel-tabs-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doc-tab {
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-dark-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s ease;
+}
+
+.doc-tab:hover {
+  color: var(--text-dark-main);
+}
+
+.doc-tab.active {
+  color: var(--accent-blue);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent-blue);
+}
+
+.panel-tabs-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.panel-icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-dark-muted);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.panel-icon-btn:hover {
+  color: var(--text-dark-main);
+  background: var(--bg-subtle-light);
+}
+
+.panel-icon-btn.starred {
+  color: var(--accent-amber);
+}
+
+.panel-icon-btn svg,
+.editor-icon-btn svg,
+.testcase-chevron-btn svg,
+.rail-expand-btn svg,
+.bottom-icon-btn svg {
+  pointer-events: none;
+}
+

@@ -111,7 +111,7 @@ export const DrawerComponent = {
             <span>· ${q.test_case_count} tests</span>
           </div>
         </div>
-        <span class="doc-diff-pill ${q.difficulty.toLowerCase()}">${q.difficulty}</span>
+        <span class="doc-diff-pill ${q.difficulty.toLowerCase()}"><span class="diff-dot">●</span> ${q.difficulty}</span>
       `;
 
       item.addEventListener("click", () => {

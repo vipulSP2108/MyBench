@@ -1,0 +1,109 @@
+  <!-- Top Navigation Bar (SQLMaster App Header) -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand" id="nav-logo" title="Go to Dashboard">
+        <span class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.25)" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h7l-9 10 2-10H4z"/></svg>
+        </span>
+        <span class="brand-text">SQL<strong>Master</strong></span>
+      </div>
+
+      <!-- Practice Editor Navigation (Only visible on Practice View) -->
+      <div class="header-editor-nav" id="header-editor-nav" style="display: none;">
+        <div class="header-divider"></div>
+        <button id="btn-toggle-problem-list" class="btn-problem-list" title="Open Question Bank (Alt + Q)">
+          <span class="list-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </span>
+          <span>Problem List</span>
+        </button>
+
+        <div class="header-nav-arrows">
+          <button id="btn-prev-q" class="header-arrow-btn" title="Previous Question (Alt + [)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button id="btn-next-q" class="header-arrow-btn" title="Next Question (Alt + ])">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button id="btn-random-q" class="header-icon-btn" title="Pick Random Question">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Run / Submit Controls (Only visible on Practice View) -->
+    <div class="header-center" id="header-practice-actions" style="display: none;">
+      <button id="btn-quick-run" class="btn-run-top" title="Run (Cmd + ')">
+        <span class="play-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </span>
+        <span>Run</span>
+      </button>
+
+      <button id="btn-submit" class="btn-submit-top" title="Submit & Validate All Test Cases (Cmd + Enter)">
+        <span id="btn-submit-spinner" class="spinner" style="display: none;"></span>
+        <span>Submit</span>
+      </button>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="header-right">
+      <button id="nav-btn-home" class="header-link-btn active" title="Home Dashboard">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </button>
+      <button id="nav-btn-notes" class="header-link-btn" title="My Notes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Notes</span>
+        <span id="notes-badge-count" class="badge-count" style="display: none;">0</span>
+      </button>
+
+      <div class="streak-pill" id="header-progress-pill" title="0 of 100 Questions Solved - Click to view Dashboard">
+        <span class="streak-flame">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        </span>
+        <span id="solved-stats-text">0 / 100</span>
+      </div>
+
+      <button id="btn-shortcuts-toggle" class="header-icon-btn" title="Keyboard Shortcuts (?)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+
+      <div class="header-theme-wrap" id="header-theme-wrap">
+        <button id="btn-theme-toggle" class="header-icon-btn" title="Toggle Light / Dark Mode (Click to toggle, hover for modes)">
+          <span id="theme-toggle-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          </span>
+        </button>
+        <div id="header-theme-menu" class="header-theme-dropdown" style="display: none;">
+          <div class="theme-dropdown-header">Application Theme</div>
+          <button class="header-theme-option" data-theme-val="light" data-code-val="light-syntax">
+            <span class="theme-bullet" style="background: #ffffff; border: 1px solid #cbd5e1;"></span>
+            <span class="theme-opt-text">Clean Light Mode</span>
+          </button>
+          <button class="header-theme-option" data-theme-val="dark" data-code-val="light-syntax">
+            <span class="theme-bullet" style="background: #1a1a1a; border: 1px solid #2cbb5d;"></span>
+            <span class="theme-opt-text">Dark (Charcoal & Green)</span>
+          </button>
+          <button class="header-theme-option" data-theme-val="dark" data-code-val="green-syntax">
+            <span class="theme-bullet" style="background: #090e17; border: 1px solid #38bdf8;"></span>
+            <span class="theme-opt-text">Dark (Midnight Navy)</span>
+          </button>
+          <button class="header-theme-option" data-theme-val="dark" data-code-val="dark-syntax">
+            <span class="theme-bullet" style="background: #282a36; border: 1px solid #bd93f9;"></span>
+            <span class="theme-opt-text">Dark (Classic Purple)</span>
+          </button>
+        </div>
+      </div>
+
+      <button id="nav-btn-settings" class="header-icon-btn" title="Settings & Shortcuts">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+
+      <div class="user-avatar-badge" title="Profile">
+        <span>SQL</span>
+      </div>
+    </div>
+  </header>
+

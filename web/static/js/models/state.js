@@ -53,9 +53,13 @@ export const state = {
   starredSlugs: new Set(JSON.parse(localStorage.getItem("sqlmaster_starred") || "[]")),
   userNotes: JSON.parse(localStorage.getItem("sqlmaster_user_notes") || "{}"),
 
-  // Theme & Code Style
+  // Theme & Code Style (with backwards-compat migration)
   theme: localStorage.getItem("sqlmaster_theme") || "light",
-  codeTheme: localStorage.getItem("sqlmaster_code_theme") || "leetcode",
+  codeTheme: (() => {
+    const raw = localStorage.getItem("sqlmaster_code_theme") || "light-syntax";
+    const valid = ["light-syntax", "green-syntax", "dark-syntax"];
+    return valid.includes(raw) ? raw : "light-syntax";
+  })(),
   plainMode: localStorage.getItem("sqlmaster_plain_mode") === "true",
 
   layout: {
@@ -78,7 +82,11 @@ export const state = {
     autoFormat: true,
     autoStartTimer: false,
     autocompleteMode: localStorage.getItem("sqlmaster_autocomplete_mode") || "standard",
-    codeTheme: localStorage.getItem("sqlmaster_code_theme") || "leetcode",
+    codeTheme: (() => {
+      const raw = localStorage.getItem("sqlmaster_code_theme") || "light-syntax";
+      const valid = ["light-syntax", "green-syntax", "dark-syntax"];
+      return valid.includes(raw) ? raw : "light-syntax";
+    })(),
     plainMode: localStorage.getItem("sqlmaster_plain_mode") === "true",
     ...JSON.parse(localStorage.getItem("sqlmaster_settings") || "{}")
   },

@@ -634,6 +634,34 @@ export const EditorComponent = {
       EditorComponent.applySettingsToEditor();
       NavbarComponent.applyCodeTheme(state.codeTheme, state.plainMode);
 
+      const editorWrapper = state.editor.getWrapperElement();
+      if (editorWrapper) {
+        editorWrapper.addEventListener("click", (e) => {
+          if (!e.target.closest("button") && !e.target.closest("input") && !e.target.closest("textarea")) {
+            state.editor.focus();
+          }
+        });
+      }
+      const editorPanel = el("editor-panel");
+      if (editorPanel) {
+        editorPanel.addEventListener("click", (e) => {
+          // Never steal focus if clicking inside testcase panel, resizers, or interactive form controls
+          if (e.target.closest("#testcase-panel") || e.target.closest(".testcase-panel") || e.target.closest("#resizer-horizontal")) {
+            return;
+          }
+          if (e.target.closest("input") || e.target.closest("textarea") || e.target.closest("button") || e.target.closest("select")) {
+            return;
+          }
+          if (e.target.closest(".editor-top-bar") || e.target.closest(".editor-bottom-bar") || e.target.closest(".header-arrow-btn")) {
+            return;
+          }
+          // Only focus if click is genuinely inside editor-wrapper
+          if (e.target.closest(".editor-wrapper")) {
+            state.editor.focus();
+          }
+        });
+      }
+
       state.editor.on("cursorActivity", () => {
         const pos = state.editor.getCursor();
         const posEl = el("editor-cursor-pos");
@@ -751,9 +779,30 @@ export const EditorComponent = {
 
   formatEditorSQL() {
     const raw = EditorComponent.getQueryCode();
-    const formatted = raw.replace(/\b(select|from|where|group by|order by|having|join|left join|right join|inner join|cross join|outer join|on|as|and|or|in|not in|with|limit|union all|union|count|sum|avg|max|min|round|distinct|over|partition by|case|when|then|else|end|coalesce|cast|extract|date_format|null|is null|is not null|between|exists|not exists)\b/gi, (m) => m.toUpperCase());
+    if (!raw.trim()) return;
+
+    const keywords = [
+      "select", "from", "where", "group by", "order by", "having",
+      "left join", "right join", "inner join", "cross join", "join",
+      "on", "as", "and", "or", "not", "in", "not in", "with", "limit",
+      "union all", "union", "count", "sum", "avg", "max", "min", "round",
+      "distinct", "over", "partition by", "case", "when", "then", "else",
+      "end", "coalesce", "cast", "extract", "date_format", "null", "is null",
+      "is not null", "between", "exists", "not exists", "row_number", "rank",
+      "dense_rank", "lead", "lag", "ntile", "concat", "ifnull", "datediff",
+      "date_add", "date_sub", "now", "curdate", "asc", "desc"
+    ];
+    const kwRegex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
+    let formatted = raw.replace(kwRegex, (m) => m.toUpperCase());
+
+    const clauses = ["FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT", "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "CROSS JOIN", "JOIN"];
+    clauses.forEach(clause => {
+      const re = new RegExp(`([^\\n])\\s+(${clause})\\b`, "g");
+      formatted = formatted.replace(re, "$1\n$2");
+    });
+
     EditorComponent.setQueryCode(formatted);
-    showToast("Formatted SQL keywords");
+    showToast("SQL formatted (Cmd+Shift+F)");
   },
 
   applySettingsToEditor() {

@@ -375,6 +375,13 @@ class SQLPracticeHandler(SimpleHTTPRequestHandler):
 
 
 def run_server(port: int = 8080, host: str = "127.0.0.1"):
+    # Ensure modular HTML components are assembled and synced
+    try:
+        from scripts.build_html import build_and_sync
+        build_and_sync(verbose=False)
+    except Exception:
+        pass
+
     ServerClass.allow_reuse_address = True
     try:
         server_address = (host, port)

@@ -1,0 +1,414 @@
+    <!-- ================= VIEW 1: PRACTICE WORKSPACE (Target Layout from Image 2) ================= -->
+    <div id="view-practice" class="view-panel">
+      <div class="split-workspace" id="split-workspace">
+        
+        <!-- Collapsed Vertical Rail for Question Panel (Matches Screenshot 2) -->
+        <div id="desc-collapsed-rail" class="desc-collapsed-rail" style="display: none;">
+          <button id="btn-rail-expand" class="rail-expand-btn" title="Expand Description Panel (Alt + [)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <div class="rail-tabs-flow">
+            <button class="rail-tab-item active" data-tab="desc" title="Description">
+              <span class="rail-tab-indicator"></span>
+              <span class="rail-tab-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </span>
+              <span class="rail-tab-text">Description</span>
+            </button>
+            <button class="rail-tab-item" data-tab="editorial" title="Editorial">
+              <span class="rail-tab-indicator"></span>
+              <span class="rail-tab-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </span>
+              <span class="rail-tab-text">Editorial</span>
+            </button>
+            <button class="rail-tab-item" data-tab="notes" title="My Notes">
+              <span class="rail-tab-indicator"></span>
+              <span class="rail-tab-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </span>
+              <span class="rail-tab-text">My Notes</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Left Panel: Problem Description (Clean Light Aesthetic) -->
+        <section class="description-panel" id="description-panel">
+          <!-- Panel Header Tabs -->
+          <div class="panel-tab-bar">
+            <div class="panel-tabs-left">
+              <button class="doc-tab active" id="tab-doc-desc" data-tab="desc">
+                <span class="tab-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
+                <span>Description</span>
+              </button>
+              <button class="doc-tab" id="tab-doc-editorial" data-tab="editorial">
+                <span class="tab-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </span>
+                <span>Editorial</span>
+              </button>
+              <button class="doc-tab" id="tab-doc-notes" data-tab="notes">
+                <span class="tab-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </span>
+                <span>My Notes</span>
+              </button>
+            </div>
+            <div class="panel-tabs-right">
+              <button id="btn-star-question" class="panel-icon-btn star-btn" title="Star / Bookmark question">
+                <span class="star-icon">
+                  <svg id="star-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </span>
+              </button>
+              <button id="btn-maximize-desc" class="panel-icon-btn" title="Maximize Question Panel (Full Space)">
+                <svg id="icon-desc-maximize" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </button>
+              <button id="btn-collapse-desc" class="panel-icon-btn" title="Collapse Question Panel (Alt + [)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- SUBPAGE 1: Problem Description -->
+          <div id="subpage-desc" class="subpage-pane active">
+            <!-- Problem Header Meta -->
+            <div class="problem-head-meta">
+              <h1 id="problem-title" class="doc-problem-title">Loading...</h1>
+              <div class="status-indicator-badge" id="problem-status-badge">
+                <span class="status-dot"></span>
+                <span id="problem-status-text">Not Attempted</span>
+              </div>
+            </div>
+
+            <!-- Badges: Easy / Company -->
+            <div class="doc-badges-row">
+              <span id="problem-diff-pill" class="doc-diff-pill easy">Easy</span>
+              <span id="problem-company-pill" class="doc-meta-pill">Facebook</span>
+              <span id="problem-extra-tags" class="doc-extra-tags" style="display: none;"></span>
+            </div>
+
+            <!-- Problem Description Text -->
+            <div id="problem-description" class="doc-body-text">
+              <!-- Rendered paragraphs with inline code highlights -->
+            </div>
+
+            <!-- Table Schema and Sample Data (Continuous flow for each table) -->
+            <div id="problem-tables-container" class="doc-tables-flow">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Example Output Card (Pastel Blue Card) -->
+            <div id="problem-output-section" class="doc-example-section">
+              <h3 class="example-heading">Output:</h3>
+              <div id="problem-sample-output" class="example-box"></div>
+            </div>
+
+            <!-- Explanation / Notes -->
+            <div id="notes-section" class="doc-example-section" style="display: none;">
+              <h3 class="example-heading">Explanation:</h3>
+              <div id="problem-notes" class="doc-explanation-box"></div>
+            </div>
+          </div>
+
+          <!-- SUBPAGE 2: Editorial & Reference Solution -->
+          <div id="subpage-editorial" class="subpage-pane" style="display: none;">
+            <div class="subpage-header">
+              <h2 class="subpage-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10M6 10h10"></path></svg>
+                <span>Editorial &amp; Approach</span>
+              </h2>
+              <p class="subpage-desc-meta">Comprehensive breakdown and reference solution for this interview question.</p>
+            </div>
+
+            <div class="editorial-scroll-body">
+              <div id="editorial-approach-content" class="doc-body-text">
+                <!-- Approach explanation -->
+              </div>
+
+              <div class="doc-editorial-card">
+                <div class="editorial-head">
+                  <span class="editorial-title">MySQL 8.0 Reference Query</span>
+                  <button id="btn-copy-solution" class="btn-copy-editorial">Copy to Editor</button>
+                </div>
+                <pre><code id="reference-sql-code"></code></pre>
+              </div>
+
+              <div class="editorial-tips-card">
+                <h4>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>
+                  <span>Key Takeaways</span>
+                </h4>
+                <ul class="editorial-bullets">
+                  <li>Verify nullability and edge cases on filtered columns.</li>
+                  <li>Ensure GROUP BY columns match unaggregated SELECT expressions in strict SQL mode.</li>
+                  <li>Check tie-breaking ordering requirements when ranking or limiting output.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBPAGE 3: My Notes -->
+          <div id="subpage-notes" class="subpage-pane subpage-notes-pane" style="display: none;">
+            <div class="subpage-header">
+              <div class="subpage-title-row">
+                <h2 class="subpage-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                  <span>My Personal Notes</span>
+                </h2>
+                <span id="note-save-status" class="save-toast-status"></span>
+              </div>
+              <p class="subpage-desc-meta">Notes are saved automatically to local storage for quick review before interviews.</p>
+            </div>
+
+            <div class="subpage-notes-editor-wrap">
+              <textarea id="user-note-input" class="subpage-notes-textarea" placeholder="Write your personal notes, edge case observations, or tricks for this question..."></textarea>
+            </div>
+
+            <div class="subpage-notes-footer">
+              <span class="notes-hint-text">Auto-saved as you type</span>
+              <div class="notes-action-buttons">
+                <button id="btn-save-note" class="btn-primary-clean">Save Note</button>
+                <button id="btn-delete-note" class="btn-sm-clean text-danger" style="display: none;">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pinned Bottom Bar (As shown in Image 2) -->
+          <div class="panel-bottom-bar">
+            <div class="bottom-bar-left">
+              <button id="btn-bottom-prev" class="bottom-icon-btn" title="Previous Question (Alt + [)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button id="btn-bottom-star" class="bottom-icon-btn" title="Star / Bookmark">
+                <svg id="bottom-star-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button id="btn-bottom-notes" class="bottom-icon-btn" title="Scroll to Notes">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+            </div>
+            <div class="bottom-bar-right">
+              <span id="bottom-q-counter" class="bottom-counter-text">1 / 100</span>
+              <button id="btn-bottom-next" class="bottom-icon-btn" title="Next Question (Alt + ])">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Vertical Draggable Resizer Handle (Between Question and Editor) -->
+        <div id="resizer-vertical" class="split-resizer-v" title="Drag to resize Question vs Editor (Double click to reset)">
+          <div class="resizer-v-bar"></div>
+        </div>
+
+        <!-- Right Panel: Dark Code Editor + Testcase Panel (Like Image 2) -->
+        <section class="editor-panel" id="editor-panel">
+          <!-- Editor Top Bar -->
+          <div class="editor-top-bar">
+            <div class="editor-top-left">
+              <div class="lang-dropdown">
+                <span class="lang-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+                </span>
+                <span class="lang-label">MySQL 8.0</span>
+                <span class="caret-down">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </span>
+              </div>
+
+              <!-- Practice Stopwatch & Countdown Timer Component (Matches Screenshots 3, 4, 5) -->
+              <div class="timer-widget-wrap" id="timer-widget-wrap">
+                <!-- Collapsed Idle / Trigger Button -->
+                <button id="btn-timer-trigger" class="btn-timer-trigger" title="Stopwatch & Timer (Click to open)">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="13" r="8"></circle>
+                    <path d="M12 9v4l2 2"></path>
+                    <path d="M5 3 2 6"></path>
+                    <path d="m22 6-3-3"></path>
+                    <path d="M12 2v3"></path>
+                  </svg>
+                  <span id="timer-trigger-badge" class="timer-running-dot" style="display: none;"></span>
+                </button>
+
+                <!-- Expanded Running Timer Bar -->
+                <div id="timer-active-bar" class="timer-active-bar" style="display: none;">
+                  <button id="btn-timer-toggle-run" class="timer-ctrl-btn" title="Pause / Resume">
+                    <svg id="timer-icon-pause" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="6" y="4" width="4" height="16"></rect>
+                      <rect x="14" y="4" width="4" height="16"></rect>
+                    </svg>
+                    <svg id="timer-icon-play" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  </button>
+                  <span id="timer-digits-display" class="timer-digits">00:00:00</span>
+                  <button id="btn-timer-reset-bar" class="timer-ctrl-btn" title="Reset Timer">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                  </button>
+                  <button id="btn-timer-collapse-bar" class="timer-ctrl-btn" title="Collapse to Icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Timer Popover Modal Card (Matches Screenshot 4) -->
+                <div id="timer-popover" class="timer-popover" style="display: none;">
+                  <div class="popover-caret"></div>
+                  <div class="timer-popover-modes">
+                    <!-- Stopwatch Mode Tile -->
+                    <div id="popover-tile-stopwatch" class="timer-mode-tile active" data-mode="stopwatch">
+                      <div class="tile-icon-circle blue">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="13" r="8"></circle>
+                          <path d="M12 9v4l2 2"></path>
+                          <path d="M5 3 2 6"></path>
+                          <path d="m22 6-3-3"></path>
+                          <path d="M12 2v3"></path>
+                        </svg>
+                      </div>
+                      <span class="tile-label">Stopwatch</span>
+                    </div>
+
+                    <!-- Countdown Timer Mode Tile -->
+                    <div id="popover-tile-timer" class="timer-mode-tile" data-mode="timer">
+                      <div class="tile-icon-circle orange">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </div>
+                      <div class="timer-inputs-row">
+                        <div class="timer-input-group">
+                          <input type="number" id="timer-input-hr" min="0" max="23" value="01" class="timer-num-input" />
+                          <span class="timer-unit-label">hr</span>
+                        </div>
+                        <span class="timer-input-sep">:</span>
+                        <div class="timer-input-group">
+                          <input type="number" id="timer-input-min" min="0" max="59" value="00" class="timer-num-input" />
+                          <span class="timer-unit-label">min</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button id="btn-timer-popover-action" class="btn-timer-primary">Start Stopwatch</button>
+                </div>
+              </div>
+            </div>
+            <div class="editor-top-right">
+              <!-- Quick Plain / Monochrome Toggle Button (Tests user without color coding!) -->
+              <button id="btn-toggle-plain-mode" class="editor-plain-toggle-btn" title="Toggle Plain B&W Mode: Strips all colors (Pure White in Dark, Pure Black in Light) to test your SQL knowledge without syntax hints">
+                <span class="plain-dot">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                </span>
+                <span id="plain-btn-text">Interview Mode</span>
+              </button>
+
+              <button id="btn-format-code" class="editor-icon-btn" title="Format SQL">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+              </button>
+              <button id="btn-reset-code" class="editor-icon-btn" title="Reset to Starter Template">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              </button>
+              <button id="btn-maximize-editor" class="editor-icon-btn" title="Maximize Editor (Full Workspace Space)">
+                <svg id="icon-editor-maximize" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+              </button>
+              <button id="btn-collapse-editor" class="editor-icon-btn" title="Collapse Testcase / Full Editor Height">
+                <svg id="icon-editor-collapse" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- CodeMirror Editor Area -->
+          <div class="editor-wrapper" id="editor-wrapper">
+            <textarea id="sql-editor" placeholder="Write your MySQL 8.0 query here..."></textarea>
+          </div>
+
+          <!-- Horizontal Draggable Resizer Handle (Between Code Editor and Testcases, with 3 dots grip) -->
+          <div id="resizer-horizontal" class="split-resizer-h" title="Drag to resize Code Editor vs Testcase (Double click to reset)">
+            <div class="resizer-h-line"></div>
+            <div class="resizer-h-grip">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <!-- Testcase Bottom Drawer (Matches Image 2) -->
+          <div class="testcase-panel" id="testcase-panel">
+            <div class="testcase-header">
+              <div class="testcase-title-wrap">
+                <span id="testcase-bracket-icon" class="code-bracket">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </span>
+                <span class="testcase-title">Testcase</span>
+                <div id="console-status-badge" class="testcase-status-badge ready">Ready</div>
+              </div>
+
+              <div class="testcase-header-actions">
+                <button id="btn-expand-testcase" class="testcase-chevron-btn" title="Maximize Testcase Panel (Full Space)">
+                  <svg id="icon-testcase-maximize" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </button>
+                <button id="btn-toggle-testcase" class="testcase-chevron-btn" title="Collapse / Expand Testcase">
+                  <svg id="chevron-testcase-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="testcase-body" id="console-body">
+              <!-- Case 1, Case 2 tabs row + Add Case (Matches Image 2) -->
+              <div class="testcase-tabs-bar" id="test-case-tabs-bar">
+                <div class="testcase-tabs-row" id="test-case-tabs">
+                  <!-- Case 1, Case 2 tabs rendered dynamically -->
+                </div>
+                <button id="btn-add-custom-case" class="btn-add-case" title="Add Custom Testcase">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+
+              <!-- Main Testcase Content (Verdict heading, Input box, Output box) -->
+              <div id="console-results" class="testcase-results">
+                <!-- Dynamically rendered (Input visible even BEFORE running!) -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Editor Bottom Action Bar -->
+          <div class="editor-bottom-bar">
+            <div class="editor-bottom-left">
+              <span id="editor-diff-badge" class="editor-meta-badge diff-easy" style="display: none;">● Easy</span>
+              <span class="editor-meta-divider" id="editor-diff-divider" style="display: none;">•</span>
+              <span id="editor-cursor-pos" class="editor-meta-text">Ln 1, Col 1</span>
+              <span class="editor-meta-divider">•</span>
+              <span id="editor-status-saved" class="editor-meta-text saved">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Saved</span>
+              </span>
+              <span class="editor-meta-divider">•</span>
+              <span id="editor-theme-indicator" class="editor-meta-badge">Light Syntax</span>
+              <span id="editor-plain-badge" class="editor-meta-badge plain" style="display: none;">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                <span>Interview Mode</span>
+              </span>
+            </div>
+            <div class="editor-bottom-right">
+              <button id="btn-bottom-run" class="btn-editor-run" title="Run Baseline Preview (Cmd + ')">
+                <span class="play-icon">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                </span>
+                <span>Run</span>
+              </button>
+              <button id="btn-bottom-submit" class="btn-editor-submit" title="Submit & Validate All Test Cases (Cmd + Enter)">
+                <span id="btn-bottom-submit-spinner" class="spinner" style="display: none;"></span>
+                <span>Submit</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+

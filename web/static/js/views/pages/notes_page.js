@@ -30,8 +30,16 @@ export const NotesPage = {
           <p style="font-size: 0.88rem; margin-top: 8px;">
             ${notedSlugs.length === 0 ? "Add your thoughts, edge case notes, or approaches directly in the problem panel during practice!" : "Try clearing your search query."}
           </p>
+          ${notedSlugs.length === 0 ? `
+            <button id="btn-empty-notes-browse" class="btn-primary btn-md" style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;">
+              <span>Browse Question Bank →</span>
+            </button>
+          ` : ""}
         </div>
       `;
+      document.getElementById("btn-empty-notes-browse")?.addEventListener("click", () => {
+        state.emit("switchView", "home");
+      });
       return;
     }
 

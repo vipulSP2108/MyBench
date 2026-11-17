@@ -1,0 +1,588 @@
+/* =====================================================================
+   SQLMaster Module: variables.css — Design Tokens, Root Variables & Base Settings
+   ===================================================================== */
+
+/* =====================================================================
+   SQLMaster — Original Design System
+   ===================================================================== */
+
+:root {
+  /* Light Theme (Header, Problem Description, Drawer) */
+  --bg-white: #ffffff;
+  --bg-page: #f8fafc;
+  --bg-subtle-light: #f1f5f9;
+  --bg-card-light: #ffffff;
+  --bg-example: #eff6ff;
+  --border-example: #dbeafe;
+  --text-example: #1e3a8a;
+
+  --border-light: #e2e8f0;
+  --border-medium-light: #cbd5e1;
+  --text-dark-main: #0f172a;
+  --text-dark-secondary: #334155;
+  --text-dark-muted: #64748b;
+
+  /* Dark Theme (Code Editor, Testcase Panel) */
+  --bg-editor-dark: #0f172a;
+  --bg-editor-panel: #0b0f19;
+  --bg-editor-subtle: #111827;
+  --border-editor-subtle: rgba(255, 255, 255, 0.08);
+  --border-editor-medium: rgba(255, 255, 255, 0.15);
+  --text-editor-main: #f8fafc;
+  --text-editor-secondary: #94a3b8;
+  --text-editor-muted: #64748b;
+
+  /* Brand Accents */
+  --accent-blue: #2563eb;
+  --accent-blue-hover: #1d4ed8;
+  --accent-cyan: #06b6d4;
+  --accent-indigo: #6366f1;
+  --accent-purple: #9333ea;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  /* Difficulty Colors */
+  --diff-easy-text: #059669;
+  --diff-easy-bg: #ecfdf5;
+  --diff-med-text: #d97706;
+  --diff-med-bg: #fffbeb;
+  --diff-hard-text: #e11d48;
+  --diff-hard-bg: #fff1f2;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+/* =====================================================================
+   Disable Font Ligatures (Prevents >= turning into ≥, != into ≠, <= into ≤)
+   ===================================================================== */
+*,
+*::before,
+*::after,
+.CodeMirror,
+.CodeMirror pre,
+.CodeMirror-line,
+.CodeMirror-line span,
+.CodeMirror-code,
+#sql-editor,
+textarea,
+pre,
+code,
+kbd,
+samp {
+  font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0, "dlig" 0 !important;
+  -webkit-font-feature-settings: "liga" 0, "calt" 0, "dlig" 0 !important;
+}
+
+/* Dark Theme (Whole Application) */
+[data-theme="dark"] {
+  --bg-white: #0f172a;
+  --bg-page: #090d16;
+  --bg-subtle-light: #1e293b;
+  --bg-card-light: #161e2e;
+  --bg-example: #131c2e;
+  --border-example: #1e3a8a;
+  --text-example: #93c5fd;
+
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-medium-light: rgba(255, 255, 255, 0.16);
+  --text-dark-main: #f8fafc;
+  --text-dark-secondary: #cbd5e1;
+  --text-dark-muted: #94a3b8;
+
+  --diff-easy-text: #34d399;
+  --diff-easy-bg: rgba(16, 185, 129, 0.15);
+  --diff-med-text: #fbbf24;
+  --diff-med-bg: rgba(245, 158, 11, 0.15);
+  --diff-hard-text: #fb7185;
+  --diff-hard-bg: rgba(244, 63, 94, 0.15);
+}
+
+/* =====================================================================
+   FULL APPLICATION THEMES (Charcoal, Midnight Navy, Purple)
+   Applied to entire application (Header, Workspace, Home, Drawer, Panels)
+   ===================================================================== */
+
+/* -------------------------------------------------------------
+   THEME PALETTE 1: Midnight Navy
+   Entire Application in Midnight Navy
+   ------------------------------------------------------------- */
+[data-theme="dark"][data-code-theme="green-syntax"],
+body[data-theme="dark"][data-code-theme="green-syntax"] {
+  --bg-page: #090e17;
+  --bg-white: #0e1726;
+  --bg-card-light: #111c30;
+  --bg-subtle-light: #152238;
+  --bg-example: #0d1627;
+  --border-example: rgba(56, 189, 248, 0.25);
+  --text-example: #38bdf8;
+  --border-light: rgba(59, 130, 246, 0.14);
+  --border-medium-light: rgba(59, 130, 246, 0.24);
+  --text-dark-main: #f8fafc;
+  --text-dark-secondary: #94a3b8;
+  --text-dark-muted: #64748b;
+  --bg-editor-dark: #090e17;
+  --bg-editor-panel: #0d1524;
+  --bg-editor-subtle: #111c30;
+  --border-editor-subtle: rgba(59, 130, 246, 0.12);
+  --border-editor-medium: rgba(59, 130, 246, 0.22);
+  --accent-blue: #38bdf8;
+  --accent-blue-hover: #0284c7;
+  --accent-green: #10b981;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .app-header {
+  background-color: #0b1120 !important;
+  border-bottom-color: rgba(59, 130, 246, 0.18) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .panel-tab-bar {
+  background: #0d1524 !important;
+  border-bottom-color: rgba(59, 130, 246, 0.16) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .description-panel {
+  background: #0e1726 !important;
+  border-right-color: rgba(59, 130, 246, 0.16) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .doc-tab.active {
+  color: #38bdf8 !important;
+  border-bottom: 2px solid #38bdf8 !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .editor-panel,
+[data-theme="dark"][data-code-theme="green-syntax"] .editor-wrapper,
+[data-theme="dark"][data-code-theme="green-syntax"] .testcase-panel {
+  background: #090e17 !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .editor-top-bar,
+[data-theme="dark"][data-code-theme="green-syntax"] .editor-bottom-bar,
+[data-theme="dark"][data-code-theme="green-syntax"] .testcase-header {
+  background: #0d1524 !important;
+  border-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .tc-tab-pill.active {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .btn-editor-submit,
+[data-theme="dark"][data-code-theme="green-syntax"] .btn-submit-top {
+  background: #2563eb !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .btn-editor-run {
+  background: #111c30 !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .problem-drawer,
+[data-theme="dark"][data-code-theme="green-syntax"] .notes-drawer {
+  background: #0e1726 !important;
+  border-right-color: rgba(59, 130, 246, 0.18) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .drawer-header,
+[data-theme="dark"][data-code-theme="green-syntax"] .notes-drawer-header {
+  background: #0b1120 !important;
+  border-bottom-color: rgba(59, 130, 246, 0.18) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .drawer-q-item.active {
+  background: #111c30 !important;
+  border-left: 3px solid #38bdf8 !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .home-container,
+[data-theme="dark"][data-code-theme="green-syntax"] .view-panel {
+  background: #090e17 !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .home-hero {
+  background: linear-gradient(135deg, #090e17 0%, #111c30 100%) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .stat-card,
+[data-theme="dark"][data-code-theme="green-syntax"] .home-sheet-main,
+[data-theme="dark"][data-code-theme="green-syntax"] .settings-card,
+[data-theme="dark"][data-code-theme="green-syntax"] .schema-modal {
+  background: #0e1726 !important;
+  border-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+[data-theme="dark"][data-code-theme="green-syntax"] .settings-card-header {
+  background: #111c30 !important;
+  border-bottom-color: rgba(59, 130, 246, 0.14) !important;
+}
+
+/* -------------------------------------------------------------
+   THEME PALETTE 2: Charcoal Dark (Charcoal & Amber Accent)
+   Entire Application in Pure Charcoal Dark
+   ------------------------------------------------------------- */
+[data-theme="dark"][data-code-theme="light-syntax"],
+body[data-theme="dark"][data-code-theme="light-syntax"] {
+  --bg-page: #1a1a1a;
+  --bg-white: #262626;
+  --bg-card-light: #262626;
+  --bg-subtle-light: #303030;
+  --bg-example: #202020;
+  --border-example: #3a3a3a;
+  --text-example: #ffa116;
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-medium-light: rgba(255, 255, 255, 0.16);
+  --text-dark-main: #eff1f6;
+  --text-dark-secondary: #9ca3af;
+  --text-dark-muted: #6b7280;
+  --bg-editor-dark: #1a1a1a;
+  --bg-editor-panel: #262626;
+  --bg-editor-subtle: #202020;
+  --border-editor-subtle: rgba(255, 255, 255, 0.08);
+  --border-editor-medium: rgba(255, 255, 255, 0.16);
+  --accent-blue: #007aff;
+  --accent-blue-hover: #0062cc;
+  --accent-amber: #ffa116;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .app-header {
+  background-color: #1a1a1a !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .panel-tab-bar {
+  background: #202020 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .description-panel {
+  background: #262626 !important;
+  border-right-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .doc-tab.active {
+  color: #eff1f6 !important;
+  border-bottom: 2px solid #ffa116 !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .editor-panel,
+[data-theme="dark"][data-code-theme="light-syntax"] .editor-wrapper,
+[data-theme="dark"][data-code-theme="light-syntax"] .testcase-panel {
+  background: #1a1a1a !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .editor-top-bar,
+[data-theme="dark"][data-code-theme="light-syntax"] .editor-bottom-bar,
+[data-theme="dark"][data-code-theme="light-syntax"] .testcase-header {
+  background: #262626 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .tc-tab-pill.active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .btn-editor-submit,
+[data-theme="dark"][data-code-theme="light-syntax"] .btn-submit-top {
+  background: #2cbb5d !important;
+  border-color: #22a04e !important;
+  box-shadow: 0 2px 8px rgba(44, 187, 93, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .btn-editor-run {
+  background: #3a3a3a !important;
+  border-color: #484848 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .problem-drawer,
+[data-theme="dark"][data-code-theme="light-syntax"] .notes-drawer {
+  background: #262626 !important;
+  border-right-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .drawer-header,
+[data-theme="dark"][data-code-theme="light-syntax"] .notes-drawer-header {
+  background: #202020 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .drawer-q-item.active {
+  background: #333333 !important;
+  border-left: 3px solid #ffa116 !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .home-container,
+[data-theme="dark"][data-code-theme="light-syntax"] .view-panel {
+  background: #1a1a1a !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .home-hero {
+  background: linear-gradient(135deg, #1f1f1f 0%, #292929 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .stat-card,
+[data-theme="dark"][data-code-theme="light-syntax"] .home-sheet-main,
+[data-theme="dark"][data-code-theme="light-syntax"] .settings-card,
+[data-theme="dark"][data-code-theme="light-syntax"] .schema-modal {
+  background: #262626 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="dark"][data-code-theme="light-syntax"] .settings-card-header {
+  background: #202020 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* -------------------------------------------------------------
+   THEME PALETTE 3: Dracula Style (Classic Purple)
+   Entire Application in Dracula Dark
+   ------------------------------------------------------------- */
+[data-theme="dark"][data-code-theme="dark-syntax"],
+body[data-theme="dark"][data-code-theme="dark-syntax"] {
+  --bg-page: #282a36;
+  --bg-white: #343746;
+  --bg-card-light: #343746;
+  --bg-subtle-light: #44475a;
+  --bg-example: #21222c;
+  --border-example: #6272a4;
+  --text-example: #bd93f9;
+  --border-light: rgba(98, 114, 164, 0.3);
+  --border-medium-light: rgba(98, 114, 164, 0.5);
+  --text-dark-main: #f8f8f2;
+  --text-dark-secondary: #bfbfbf;
+  --text-dark-muted: #6272a4;
+  --bg-editor-dark: #282a36;
+  --bg-editor-panel: #21222c;
+  --bg-editor-subtle: #343746;
+  --border-editor-subtle: rgba(98, 114, 164, 0.25);
+  --border-editor-medium: rgba(98, 114, 164, 0.45);
+  --accent-blue: #bd93f9;
+  --accent-blue-hover: #a855f7;
+  --accent-purple: #bd93f9;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .app-header {
+  background-color: #21222c !important;
+  border-bottom-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .panel-tab-bar {
+  background: #282a36 !important;
+  border-bottom-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .description-panel {
+  background: #343746 !important;
+  border-right-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .doc-tab.active {
+  color: #bd93f9 !important;
+  border-bottom: 2px solid #bd93f9 !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .editor-panel,
+[data-theme="dark"][data-code-theme="dark-syntax"] .editor-wrapper,
+[data-theme="dark"][data-code-theme="dark-syntax"] .testcase-panel {
+  background: #282a36 !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .editor-top-bar,
+[data-theme="dark"][data-code-theme="dark-syntax"] .editor-bottom-bar,
+[data-theme="dark"][data-code-theme="dark-syntax"] .testcase-header {
+  background: #21222c !important;
+  border-color: rgba(98, 114, 164, 0.25) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .tc-tab-pill.active {
+  background: rgba(189, 147, 249, 0.15) !important;
+  color: #bd93f9 !important;
+  border-color: rgba(189, 147, 249, 0.4) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .btn-editor-submit,
+[data-theme="dark"][data-code-theme="dark-syntax"] .btn-submit-top {
+  background: #bd93f9 !important;
+  border-color: #a855f7 !important;
+  color: #282a36 !important;
+  box-shadow: 0 2px 8px rgba(189, 147, 249, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .btn-editor-run {
+  background: #44475a !important;
+  border-color: #6272a4 !important;
+  color: #f8f8f2 !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .problem-drawer,
+[data-theme="dark"][data-code-theme="dark-syntax"] .notes-drawer {
+  background: #282a36 !important;
+  border-right-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .drawer-header,
+[data-theme="dark"][data-code-theme="dark-syntax"] .notes-drawer-header {
+  background: #21222c !important;
+  border-bottom-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .drawer-q-item.active {
+  background: #343746 !important;
+  border-left: 3px solid #bd93f9 !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .home-container,
+[data-theme="dark"][data-code-theme="dark-syntax"] .view-panel {
+  background: #21222c !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .home-hero {
+  background: linear-gradient(135deg, #282a36 0%, #343746 100%) !important;
+  border-color: rgba(98, 114, 164, 0.35) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .stat-card,
+[data-theme="dark"][data-code-theme="dark-syntax"] .home-sheet-main,
+[data-theme="dark"][data-code-theme="dark-syntax"] .settings-card,
+[data-theme="dark"][data-code-theme="dark-syntax"] .schema-modal {
+  background: #282a36 !important;
+  border-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+[data-theme="dark"][data-code-theme="dark-syntax"] .settings-card-header {
+  background: #21222c !important;
+  border-bottom-color: rgba(98, 114, 164, 0.3) !important;
+}
+
+/* Light Theme Variants */
+[data-theme="light"][data-code-theme="green-syntax"],
+body[data-theme="light"][data-code-theme="green-syntax"] {
+  --bg-page: #f3f5f8;
+  --bg-white: #ffffff;
+  --bg-card-light: #ffffff;
+  --bg-subtle-light: #eaeff5;
+  --border-light: #dbe2ea;
+  --border-medium-light: #c5d1e0;
+  --text-dark-main: #0f172a;
+  --text-dark-secondary: #334155;
+  --accent-blue: #097bbf;
+}
+
+[data-theme="light"][data-code-theme="light-syntax"],
+body[data-theme="light"][data-code-theme="light-syntax"] {
+  --bg-page: #f7f8fa;
+  --bg-white: #ffffff;
+  --bg-card-light: #ffffff;
+  --bg-subtle-light: #f0f2f5;
+  --border-light: #e5e7eb;
+  --border-medium-light: #d1d5db;
+  --text-dark-main: #262626;
+  --text-dark-secondary: #4b5563;
+  --accent-amber: #ffa116;
+  --accent-blue: #007aff;
+}
+
+[data-theme="light"][data-code-theme="dark-syntax"],
+body[data-theme="light"][data-code-theme="dark-syntax"] {
+  --bg-page: #f8f9fa;
+  --bg-white: #ffffff;
+  --bg-card-light: #ffffff;
+  --bg-subtle-light: #ede9fe;
+  --border-light: #ddd6fe;
+  --border-medium-light: #c4b5fd;
+  --accent-blue: #7c3aed;
+}
+
+[data-theme="dark"] .home-hero {
+  background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .home-badge {
+  background: rgba(37, 99, 235, 0.2);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .doc-editorial-card {
+  background: #1e1b4b;
+  border-color: #4338ca;
+}
+
+[data-theme="dark"] .editorial-title {
+  color: #c084fc;
+}
+
+[data-theme="dark"] .panel-tab-bar {
+  background: #0f1422;
+  border-bottom: 1px solid var(--border-editor-subtle);
+}
+
+[data-theme="dark"] .doc-tab {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .doc-tab:hover {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .doc-tab.active {
+  color: #3b82f6;
+  border-bottom: 2px solid #3b82f6;
+}
+
+[data-theme="dark"] .drawer-q-item.active {
+  background: #1e293b;
+}
+
+[data-theme="dark"] .data-table td.num {
+  color: #38bdf8;
+}
+
+[data-theme="dark"] .example-box .data-table th {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+[data-theme="dark"] .example-box .data-table td {
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .settings-card-header {
+  background: #161e2e;
+}
+
+[data-theme="dark"] .shortcut-kbd {
+  background: #1e293b;
+  border-color: #334155;
+  color: #60a5fa;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-white);
+  color: var(--text-dark-main);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+

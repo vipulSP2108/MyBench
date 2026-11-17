@@ -313,6 +313,20 @@ def cmd_rebuild(args: argparse.Namespace) -> int:
         return 1
 
 
+def cmd_build_html(args: argparse.Namespace) -> int:
+    """Reassembles index.html from modular component templates."""
+    try:
+        from scripts.build_html import build_and_sync, watch_templates
+        if getattr(args, "watch", False):
+            watch_templates()
+        else:
+            build_and_sync(verbose=True)
+        return 0
+    except Exception as e:
+        print(f"Error building HTML templates: {e}")
+        return 1
+
+
 def cmd_serve(args: argparse.Namespace) -> int:
     """Launches the interactive local web practice platform."""
     try:
@@ -358,6 +372,10 @@ def main() -> int:
     # rebuild
     subparsers.add_parser("rebuild", help="Rebuild questions from raw data")
 
+    # build-html
+    p_bhtml = subparsers.add_parser("build-html", help="Reassemble index.html from modular component templates")
+    p_bhtml.add_argument("--watch", "-w", action="store_true", help="Watch templates for live edits")
+
     # serve / web
     p_serve = subparsers.add_parser("serve", help="Launch interactive web practice platform")
     p_serve.add_argument("--port", "-p", type=int, default=8080, help="Port to listen on (default 8080)")
@@ -380,6 +398,7 @@ def main() -> int:
         "validate-all": cmd_validate_all,
         "stats": cmd_stats,
         "rebuild": cmd_rebuild,
+        "build-html": cmd_build_html,
         "serve": cmd_serve,
         "web": cmd_serve
     }

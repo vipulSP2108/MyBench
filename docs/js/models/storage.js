@@ -137,7 +137,7 @@ export const Storage = {
       settings: state.settings,
       ui_preferences: {
         theme: localStorage.getItem("sqlmaster_theme") || "light",
-        codeTheme: localStorage.getItem("sqlmaster_code_theme") || "leetcode",
+        codeTheme: localStorage.getItem("sqlmaster_code_theme") || "light-syntax",
         plainMode: localStorage.getItem("sqlmaster_plain_mode") === "true",
         sort: localStorage.getItem("sqlmaster_sort") || "default",
         descWidth: localStorage.getItem("sqlmaster_desc_width"),
@@ -189,6 +189,46 @@ export const Storage = {
     a.click();
     URL.revokeObjectURL(url);
     showToast("Compact Backup downloaded");
+  },
+
+  exportStudyGuide() {
+    const total = state.questions.length || 100;
+    const solved = state.solvedSlugs.size;
+    let md = `# SQLMaster — Interview Preparation Study Guide\n\n`;
+    md += `> Generated on ${new Date().toLocaleDateString()} | Progress: ${solved} / ${total} Solved (${((solved/total)*100).toFixed(0)}%)\n\n`;
+    md += `## Table of Contents\n\n`;
+
+    const solvedQuestions = state.questions.filter(q => state.solvedSlugs.has(q.slug));
+    if (solvedQuestions.length === 0) {
+      showToast("No solved problems to export yet! Solve questions to build your study guide.");
+      return;
+    }
+
+    solvedQuestions.forEach((q, idx) => {
+      md += `${idx + 1}. [${q.title} (${q.difficulty} - ${q.company || "General"})](#${q.slug})\n`;
+    });
+    md += `\n---\n\n`;
+
+    solvedQuestions.forEach((q, idx) => {
+      md += `### ${idx + 1}. ${q.title} <a id="${q.slug}"></a>\n\n`;
+      md += `**Difficulty:** ${q.difficulty} | **Company:** ${q.company || "General"} | **Tests:** ${q.test_case_count}\n\n`;
+      if (state.userNotes[q.slug]) {
+        md += `#### Personal Notes & Approach\n> ${state.userNotes[q.slug].replace(/\n/g, "\n> ")}\n\n`;
+      }
+      const draft = Storage.getDraft(q.slug) || q.solution_sql || "-- No saved draft";
+      md += `#### Solution Query (MySQL 8.0)\n\`\`\`sql\n${draft.trim()}\n\`\`\`\n\n---\n\n`;
+    });
+
+    const blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `SQLMaster_Study_Guide_${new Date().toISOString().split("T")[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`Study guide downloaded: ${solvedQuestions.length} questions included!`);
   },
 
   applyRestoreData(data, mode = "merge") {

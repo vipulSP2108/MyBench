@@ -1,0 +1,477 @@
+    <!-- ================= VIEW 4: SETTINGS VIEW ================= -->
+    <div id="view-settings" class="view-panel">
+      <div class="settings-container">
+        <div class="settings-header">
+          <h1 class="settings-title">Preferences & Shortcuts</h1>
+          <p class="settings-subtitle">Customize keyboard shortcuts, layout preferences, and editor behavior.</p>
+        </div>
+
+        <div class="settings-cards-list">
+          <!-- Keyboard Shortcuts Section -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3 style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/></svg>
+                <span>Keyboard Shortcuts</span>
+              </h3>
+              <p>Configure keys to run tests and baseline preview.</p>
+            </div>
+            <div class="settings-card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-shortcut-run">Submit / Run Tests</label>
+                  <span class="setting-desc">Validates query against all hidden normal, edge, and volume cases.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-shortcut-run" class="control-select">
+                    <option value="cmd-enter">Cmd / Ctrl + Enter (Default)</option>
+                    <option value="shift-enter">Shift + Enter</option>
+                    <option value="cmd-s">Cmd / Ctrl + S</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-shortcut-preview">Run Baseline Preview</label>
+                  <span class="setting-desc">Quick test against sample input data only without executing full test suites.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-shortcut-preview" class="control-select">
+                    <option value="cmd-quote">Cmd / Ctrl + ' (Quote)</option>
+                    <option value="cmd-b">Cmd / Ctrl + B</option>
+                    <option value="alt-enter">Alt + Enter</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span>Toggle Question Bank Drawer</span>
+                  <span class="setting-desc">Open or close the left problem list.</span>
+                </div>
+                <div class="setting-control">
+                  <kbd class="shortcut-kbd">Alt + Q</kbd>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span>Previous / Next Question</span>
+                  <span class="setting-desc">Navigate questions in current filtered & sorted order.</span>
+                </div>
+                <div class="setting-control">
+                  <kbd class="shortcut-kbd">Alt + [</kbd> <span style="margin: 0 4px; color: var(--text-muted);">/</span> <kbd class="shortcut-kbd">Alt + ]</kbd>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span>Toggle Comment (Selection or Line)</span>
+                  <span class="setting-desc">Comment or uncomment code with SQL single-line prefix (--).</span>
+                </div>
+                <div class="setting-control">
+                  <kbd class="shortcut-kbd">Cmd / Ctrl + /</kbd>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span>Trigger Autocomplete</span>
+                  <span class="setting-desc">Trigger SQL keywords, functions, or editor words completion menu.</span>
+                </div>
+                <div class="setting-control">
+                  <kbd class="shortcut-kbd">Ctrl + Space</kbd>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Display & Content Preferences -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3 style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                <span>Display & Content Preferences</span>
+              </h3>
+              <p>Control what details are displayed on problem statements.</p>
+            </div>
+            <div class="settings-card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-attempt-trigger">Mark Question as Attempted</label>
+                  <span class="setting-desc">Choose when a problem is marked as Attempted: on First Run (default), only on Submit, or as soon as Opened.</span>
+                </div>
+                <div class="setting-control" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+                  <select id="setting-attempt-trigger" class="control-select">
+                    <option value="run" selected>On First Run (Default)</option>
+                    <option value="submit">On First Submit Only</option>
+                    <option value="open">When Question is Opened</option>
+                  </select>
+                  <button type="button" id="btn-reset-attempted" class="btn-sm btn-ghost" style="font-size: 0.72rem; padding: 2px 8px; color: var(--text-dark-muted);" title="Clear all attempted tags to start fresh">
+                    Reset Attempted List
+                  </button>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-auto-start-timer">Auto-start Stopwatch on Question Open</label>
+                  <span class="setting-desc">Automatically start counting when opening a question. When off, click the stopwatch icon to start whenever you are ready.</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="setting-auto-start-timer" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-theme">Theme Mode</label>
+                  <span class="setting-desc">Switch between Clean Light Mode and Focused Dark Mode.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-theme" class="control-select">
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-code-theme">Editor Syntax Color Style</label>
+                  <span class="setting-desc">Choose between Light Syntax, Green Syntax, or Dark Syntax editor color styles.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-code-theme" class="control-select">
+                    <option value="light-syntax">Light Syntax (Charcoal & Blue/Green Accent)</option>
+                    <option value="green-syntax">Green Syntax (Midnight Navy & Teal Accent)</option>
+                    <option value="dark-syntax">Dark Syntax (Classic Purple)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-plain-mode">Interview Mode (Plain Monochrome)</label>
+                  <span class="setting-desc">Disables syntax coloring (Pure White text in Dark Mode, Pure Black in Light Mode) to test yourself without color hints.</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="setting-plain-mode" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-show-tags">Show Topic Tags in Problem Header</label>
+                  <span class="setting-desc">Show or hide detailed tags like "date-manipulation", "ecommerce", "healthcare" in problem title bar.</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="setting-show-tags" />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-font-size">Editor Font Size</label>
+                  <span class="setting-desc">Adjust CodeMirror editor font scale.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-font-size" class="control-select">
+                    <option value="12px">12 px (Compact)</option>
+                    <option value="13px">13 px</option>
+                    <option value="14px" selected>14 px (Default)</option>
+                    <option value="15px">15 px</option>
+                    <option value="16px">16 px (Large)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-auto-format">Auto-uppercase SQL Keywords</label>
+                  <span class="setting-desc">Capitalize keywords like SELECT, FROM, WHERE automatically when formatting.</span>
+                </div>
+                <div class="setting-control">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="setting-auto-format" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <label for="setting-autocomplete-mode">Editor Autocomplete Mode</label>
+                  <span class="setting-desc">Choose completion behavior: Standard (SQL keywords & functions like CONCAT), OA / Exam mode (only suggests words already typed in editor), or Off.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="setting-autocomplete-mode" class="control-select">
+                    <option value="standard" selected>Standard (Keywords, Functions & Schemas)</option>
+                    <option value="editor_only">OA / Exam Mode (Only words in editor)</option>
+                    <option value="off">Off (Disabled)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Browser Storage & Health -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+                  <span>Browser Storage & Health</span>
+                </h3>
+                <span id="storage-status-badge" class="badge-tag-rec" style="font-size: 11px;">Healthy</span>
+              </div>
+              <p>Live measurement of browser LocalStorage consumed by your saved SQL drafts, notes, and progress.</p>
+            </div>
+            <div class="settings-card-body">
+              <!-- Visual Storage Bar -->
+              <div class="storage-meter-section">
+                <div class="storage-meter-header">
+                  <span class="storage-meter-title">Browser LocalStorage Quota Allocation</span>
+                  <span class="storage-meter-values">
+                    <span style="color: #38bdf8; font-weight: 500;">Used: <strong id="storage-used-text">0.0 KB</strong> (<span id="storage-used-pct">0.0%</span>)</span>
+                    <span style="margin: 0 6px; opacity: 0.35;">•</span>
+                    <span style="color: #10b981; font-weight: 500;">Free: <strong id="storage-free-text">5.0 MB</strong> (<span id="storage-free-pct-head">100.0%</span>)</span>
+                    <span style="margin: 0 6px; opacity: 0.35;">•</span>
+                    <span style="color: var(--text-dark-muted);">Total Quota: <strong>5.0 MB</strong></span>
+                  </span>
+                </div>
+                <div class="storage-meter-bar-wrap">
+                  <div class="storage-meter-bar" id="storage-meter-bar">
+                    <div class="storage-meter-seg storage-seg-drafts" id="seg-drafts" title="SQL Query Drafts" style="width: 0%;"></div>
+                    <div class="storage-meter-seg storage-seg-notes" id="seg-notes" title="Personal Notes" style="width: 0%;"></div>
+                    <div class="storage-meter-seg storage-seg-progress" id="seg-progress" title="Progress & History" style="width: 0%;"></div>
+                    <div class="storage-meter-seg storage-seg-cache" id="seg-cache" title="Offline Questions Cache" style="width: 0%;"></div>
+                    <div class="storage-meter-seg storage-seg-settings" id="seg-settings" title="Settings & UI" style="width: 0%;"></div>
+                    <div class="storage-meter-seg storage-seg-free" id="seg-free" title="Available Free Space" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Storage Breakdown Cards -->
+              <div class="storage-breakdown-grid">
+                <div class="storage-breakdown-card">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-drafts"></span>
+                    <span class="storage-card-title">SQL Query Drafts</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-drafts-size">0.0 KB</div>
+                  <div class="storage-card-sub" id="storage-drafts-count">0 drafts saved</div>
+                </div>
+
+                <div class="storage-breakdown-card">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-notes"></span>
+                    <span class="storage-card-title">Personal Notes</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-notes-size">0.0 KB</div>
+                  <div class="storage-card-sub" id="storage-notes-count">0 problem notes</div>
+                </div>
+
+                <div class="storage-breakdown-card">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-progress"></span>
+                    <span class="storage-card-title">Solved, Attempted & Starred</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-progress-size">0.0 KB</div>
+                  <div class="storage-card-sub" id="storage-progress-count">0 solved, 0 attempted • 0 starred</div>
+                </div>
+
+                <div class="storage-breakdown-card">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-cache"></span>
+                    <span class="storage-card-title">Offline Cache</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-cache-size">0.0 KB</div>
+                  <div class="storage-card-sub" id="storage-cache-count">0 questions cached</div>
+                </div>
+
+                <div class="storage-breakdown-card">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-settings"></span>
+                    <span class="storage-card-title">Settings & UI State</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-settings-size">0.0 KB</div>
+                  <div class="storage-card-sub">Preferences & themes</div>
+                </div>
+
+                <!-- Free / Available Space Card -->
+                <div class="storage-breakdown-card storage-card-free-highlight">
+                  <div class="storage-card-header">
+                    <span class="storage-card-dot dot-free"></span>
+                    <span class="storage-card-title">Available Free Space</span>
+                  </div>
+                  <div class="storage-card-metric" id="storage-free-size" style="color: #10b981;">5.0 MB</div>
+                  <div class="storage-card-sub" id="storage-free-sub">100% remaining</div>
+                </div>
+              </div>
+
+              <!-- Explainer Banner for Browser Quota & IndexedDB -->
+              <div class="storage-quota-explainer">
+                <div style="display: flex; gap: 10px; align-items: flex-start;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #38bdf8; margin-top: 1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <div style="font-size: 12px; line-height: 1.5; color: var(--text-dark-muted);">
+                    <strong style="color: var(--text-dark-main);">Why is LocalStorage capped at 5.0 MB?</strong>
+                    Standard web browsers (Chrome, Safari, Firefox) hard-cap synchronous <code>localStorage</code> at <strong>5 MB per domain</strong> to keep tab execution smooth. Your personal SQL drafts, notes, and progress only take <strong>~25 KB (&lt;1%)</strong>. If you clear the offline question schemas from LocalStorage, you will instantly reclaim <strong>~2.5 MB</strong> of free space!
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-row" style="margin-top: 8px; border-bottom: none; padding-bottom: 4px;">
+                <div class="setting-info">
+                  <span>Storage Diagnostics & Controls</span>
+                  <span class="setting-desc">Re-evaluate storage, pre-load questions, or purge offline cache to reclaim 2.5 MB.</span>
+                </div>
+                <div class="setting-control" style="gap: 8px; flex-wrap: wrap;">
+                  <button id="btn-free-cache" class="btn-sm btn-ghost text-warning" title="Purge offline question cache from LocalStorage to reclaim ~2.5 MB">
+                    Reclaim Cache (~2.5 MB)
+                  </button>
+                  <button id="btn-precache-offline" class="btn-sm btn-secondary" title="Cache all 100 questions locally in browser">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Pre-cache All 100 Questions
+                  </button>
+                  <button id="btn-refresh-storage" class="btn-sm btn-ghost" title="Re-calculate local storage usage">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: -2px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    Refresh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Backup & Data Portability (100% Client-Side) -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3 style="display: flex; align-items: center; gap: 8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span>Backup & Data Portability</span>
+              </h3>
+              <p>Everything you create is stored on your device. Export complete backups or restore to continue practicing on another device.</p>
+            </div>
+            <div class="settings-card-body">
+              <!-- Privacy Guarantee Banner -->
+              <div class="privacy-guarantee-banner">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; color: #10b981;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                <div>
+                  <strong style="color: var(--text-dark-main);">100% Client-Side Privacy Guarantee</strong>
+                  <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-dark-muted); line-height: 1.4;">All your SQL code drafts, personal notes, and solved questions live strictly in your browser's local storage. Nothing is ever tracked, uploaded, or sent to external servers.</p>
+                </div>
+              </div>
+
+              <!-- Interactive Backup Dropzone (Drag & Drop or Click to Upload) -->
+              <div class="backup-dropzone" id="backup-dropzone">
+                <div class="backup-dropzone-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="backup-dropzone-content">
+                  <div class="backup-dropzone-title">Upload & Restore SQLMaster Backup (.json)</div>
+                  <div class="backup-dropzone-subtitle">Drag and drop your backup file here, or click anywhere to choose from computer</div>
+                  <div class="backup-dropzone-note">
+                    <span class="badge-tag-rec" style="font-size: 10px; padding: 2px 7px;">Instant Restore</span>
+                    <span>Restores all SQL query drafts, notes, stars, and solved progress directly into this browser.</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-sm btn-secondary" id="btn-browse-backup" style="flex-shrink: 0;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Browse File...
+                </button>
+              </div>
+
+              <!-- Inline Dropzone File Info / Quick Restore Feedback Card -->
+              <div id="dropzone-file-info" class="dropzone-file-info" style="display: none;"></div>
+
+              <!-- Full Backup Row -->
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-weight: 600;">Download Full Backup (JSON)</span>
+                    <span class="badge-tag-rec">Recommended</span>
+                  </div>
+                  <span class="setting-desc">Saves EVERYTHING: all your written SQL query drafts for each question, personal notes, solved status, attempted list, bookmarks, submissions counter, and settings.</span>
+                </div>
+                <div class="setting-control">
+                  <button id="btn-export-full" class="btn-sm btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Full Backup (with Drafts)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Compact Progress Backup Row -->
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-weight: 600;">Download Compact Progress Only</span>
+                    <span class="badge-tag-subtle">Lightweight</span>
+                  </div>
+                  <span class="setting-desc">Exports solved status, attempted list, bookmarks, notes, and settings without query drafts (compatible with legacy sqlmaster_backup_YYYY-MM-DD.json).</span>
+                </div>
+                <div class="setting-control">
+                  <button id="btn-export-compact" class="btn-sm btn-secondary">Quick Progress (JSON)</button>
+                </div>
+              </div>
+
+              <!-- Export Study Guide (Markdown) Row -->
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-weight: 600;">Export Markdown Study Handbook</span>
+                    <span class="badge-tag-rec" style="background: rgba(16, 185, 129, 0.15); color: #059669; border-color: rgba(16, 185, 129, 0.3);">Handbook</span>
+                  </div>
+                  <span class="setting-desc">Generates a formatted Markdown study guide (.md) containing all your solved problems, your SQL solutions, and your personal approach notes for offline review.</span>
+                </div>
+                <div class="setting-control">
+                  <button id="btn-export-study-guide" class="btn-sm btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 5px; vertical-align: -2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Study Guide (.md)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Restore from Backup Row -->
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span style="font-weight: 600;">Restore / Import from Backup</span>
+                  <span class="setting-desc">Load any previous backup file (Full or Compact). You will preview the contents before confirming. Supports merge or replace.</span>
+                </div>
+                <div class="setting-control">
+                  <button id="btn-trigger-import" class="btn-sm btn-secondary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Restore from File...
+                  </button>
+                  <input type="file" id="input-import-backup" accept=".json,application/json" style="display: none;" />
+                </div>
+              </div>
+
+              <!-- Selective Storage Maintenance Row -->
+              <div class="setting-row">
+                <div class="setting-info">
+                  <span style="font-weight: 600;">Storage Maintenance & Clear</span>
+                  <span class="setting-desc">Clear drafts to free storage, reset practice checklist, or factory reset all data.</span>
+                </div>
+                <div class="setting-control" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <button id="btn-clear-drafts" class="btn-sm btn-ghost text-warning" title="Delete all saved SQL query drafts to free browser storage">Clear Drafts Only</button>
+                  <button id="btn-reset-progress" class="btn-sm btn-ghost text-danger" title="Reset solved and attempted checklist to 0">Reset Solved</button>
+                  <button id="btn-factory-reset" class="btn-sm btn-danger" title="Completely erase all local data and reset app">Factory Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+

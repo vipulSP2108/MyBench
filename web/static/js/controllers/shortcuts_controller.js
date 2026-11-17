@@ -21,6 +21,22 @@ import { el, showToast } from "../utils.js";
 
 export const ShortcutsController = {
   setupEventListeners() {
+    el("btn-shortcuts-toggle")?.addEventListener("click", () => {
+      const scModal = el("shortcuts-modal");
+      if (scModal) scModal.style.display = scModal.style.display === "flex" ? "none" : "flex";
+    });
+
+    el("btn-close-shortcuts-modal")?.addEventListener("click", () => {
+      const scModal = el("shortcuts-modal");
+      if (scModal) scModal.style.display = "none";
+    });
+
+    el("shortcuts-modal")?.addEventListener("click", (e) => {
+      if (e.target === el("shortcuts-modal")) {
+        el("shortcuts-modal").style.display = "none";
+      }
+    });
+
     el("nav-logo")?.addEventListener("click", () => state.emit("switchView", "home"));
 
     el("nav-btn-home")?.addEventListener("click", () => state.emit("switchView", "home"));
@@ -104,7 +120,40 @@ export const ShortcutsController = {
 
     el("btn-add-custom-case")?.addEventListener("click", TestcaseComponent.addNewCustomCase);
 
+    let highlightedDrawerIndex = -1;
+
+    el("search-input")?.addEventListener("keydown", (e) => {
+      const items = document.querySelectorAll(".drawer-q-item");
+      if (items.length === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        highlightedDrawerIndex = Math.min(highlightedDrawerIndex + 1, items.length - 1);
+        items.forEach((it, idx) => it.classList.toggle("keyboard-focus", idx === highlightedDrawerIndex));
+        items[highlightedDrawerIndex]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        highlightedDrawerIndex = Math.max(highlightedDrawerIndex - 1, 0);
+        items.forEach((it, idx) => it.classList.toggle("keyboard-focus", idx === highlightedDrawerIndex));
+        items[highlightedDrawerIndex]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const targetItem = highlightedDrawerIndex >= 0 ? items[highlightedDrawerIndex] : items[0];
+        if (targetItem) {
+          targetItem.click();
+          highlightedDrawerIndex = -1;
+          if (state.editor) setTimeout(() => state.editor.focus(), 100);
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        highlightedDrawerIndex = -1;
+        DrawerComponent.closeDrawer();
+        if (state.editor) state.editor.focus();
+      }
+    });
+
     el("search-input")?.addEventListener("input", (e) => {
+      highlightedDrawerIndex = -1;
       state.searchQuery = e.target.value;
       const clearBtn = el("btn-clear-search");
       if (clearBtn) clearBtn.style.display = state.searchQuery ? "block" : "none";
@@ -428,6 +477,7 @@ export const ShortcutsController = {
 
     el("btn-export-full")?.addEventListener("click", Storage.exportFullBackup);
     el("btn-export-compact")?.addEventListener("click", Storage.exportCompactBackup);
+    el("btn-export-study-guide")?.addEventListener("click", Storage.exportStudyGuide);
     el("btn-export-data")?.addEventListener("click", Storage.exportCompactBackup);
     el("btn-trigger-import")?.addEventListener("click", () => el("input-import-backup")?.click());
     el("btn-browse-backup")?.addEventListener("click", (e) => {
@@ -533,6 +583,29 @@ export const ShortcutsController = {
     el("btn-progress-reset")?.addEventListener("click", handleResetProgress);
 
     window.addEventListener("keydown", (e) => {
+      // Cmd + Shift + F: Format SQL
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === "f" || e.key === "F")) {
+        e.preventDefault();
+        e.stopPropagation();
+        EditorComponent.formatEditorSQL();
+        return;
+      }
+
+      // Alt + M: Toggle Interview Mode
+      if (e.altKey && (e.key === "m" || e.key === "M")) {
+        e.preventDefault();
+        NavbarComponent.togglePlainMode();
+        return;
+      }
+
+      // ? : Toggle Shortcuts Modal
+      if (e.key === "?" && !state.editor?.hasFocus() && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        const scModal = el("shortcuts-modal");
+        if (scModal) scModal.style.display = scModal.style.display === "flex" ? "none" : "flex";
+        return;
+      }
+
       if ((e.metaKey || e.ctrlKey) && (e.key === "/" || e.code === "Slash" || e.keyCode === 191)) {
         e.preventDefault();
         e.stopPropagation();
@@ -546,6 +619,10 @@ export const ShortcutsController = {
       }
 
       if (e.key === "Escape") {
+        if (el("shortcuts-modal") && el("shortcuts-modal").style.display === "flex") {
+          el("shortcuts-modal").style.display = "none";
+          return;
+        }
         if (el("restore-modal") && el("restore-modal").style.display === "flex") {
           SettingsPage.closeRestoreModal();
           return;
