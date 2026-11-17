@@ -164,32 +164,38 @@ export const HomePage = {
     if (arcEasy) {
       if (easySolved > 0) {
         arcEasy.setAttribute("stroke-dasharray", `${easyPctOfTotal} 100`);
+        arcEasy.style.display = "";
         arcEasy.setAttribute("stroke-dashoffset", "0");
         currentOffset += easyPctOfTotal + segGap;
       } else {
         arcEasy.setAttribute("stroke-dasharray", "0 100");
         arcEasy.setAttribute("stroke-dashoffset", "0");
+        arcEasy.style.display = "none";
       }
     }
 
     if (arcMed) {
       if (medSolved > 0) {
         arcMed.setAttribute("stroke-dasharray", `${medPctOfTotal} 100`);
+        arcMed.style.display = "";
         arcMed.setAttribute("stroke-dashoffset", `-${currentOffset}`);
         currentOffset += medPctOfTotal + segGap;
       } else {
         arcMed.setAttribute("stroke-dasharray", "0 100");
         arcMed.setAttribute("stroke-dashoffset", "0");
+        arcMed.style.display = "none";
       }
     }
 
     if (arcHard) {
       if (hardSolved > 0) {
         arcHard.setAttribute("stroke-dasharray", `${hardPctOfTotal} 100`);
+        arcHard.style.display = "";
         arcHard.setAttribute("stroke-dashoffset", `-${currentOffset}`);
       } else {
         arcHard.setAttribute("stroke-dasharray", "0 100");
         arcHard.setAttribute("stroke-dashoffset", "0");
+        arcHard.style.display = "none";
       }
     }
 

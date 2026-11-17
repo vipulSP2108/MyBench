@@ -1087,7 +1087,7 @@
 }
 
 [data-theme="dark"] .refined-filter-toolbar {
-  background: #181818;
+  background: var(--bg-card-light);
   border-color: rgba(255, 255, 255, 0.08);
 }
 

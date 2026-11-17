@@ -133,7 +133,8 @@
 
 .header-theme-dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
+  margin-top: 6px;
   right: 0;
   min-width: 250px;
   background: var(--bg-white);
@@ -152,6 +153,16 @@
   background: var(--bg-card-light) !important;
   border-color: var(--border-light) !important;
   box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Invisible bridge so the pointer can travel from the button into the menu without the menu closing */
+.header-theme-dropdown::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -10px;
+  height: 10px;
 }
 
 .theme-dropdown-header {

@@ -463,12 +463,13 @@ export const ShortcutsController = {
     const headerThemeMenu = el("header-theme-menu");
 
     if (headerThemeWrap && headerThemeMenu) {
-      headerThemeWrap.addEventListener("mouseenter", () => {
-        headerThemeMenu.style.display = "flex";
-      });
-      headerThemeWrap.addEventListener("mouseleave", () => {
-        headerThemeMenu.style.display = "none";
-      });
+      let closeTimer = null;
+      const openMenu = () => { clearTimeout(closeTimer); headerThemeMenu.style.display = "flex"; };
+      const closeMenu = () => { closeTimer = setTimeout(() => { headerThemeMenu.style.display = "none"; }, 180); };
+      headerThemeWrap.addEventListener("mouseenter", openMenu);
+      headerThemeWrap.addEventListener("mouseleave", closeMenu);
+      headerThemeMenu.addEventListener("mouseenter", openMenu);
+      headerThemeMenu.addEventListener("mouseleave", closeMenu);
     }
 
     document.querySelectorAll(".header-theme-option").forEach(btn => {

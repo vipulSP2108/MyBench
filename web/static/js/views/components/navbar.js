@@ -6,7 +6,51 @@
 import { state } from "../../models/state.js";
 import { el, showToast } from "../../utils.js";
 
+const DEFAULT_CODE = { light: "light-syntax", dark: "dark-syntax" };
+const LAST_PICK_KEY = "sqlmaster_last_code_by_theme";
+
 export const NavbarComponent = {
+  /** Colour scheme the user last picked for a given mode (light or dark). */
+  lastCodeFor(mode) {
+    try {
+      const stored = JSON.parse(localStorage.getItem(LAST_PICK_KEY) || "{}");
+      const v = stored[mode];
+      if (v && ["light-syntax", "green-syntax", "dark-syntax"].includes(v)) return v;
+    } catch (e) {}
+    return DEFAULT_CODE[mode];
+  },
+
+  rememberCode(mode, code) {
+    try {
+      const stored = JSON.parse(localStorage.getItem(LAST_PICK_KEY) || "{}");
+      stored[mode] = code;
+      localStorage.setItem(LAST_PICK_KEY, JSON.stringify(stored));
+    } catch (e) {}
+  },
+
+  /** Highlights the mode menu entry that matches the current theme + colour scheme. */
+  syncThemeMenu() {
+    document.querySelectorAll(".header-theme-option").forEach(btn => {
+      const match = btn.dataset.themeVal === state.theme && btn.dataset.codeVal === state.codeTheme;
+      btn.classList.toggle("active", match);
+    });
+    const toggle = el("btn-theme-toggle");
+    if (toggle) {
+      const nextMode = state.theme === "dark" ? "light" : "dark";
+      const name = NavbarComponent.labelFor(nextMode, NavbarComponent.lastCodeFor(nextMode));
+      toggle.title = `Switch to ${name} (hover for all modes)`;
+    }
+  },
+
+  labelFor(mode, code) {
+    const map = {
+      "light-syntax": mode === "light" ? "Clean Light Mode" : "Dark (Charcoal & Green)",
+      "green-syntax": "Dark (Midnight Navy)",
+      "dark-syntax": "Dark (Classic Purple)"
+    };
+    return map[code] || (mode === "dark" ? "Dark Mode" : "Light Mode");
+  },
+
   applyTheme(themeName) {
     state.theme = themeName;
     localStorage.setItem("sqlmaster_theme", themeName);
@@ -27,24 +71,18 @@ export const NavbarComponent = {
       themeSelect.value = themeName;
     }
 
+    NavbarComponent.syncThemeMenu();
     setTimeout(() => { if (state.editor) state.editor.refresh(); }, 50);
     document.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: themeName } }));
   },
 
   toggleTheme() {
     const next = state.theme === "dark" ? "light" : "dark";
-    if (next === "light" && state.codeTheme === "dark-syntax") {
-      state.codeTheme = "light-syntax";
-      state.settings.codeTheme = "light-syntax";
-      localStorage.setItem("sqlmaster_code_theme", "light-syntax");
-    } else if (next === "dark" && state.codeTheme === "light-syntax") {
-      state.codeTheme = "dark-syntax";
-      state.settings.codeTheme = "dark-syntax";
-      localStorage.setItem("sqlmaster_code_theme", "dark-syntax");
-    }
+    // Go back to the colour scheme the user last chose for that mode, not a fixed default
+    const code = NavbarComponent.lastCodeFor(next);
     NavbarComponent.applyTheme(next);
-    NavbarComponent.applyCodeTheme(state.codeTheme);
-    showToast(`Switched to ${next === "dark" ? "Dark Mode" : "Light Mode"}`);
+    NavbarComponent.applyCodeTheme(code);
+    showToast(`Switched to ${NavbarComponent.labelFor(next, code)}`);
   },
 
   applyCodeTheme(themeName, isPlain = null) {
@@ -56,6 +94,7 @@ export const NavbarComponent = {
       state.codeTheme = themeName;
       state.settings.codeTheme = themeName;
       localStorage.setItem("sqlmaster_code_theme", themeName);
+      NavbarComponent.rememberCode(state.theme, themeName);
     } else {
       if (!validThemes.includes(state.codeTheme)) {
         state.codeTheme = "light-syntax";
@@ -112,6 +151,8 @@ export const NavbarComponent = {
     if (plainText) {
       plainText.textContent = state.plainMode ? "Interview Mode (ON)" : "Interview Mode";
     }
+
+    NavbarComponent.syncThemeMenu();
 
     document.querySelectorAll(".theme-menu-item").forEach(item => {
       item.classList.toggle("active", item.dataset.themeId === state.codeTheme);

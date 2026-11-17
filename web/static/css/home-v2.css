@@ -249,3 +249,47 @@
 .home-problems-table th:nth-child(8), .home-problems-table th:nth-child(9) { width: 38px !important; }
 .home-problems-table th:nth-child(1) { width: 44px !important; }
 .home-problems-table th { font-size: .66rem !important; letter-spacing: .2px !important; }
+
+/* Danger buttons had no styling and fell back to the default light button in dark themes */
+.btn-danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+}
+.btn-danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+/* ===== Dark colour schemes: cards and controls take their surface from the active scheme ===== */
+[data-theme="dark"] .tracker-card {
+  background: var(--bg-white);
+  border-color: var(--border-light);
+}
+[data-theme="dark"] .progress-gauge-card,
+[data-theme="dark"] .diff-card-item {
+  background: color-mix(in srgb, var(--bg-white) 82%, #000);
+  border-color: var(--border-light);
+}
+[data-theme="dark"] .progress-gauge-card:hover,
+[data-theme="dark"] .progress-gauge-card.is-hovered,
+[data-theme="dark"] .diff-card-item:hover {
+  background: var(--bg-subtle-light);
+  border-color: var(--border-light);
+}
+[data-theme="dark"] .filter-pill-btn,
+[data-theme="dark"] .filter-search-box,
+[data-theme="dark"] .home-sort-select,
+[data-theme="dark"] .btn-pick-randomly,
+[data-theme="dark"] .filter-counter-pill,
+[data-theme="dark"] .filter-reset-all-btn,
+[data-theme="dark"] .filter-segmented-pill,
+[data-theme="dark"] .home-match-segmented {
+  background: color-mix(in srgb, var(--bg-card-light) 78%, #000);
+  border-color: var(--border-light);
+}
+[data-theme="dark"] .filter-pill-btn:hover,
+[data-theme="dark"] .btn-pick-randomly:hover {
+  background: var(--bg-subtle-light);
+}
+
+/* Gauge: keep the centred text clear of the open bottom of the ring */
+.gauge-center-content { padding-bottom: 26px; }
+.gauge-submissions-label { margin-top: 2px; }
