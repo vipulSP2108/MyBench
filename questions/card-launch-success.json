@@ -70,11 +70,11 @@
   "sample_output": [
     {
       "card_name": "Chase Sapphire Reserve",
-      "issued_amount": "170000"
+      "issued_amount": 170000
     },
     {
       "card_name": "Chase Freedom Flex",
-      "issued_amount": "65000"
+      "issued_amount": 65000
     }
   ],
   "reference_sql": "WITH launch_dates AS (\n  SELECT card_name, issue_year, issue_month, issued_amount,\n         ROW_NUMBER() OVER (PARTITION BY card_name ORDER BY issue_year, issue_month) AS rn\n  FROM monthly_cards_issued\n)\nSELECT card_name, issued_amount\nFROM launch_dates\nWHERE rn = 1\nORDER BY issued_amount DESC, card_name ASC;",

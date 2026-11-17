@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Accenture",
   "premium": true,
-  "question": "Human Resources compensation teams audit salary structures to identify compensation anomalies.\n\nAn employee's salary is defined as a **compensation outlier** if:\n1. Their salary is more than double (> 2x) the average salary of their job title, OR\n2. Their salary is less than half (< 0.5x) the average salary of their job title.\n\nWrite a query to identify all outlier employees. Output the `employee_id`, salary, and whether they are classified as 'Overpaid' or 'Underpaid'.",
+  "question": "Human Resources compensation teams audit salary structures to identify compensation anomalies.\n\nAn employee's salary is defined as a **compensation outlier** if:\n1. Their salary is more than double (> 2x) the average salary of their job title, OR\n2. Their salary is less than half (< 0.5x) the average salary of their job title.\n\nWrite a query to identify all outlier employees. Output the `employee_id`, salary, and a `status` column that is either 'Overpaid' or 'Underpaid'. Sort by `employee_id`.",
   "notes": [
     "Overpaid: salary > 2 * avg_salary for that job title",
     "Underpaid: salary < 0.5 * avg_salary for that job title"
@@ -123,7 +123,8 @@
     "accenture",
     "finance",
     "window-function",
-    "case-statement"
+    "case-statement",
+    "medium"
   ],
   "order_sensitive": true,
   "test_cases": [

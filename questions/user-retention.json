@@ -7,9 +7,8 @@
   "premium": false,
   "question": "Facebook user engagement analytics measures Monthly Active User (MAU) retention from month to month.\n\nA user is retained in Month M if they performed at least one qualifying user action (such as a sign-in, like, or comment) in Month M, AND also performed a qualifying action in the immediately preceding month (Month M - 1).\n\nWrite a query to count the number of retained monthly active users for the target month of July 2022 (Month 7). Output the numeric month as `mth` and the count of retained users as `monthly_active_users`.",
   "notes": [
-    "An active user is defined as a user who has performed actions such as 'sign-in', 'like', or 'comment' in both the current month and the previous month.",
-    "In June 2022, there was only one monthly active user (MAU) with the user_id 445.",
-    "Please note that the output provided is for June 2022 as the user_actions table only contains event dates for that month. You should adapt the solution accordingly for July 2022."
+    "An active user performed a sign-in, like or comment. A user is retained in July when they were active in both June and July.",
+    "In the sample data, two users were active in both months."
   ],
   "tables": [
     {
@@ -82,11 +81,11 @@
   },
   "sample_output": [
     {
-      "month": 7,
+      "mth": 7,
       "monthly_active_users": 2
     }
   ],
-  "reference_sql": "WITH monthly_users AS (\n  SELECT DISTINCT \n    user_id, \n    MONTH(event_date) AS mth\n  FROM user_actions\n  WHERE event_type IN ('sign-in', 'like', 'comment')\n    AND YEAR(event_date) = 2022\n)\nSELECT \n  curr.mth AS month,\n  COUNT(DISTINCT curr.user_id) AS monthly_active_users\nFROM monthly_users curr\nJOIN monthly_users prev \n  ON curr.user_id = prev.user_id \n AND curr.mth = prev.mth + 1\nWHERE curr.mth = 7\nGROUP BY curr.mth;",
+  "reference_sql": "WITH monthly_users AS (\n  SELECT DISTINCT user_id, MONTH(event_date) AS mth\n  FROM user_actions\n  WHERE event_type IN ('sign-in', 'like', 'comment')\n    AND YEAR(event_date) = 2022\n)\nSELECT curr.mth AS mth, COUNT(DISTINCT curr.user_id) AS monthly_active_users\nFROM monthly_users curr\nJOIN monthly_users prev ON curr.user_id = prev.user_id AND curr.mth = prev.mth + 1\nWHERE curr.mth = 7\nGROUP BY curr.mth;",
   "tags": [
     "date-manipulation",
     "facebook",
@@ -147,7 +146,7 @@
       },
       "expected_output": [
         {
-          "month": 7,
+          "mth": 7,
           "monthly_active_users": 2
         }
       ],
@@ -222,7 +221,7 @@
       },
       "expected_output": [
         {
-          "month": 7,
+          "mth": 7,
           "monthly_active_users": 3
         }
       ],
@@ -354,7 +353,7 @@
       },
       "expected_output": [
         {
-          "month": 7,
+          "mth": 7,
           "monthly_active_users": 2
         }
       ]

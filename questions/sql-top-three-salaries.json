@@ -139,27 +139,27 @@
     {
       "department_name": "Data Analytics",
       "name": "James Anderson",
-      "salary": "4000"
+      "salary": 4000
     },
     {
       "department_name": "Data Analytics",
       "name": "Emma Thompson",
-      "salary": "3800"
+      "salary": 3800
     },
     {
       "department_name": "Data Analytics",
       "name": "Daniel Rodriguez",
-      "salary": "2230"
+      "salary": 2230
     },
     {
       "department_name": "Data Science",
       "name": "Noah Johnson",
-      "salary": "6800"
+      "salary": 6800
     },
     {
       "department_name": "Data Science",
       "name": "William Davis",
-      "salary": "6800"
+      "salary": 6800
     }
   ],
   "reference_sql": "WITH ranked AS (\n  SELECT \n    d.department_name,\n    e.name,\n    e.salary,\n    DENSE_RANK() OVER (PARTITION BY e.department_id ORDER BY e.salary DESC) AS rnk\n  FROM employee e\n  JOIN department d ON e.department_id = d.department_id\n)\nSELECT department_name, name, salary\nFROM ranked\nWHERE rnk <= 3\nORDER BY department_name, salary DESC, name;",

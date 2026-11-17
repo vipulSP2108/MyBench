@@ -55,11 +55,11 @@
   "sample_output": [
     {
       "customer_id": 101,
-      "max_purchase": "450.50"
+      "max_purchase": 450.5
     },
     {
       "customer_id": 102,
-      "max_purchase": "89.99"
+      "max_purchase": 89.99
     }
   ],
   "reference_sql": "SELECT \n  customer_id,\n  ROUND(MAX(purchase_amount), 2) AS max_purchase\nFROM transactions\nGROUP BY customer_id\nORDER BY max_purchase DESC, customer_id ASC;",

@@ -66,19 +66,19 @@
   },
   "sample_output": [
     {
-      "transaction_date": "07/08/2022 12:00:00",
-      "user_id": "115",
-      "purchase_count": "1"
+      "transaction_date": "2022-07-08",
+      "user_id": 115,
+      "purchase_count": 1
     },
     {
-      "transaction_date": "07/08/2022 12:00:000",
-      "user_id": "123",
-      "purchase_count": "2"
+      "transaction_date": "2022-07-08",
+      "user_id": 123,
+      "purchase_count": 2
     },
     {
-      "transaction_date": "07/10/2022 12:00:00",
-      "user_id": "159",
-      "purchase_count": "1"
+      "transaction_date": "2022-07-10",
+      "user_id": 159,
+      "purchase_count": 1
     }
   ],
   "reference_sql": "WITH ranked AS (\n  SELECT user_id, product_id, spend, transaction_date,\n         DENSE_RANK() OVER (PARTITION BY user_id ORDER BY transaction_date DESC) AS rn\n  FROM user_transactions\n)\nSELECT \n  DATE(transaction_date) AS transaction_date,\n  user_id,\n  COUNT(product_id) AS purchase_count\nFROM ranked\nWHERE rn = 1\nGROUP BY transaction_date, user_id\nORDER BY transaction_date, user_id;",

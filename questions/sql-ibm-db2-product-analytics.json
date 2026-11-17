@@ -7,9 +7,8 @@
   "premium": false,
   "question": "IBM Db2 database engineers track query workloads executed by employees across distinct development environments.\n\nWrite a query to calculate the count of unique SQL queries executed by each employee during the evaluation quarter (Q3 2023).\n\nOutput the employee `unique_queries` bucket (e.g. 0 queries, 1 query, 2 queries) and the number of employees who executed that number of queries. Order by query count.",
   "notes": [
-    "Assume that the table below displays all queries made from July 1, 2023 to 31 July, 2023:",
-    "Assume that the table below displays all employees in the table:",
-    "The output indicates that 191 employees did not run any queries, 46 employees ran exactly 1 unique queries, 12 employees ran 2 unique queries, and so on."
+    "The query log covers Q3 2023 (July 1 to September 30).",
+    "Employees 110, 132, 221 and 240 each ran one unique query and employee 226 ran two. Employees 1, 2 and 3 ran none, so the buckets are 0, 1 and 2 queries."
   ],
   "tables": [
     {
@@ -82,6 +81,12 @@
         "query_id": "413477",
         "query_starttime": "07/02/2023 10:55:14",
         "execution_time": "470"
+      },
+      {
+        "employee_id": "226",
+        "query_id": "856990",
+        "query_starttime": "07/03/2023 09:12:00",
+        "execution_time": "310"
       }
     ],
     "employees": [
@@ -99,25 +104,46 @@
         "employee_id": "3",
         "full_name": "Ashbey Strahan",
         "gender": "Male"
+      },
+      {
+        "employee_id": "110",
+        "full_name": "Mara Quint",
+        "gender": "Female"
+      },
+      {
+        "employee_id": "132",
+        "full_name": "Oren Vale",
+        "gender": "Male"
+      },
+      {
+        "employee_id": "221",
+        "full_name": "Tess Holloway",
+        "gender": "Female"
+      },
+      {
+        "employee_id": "226",
+        "full_name": "Dev Anand",
+        "gender": "Male"
+      },
+      {
+        "employee_id": "240",
+        "full_name": "Ines Calder",
+        "gender": "Female"
       }
     ]
   },
   "sample_output": [
     {
-      "unique_queries": "0",
-      "employee_count": "191"
+      "unique_queries": 0,
+      "employee_count": 3
     },
     {
-      "unique_queries": "1",
-      "employee_count": "46"
+      "unique_queries": 1,
+      "employee_count": 4
     },
     {
-      "unique_queries": "2",
-      "employee_count": "12"
-    },
-    {
-      "unique_queries": "3",
-      "employee_count": "1"
+      "unique_queries": 2,
+      "employee_count": 1
     }
   ],
   "reference_sql": "WITH emp_query_counts AS (\n  SELECT e.employee_id, COUNT(DISTINCT q.query_id) AS unique_queries\n  FROM employees e\n  LEFT JOIN queries q ON e.employee_id = q.employee_id \n    AND q.query_starttime >= '2023-07-01' \n    AND q.query_starttime < '2023-10-01'\n  GROUP BY e.employee_id\n)\nSELECT unique_queries, COUNT(employee_id) AS employee_count\nFROM emp_query_counts\nGROUP BY unique_queries\nORDER BY unique_queries;",
@@ -164,6 +190,12 @@
             "query_id": "413477",
             "query_starttime": "07/02/2023 10:55:14",
             "execution_time": "470"
+          },
+          {
+            "employee_id": "226",
+            "query_id": "856990",
+            "query_starttime": "07/03/2023 09:12:00",
+            "execution_time": "310"
           }
         ],
         "employees": [
@@ -181,6 +213,31 @@
             "employee_id": "3",
             "full_name": "Ashbey Strahan",
             "gender": "Male"
+          },
+          {
+            "employee_id": "110",
+            "full_name": "Mara Quint",
+            "gender": "Female"
+          },
+          {
+            "employee_id": "132",
+            "full_name": "Oren Vale",
+            "gender": "Male"
+          },
+          {
+            "employee_id": "221",
+            "full_name": "Tess Holloway",
+            "gender": "Female"
+          },
+          {
+            "employee_id": "226",
+            "full_name": "Dev Anand",
+            "gender": "Male"
+          },
+          {
+            "employee_id": "240",
+            "full_name": "Ines Calder",
+            "gender": "Female"
           }
         ]
       },
@@ -188,6 +245,14 @@
         {
           "unique_queries": 0,
           "employee_count": 3
+        },
+        {
+          "unique_queries": 1,
+          "employee_count": 4
+        },
+        {
+          "unique_queries": 2,
+          "employee_count": 1
         }
       ],
       "category": "normal"

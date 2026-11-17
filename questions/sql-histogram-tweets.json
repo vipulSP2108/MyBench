@@ -68,12 +68,12 @@
   },
   "sample_output": [
     {
-      "tweet_bucket": "1",
-      "users_num": "2"
+      "tweet_bucket": 1,
+      "users_num": 2
     },
     {
-      "tweet_bucket": "2",
-      "users_num": "1"
+      "tweet_bucket": 2,
+      "users_num": 1
     }
   ],
   "reference_sql": "WITH user_tweets AS (\n  SELECT user_id, COUNT(tweet_id) AS tweet_count\n  FROM tweets\n  WHERE YEAR(tweet_date) = 2022\n  GROUP BY user_id\n)\nSELECT tweet_count AS tweet_bucket, COUNT(user_id) AS users_num\nFROM user_tweets\nGROUP BY tweet_count\nORDER BY tweet_bucket;",

@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Visa",
   "premium": true,
-  "question": "Visa payment processing networks reconcile monthly net settlement balances for commercial merchants.\n\nIn the merchant transaction ledger:\n• Incoming customer payments (`type = 'deposit'`) add funds to the balance.\n• Merchant fees or refunds (`type = 'withdrawal'`) subtract funds from the balance.\n\nWrite a query to calculate the net monthly transaction balance for each month. Output the year-month (`'YYYY-MM'`) and the total net balance, ordered by month.",
+  "question": "Visa payment processing networks reconcile monthly net settlement balances for commercial merchants.\n\nIn the merchant transaction ledger:\n• Incoming customer payments (`type = 'deposit'`) add funds to the balance.\n• Merchant fees or refunds (`type = 'withdrawal'`) subtract funds from the balance.\n\nWrite a query to calculate the net monthly transaction balance for each month. Output `transaction_month` (formatted `'YYYY-MM'`) and `balance` (deposits minus withdrawals), ordered by month.",
   "notes": [],
   "tables": [
     {
@@ -66,15 +66,11 @@
   },
   "sample_output": [
     {
-      "transaction_date": "07/08/2022 12:00:00",
-      "balance": "106.66"
-    },
-    {
-      "transaction_date": "07/10/2022 12:00:00",
-      "balance": "205.16"
+      "transaction_month": "2022-07",
+      "balance": 205.16
     }
   ],
-  "reference_sql": "SELECT \n  DATE_FORMAT(transaction_date, '%Y-%m') AS transaction_month,\n  SUM(CASE WHEN type = 'credit' THEN amount ELSE -amount END) AS balance\nFROM transactions\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\nORDER BY transaction_month;",
+  "reference_sql": "SELECT\n  DATE_FORMAT(transaction_date, '%Y-%m') AS transaction_month,\n  SUM(CASE WHEN type = 'deposit' THEN amount ELSE -amount END) AS balance\nFROM transactions\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\nORDER BY transaction_month;",
   "tags": [
     "aggregation",
     "date-manipulation",
@@ -125,7 +121,7 @@
       "expected_output": [
         {
           "transaction_month": "2022-07",
-          "balance": -348.94
+          "balance": 205.16
         }
       ],
       "category": "normal"
@@ -200,7 +196,7 @@
       "expected_output": [
         {
           "transaction_month": "2022-07",
-          "balance": -872.35
+          "balance": 512.91
         }
       ],
       "category": "volume"
@@ -261,7 +257,7 @@
         },
         {
           "transaction_month": "2022-07",
-          "balance": -348.94
+          "balance": 205.16
         }
       ],
       "category": "edge"
@@ -327,7 +323,7 @@
       "expected_output": [
         {
           "transaction_month": "2022-07",
-          "balance": -593.39
+          "balance": 92.51
         }
       ],
       "category": "edge"
@@ -402,7 +398,7 @@
       "expected_output": [
         {
           "transaction_month": "2022-07",
-          "balance": -1046.82
+          "balance": 615.48
         }
       ],
       "category": "boundary"

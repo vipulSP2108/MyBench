@@ -72,7 +72,7 @@
       "product2": "Jam"
     }
   ],
-  "reference_sql": "SELECT a.product_name AS product1, b.product_name AS product2\nFROM products a\nJOIN products b ON a.transaction_id = b.transaction_id AND a.product_id < b.product_id\nGROUP BY a.product_name, b.product_name\nORDER BY a.product_name, b.product_name;",
+  "reference_sql": "SELECT DISTINCT a.product_name AS product1, b.product_name AS product2\nFROM products a\nJOIN products b ON a.transaction_id = b.transaction_id AND a.product_name < b.product_name\nORDER BY product1, product2;",
   "tags": [
     "aggregation",
     "cte",

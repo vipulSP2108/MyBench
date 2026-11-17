@@ -6,10 +6,64 @@
 
 import { state, isQuestionSolved, isQuestionAttempted } from "../../models/state.js";
 import { Storage } from "../../models/storage.js";
+import { Activity, dayKey } from "../../models/activity.js";
 import { el, escapeHTML, showToast } from "../../utils.js";
 
+
+export const TOPICS = [
+  { id: "aggregation", label: "Aggregation", icon: "∑", tags: ["aggregation"] },
+  { id: "join", label: "Joins", icon: "⋈", tags: ["join", "left-join", "self-join"] },
+  { id: "window", label: "Window functions", icon: "▦", tags: ["window-function", "lead-lag", "ranking"] },
+  { id: "date", label: "Dates & time", icon: "◷", tags: ["date-manipulation"] },
+  { id: "cte", label: "CTEs", icon: "⧉", tags: ["cte"] },
+  { id: "math", label: "Math & ratios", icon: "%", tags: ["math"] },
+  { id: "logic", label: "Conditional logic", icon: "?", tags: ["conditional-logic", "case-statement"] }
+];
+
+const DIFF_RANK = { easy: 1, medium: 2, hard: 3 };
+
+export function topicsOf(q) {
+  return TOPICS.filter(t => (q.tags || []).some(tag => t.tags.includes(tag)));
+}
+
+function hashStr(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+export function getDailyChallenge() {
+  if (!state.questions.length) return null;
+  const pool = state.questions.filter(q => !state.solvedSlugs.has(q.slug));
+  const list = pool.length ? pool : state.questions;
+  return list[hashStr(dayKey()) % list.length];
+}
+
+const ICON_ARROW = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
 export const HomePage = {
+  applyTopicsVisibility() {
+    el("view-home")?.classList.toggle("topics-hidden", !state.showTopics);
+    el("btn-topics-toggle")?.setAttribute("aria-pressed", String(state.showTopics));
+    HomePage.syncToolbarHeight();
+  },
+
+  syncToolbarHeight() {
+    const tb = document.querySelector(".home-sheet-main .refined-filter-toolbar");
+    const home = el("view-home");
+    if (!tb || !home) return;
+    home.style.setProperty("--toolbar-h", `${tb.offsetHeight + 8}px`);
+    if (!HomePage._ro && "ResizeObserver" in window) {
+      HomePage._ro = new ResizeObserver(() => HomePage.syncToolbarHeight());
+      HomePage._ro.observe(tb);
+    }
+  },
+
   renderHomeDashboard() {
+    HomePage.applyTopicsVisibility();
     const total = state.questions.length || 100;
     const solved = state.solvedSlugs.size;
     const attempting = Array.from(state.attemptedSlugs).filter(s => !state.solvedSlugs.has(s)).length;
@@ -159,6 +213,9 @@ export const HomePage = {
       });
     }
 
+    HomePage.renderHero();
+    HomePage.renderToday();
+    HomePage.renderTopics();
     HomePage.renderStreakCalendar();
     HomePage.populateCompanyFilterOptions();
 
@@ -173,34 +230,194 @@ export const HomePage = {
     HomePage.renderHomeProblemsTable();
   },
 
+  renderHero() {
+    const hour = new Date().getHours();
+    const greet = hour < 5 ? "Burning the midnight oil" : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    const total = state.questions.length || 100;
+    const solved = state.solvedSlugs.size;
+    const streak = Activity.currentStreak();
+
+    const badge = el("home-date-badge");
+    if (badge) badge.textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+    const g = el("home-greeting");
+    if (g) g.textContent = solved === 0 ? "Let's write your first query" : `${greet}. ${solved} of ${total} solved`;
+
+    const sub = el("home-hero-sub");
+    if (sub) {
+      if (solved === 0) {
+        sub.textContent = `${total} real interview questions, a full MySQL 8.0 engine in your browser, and instant test case validation. Nothing to install and nothing leaves your machine.`;
+      } else if (solved === total) {
+        sub.textContent = "You have solved every question. Revisit starred problems or try them again against the clock.";
+      } else {
+        const left = total - solved;
+        sub.textContent = streak > 1
+          ? `You are on a ${streak}-day streak. ${left} question${left === 1 ? "" : "s"} to go. Solve one today to keep it alive.`
+          : `${left} question${left === 1 ? "" : "s"} to go. One solved problem a day adds up quickly.`;
+      }
+    }
+
+    const set = (id, v) => { const n = el(id); if (n) n.textContent = v; };
+    set("hero-stat-streak", streak);
+    set("hero-stat-best", Activity.longestStreak());
+    set("hero-stat-week", Activity.solvesInLastDays(7));
+    const subs = Storage.getSubmissionCount();
+    set("hero-stat-acc", subs > 0 ? `${Math.min(100, Math.round((solved / subs) * 100))}%` : "–");
+
+    const kbd = el("home-palette-kbd");
+    if (kbd) kbd.textContent = /Mac|iPhone|iPad/.test(navigator.platform) ? "⌘ K" : "Ctrl K";
+
+    const label = el("home-resume-label");
+    const cont = HomePage.getContinueTarget();
+    if (label) label.textContent = cont && (isQuestionAttempted(cont.slug) || localStorage.getItem("sqlmaster_current_slug") === cont.slug)
+      ? `Continue: ${cont.title}` : "Start practicing";
+  },
+
+  getContinueTarget() {
+    const savedSlug = localStorage.getItem("sqlmaster_current_slug");
+    return (savedSlug && state.questions.find(q => q.slug === savedSlug && !state.solvedSlugs.has(q.slug))) ||
+           state.questions.find(q => isQuestionAttempted(q.slug)) ||
+           state.questions.find(q => !isQuestionSolved(q.slug)) ||
+           state.questions[0] || null;
+  },
+
+  topicStats() {
+    return TOPICS.map(t => {
+      const qs = state.questions.filter(q => topicsOf(q).some(x => x.id === t.id));
+      const solved = qs.filter(q => state.solvedSlugs.has(q.slug)).length;
+      return { ...t, total: qs.length, solved, pct: qs.length ? solved / qs.length : 0, questions: qs };
+    }).filter(t => t.total > 0);
+  },
+
+  pillHTML(q) {
+    const d = q.difficulty.toLowerCase();
+    return `<span class="doc-diff-pill ${d}"><span class="diff-dot">●</span> ${q.difficulty}</span>`;
+  },
+
+  renderToday() {
+    const daily = getDailyChallenge();
+    const dailyEl = el("today-daily");
+    if (dailyEl && daily) {
+      const done = state.solvedSlugs.has(daily.slug);
+      dailyEl.innerHTML = `
+        <div class="today-eyebrow"><span class="today-dot daily"></span>Daily challenge</div>
+        <h3 class="today-title">${escapeHTML(daily.title)}</h3>
+        <div class="today-meta">${HomePage.pillHTML(daily)}<span class="doc-meta-pill">${escapeHTML(daily.company || "General")}</span></div>
+        <button class="today-cta" data-slug="${daily.slug}">${done ? "Solved. Review it" : "Start today's problem"} ${ICON_ARROW}</button>`;
+    }
+
+    const cont = HomePage.getContinueTarget();
+    const contEl = el("today-continue");
+    if (contEl) {
+      if (!cont) {
+        contEl.innerHTML = "";
+      } else {
+        const draft = localStorage.getItem(`sqlmaster_draft_${cont.slug}`) || "";
+        const hasDraft = draft.trim().length > 0;
+        const preview = hasDraft ? escapeHTML(draft.trim().split("\n").slice(0, 3).join("\n").slice(0, 140)) : "";
+        contEl.innerHTML = `
+          <div class="today-eyebrow"><span class="today-dot cont"></span>${hasDraft ? "Pick up where you left off" : "Up next"}</div>
+          <h3 class="today-title">${escapeHTML(cont.title)}</h3>
+          <div class="today-meta">${HomePage.pillHTML(cont)}<span class="doc-meta-pill">${escapeHTML(cont.company || "General")}</span></div>
+          ${hasDraft ? `<pre class="today-draft">${preview}</pre>` : ""}
+          <button class="today-cta" data-slug="${cont.slug}">${hasDraft ? "Resume your query" : "Open question"} ${ICON_ARROW}</button>`;
+      }
+    }
+
+    const recEl = el("today-recommended");
+    if (recEl) {
+      const stats = HomePage.topicStats().filter(t => t.solved < t.total);
+      stats.sort((a, b) => a.pct - b.pct || b.total - a.total);
+      const weakest = stats[0];
+      let rec = null;
+      if (weakest) {
+        rec = weakest.questions
+          .filter(q => !state.solvedSlugs.has(q.slug))
+          .sort((a, b) => DIFF_RANK[a.difficulty.toLowerCase()] - DIFF_RANK[b.difficulty.toLowerCase()])[0];
+      }
+      if (!rec) {
+        recEl.innerHTML = `
+          <div class="today-eyebrow"><span class="today-dot rec"></span>Recommended</div>
+          <h3 class="today-title">Everything is solved</h3>
+          <p class="today-note">Nothing left to recommend. Star problems you want to revisit.</p>`;
+      } else {
+        recEl.innerHTML = `
+          <div class="today-eyebrow"><span class="today-dot rec"></span>Strengthen: ${escapeHTML(weakest.label)}</div>
+          <h3 class="today-title">${escapeHTML(rec.title)}</h3>
+          <div class="today-meta">${HomePage.pillHTML(rec)}<span class="doc-meta-pill">${weakest.solved}/${weakest.total} in this topic</span></div>
+          <button class="today-cta" data-slug="${rec.slug}">Try it ${ICON_ARROW}</button>`;
+      }
+    }
+
+    document.querySelectorAll("#home-today-grid .today-cta").forEach(btn => {
+      btn.onclick = () => state.emit("navigateToQuestion", btn.dataset.slug);
+    });
+  },
+
+  renderTopics() {
+    const grid = el("home-topics-grid");
+    if (!grid) return;
+    const stats = HomePage.topicStats();
+    grid.innerHTML = stats.map(t => `
+      <button class="topic-card ${state.homeTag === t.id ? "active" : ""}" data-topic="${t.id}" aria-pressed="${state.homeTag === t.id}">
+        <span class="topic-icon">${t.icon}</span>
+        <span class="topic-body">
+          <span class="topic-name">${t.label}</span>
+          <span class="topic-count">${t.solved} / ${t.total} solved</span>
+          <span class="topic-bar"><span class="topic-bar-fill" style="width:${Math.round(t.pct * 100)}%"></span></span>
+        </span>
+      </button>`).join("");
+    grid.querySelectorAll(".topic-card").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.homeTag = state.homeTag === btn.dataset.topic ? null : btn.dataset.topic;
+        HomePage.renderTopics();
+        HomePage.renderActiveFilterTags();
+        HomePage.renderHomeProblemsTable();
+        if (state.homeTag) el("home-sheet-counter")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+  },
+
   renderStreakCalendar() {
     const calGrid = el("streak-calendar-grid");
     if (!calGrid) return;
 
-    const emptySlots = 3;
-    const totalDays = 31;
-    let cellsHTML = "";
+    const now = new Date();
+    const view = new Date(now.getFullYear(), now.getMonth() + (state.calMonthOffset || 0), 1);
+    const year = view.getFullYear();
+    const month = view.getMonth();
+    const title = el("streak-month-title");
+    if (title) title.textContent = view.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
-    for (let i = 0; i < emptySlots; i++) {
-      cellsHTML += `<div class="cal-day-cell empty"></div>`;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const lead = (view.getDay() + 6) % 7; // Monday first
+    const todayKey = dayKey(now);
+    const all = Activity.all();
+    let html = "";
+    for (let i = 0; i < lead; i++) html += `<div class="cal-day-cell empty"></div>`;
+
+    let activeDays = 0;
+    for (let day = 1; day <= daysInMonth; day++) {
+      const key = dayKey(new Date(year, month, day));
+      const rec = all[key];
+      const active = !!rec && (rec.runs + rec.submits + rec.solves) > 0;
+      if (active) activeDays++;
+      const future = key > todayKey;
+      let cls = "cal-day-cell";
+      if (active) cls += " active-streak";
+      if (key === todayKey) cls += " today";
+      if (future) cls += " future";
+      const tip = active
+        ? `${key}: ${rec.solves} solved, ${rec.submits} submissions, ${rec.runs} runs`
+        : key === todayKey ? "Today: no practice yet" : key;
+      html += `<div class="${cls}" title="${tip}">${day}</div>`;
     }
+    calGrid.innerHTML = html;
 
-    for (let day = 1; day <= totalDays; day++) {
-      let classes = "cal-day-cell";
-      let title = `October ${day}, 2026`;
+    const next = el("btn-streak-next");
+    if (next) next.disabled = (state.calMonthOffset || 0) >= 0;
 
-      if (day >= 1 && day <= 3) {
-        classes += " active-streak";
-        title += " — Practice Streak Active";
-      } else if (day === 4) {
-        classes += " today active-streak";
-        title += " — Today Practice Active";
-      }
-
-      cellsHTML += `<div class="${classes}" title="${title}">${day}</div>`;
-    }
-
-    calGrid.innerHTML = cellsHTML;
+    const foot = el("streak-footer");
+    if (foot) foot.innerHTML = `<span><strong>${activeDays}</strong> active day${activeDays === 1 ? "" : "s"} this month</span><span>Current streak <strong>${Activity.currentStreak()}</strong> · Best <strong>${Activity.longestStreak()}</strong></span>`;
   },
 
   populateCompanyFilterOptions() {
@@ -264,6 +481,10 @@ export const HomePage = {
     if (state.homeCompany && state.homeCompany !== "all") {
       tags.push({ type: "company", label: state.homeCompany, val: state.homeCompany });
     }
+    if (state.homeTag) {
+      const t = TOPICS.find(x => x.id === state.homeTag);
+      tags.push({ type: "topic", label: `Topic: ${t ? t.label : state.homeTag}`, val: state.homeTag });
+    }
 
     const btnStatus = el("btn-filter-status");
     const btnDiff = el("btn-filter-diff");
@@ -307,6 +528,9 @@ export const HomePage = {
           state.homeDiffFilters.delete(val);
           const cb = document.querySelector(`.filter-cb-diff[value="${val}"]`);
           if (cb) cb.checked = false;
+        } else if (type === "topic") {
+          state.homeTag = null;
+          HomePage.renderTopics();
         } else if (type === "company") {
           state.homeCompany = "all";
           const radio = document.querySelector('input[name="company-filter"][value="all"]');
@@ -470,6 +694,8 @@ export const HomePage = {
         }
       }
 
+      if (state.homeTag && !topicsOf(q).some(t => t.id === state.homeTag)) return false;
+
       if (query) {
         const titleMatch = q.title.toLowerCase().includes(query);
         const companyMatch = q.company && q.company.toLowerCase().includes(query);
@@ -481,8 +707,16 @@ export const HomePage = {
       return true;
     });
 
+    const sortMode = state.homeSort || "default";
+    const rankOf = q => DIFF_RANK[q.difficulty.toLowerCase()] || 2;
+    if (sortMode === "difficulty-asc") filtered.sort((a, b) => rankOf(a) - rankOf(b));
+    else if (sortMode === "difficulty-desc") filtered.sort((a, b) => rankOf(b) - rankOf(a));
+    else if (sortMode === "title") filtered.sort((a, b) => a.title.localeCompare(b.title));
+    else if (sortMode === "company") filtered.sort((a, b) => (a.company || "").localeCompare(b.company || "") || a.title.localeCompare(b.title));
+    else if (sortMode === "unsolved") filtered.sort((a, b) => Number(isQuestionSolved(a.slug)) - Number(isQuestionSolved(b.slug)));
+
     if (counter) {
-      counter.textContent = `${filtered.length} Problems`;
+      counter.textContent = `${filtered.length} Problem${filtered.length === 1 ? "" : "s"}`;
     }
 
     if (filtered.length === 0) {
@@ -531,6 +765,7 @@ export const HomePage = {
             <a class="problem-title-link" data-slug="${q.slug}" title="${escapeHTML(q.title)}">
               ${escapeHTML(q.title)}
             </a>
+            <div class="row-topics">${topicsOf(q).slice(0, 3).map(t => `<span class="row-topic">${t.label}</span>`).join("")}</div>
           </td>
           <td>
             <span class="doc-diff-pill ${diff}"><span class="diff-dot">●</span> ${q.difficulty}</span>

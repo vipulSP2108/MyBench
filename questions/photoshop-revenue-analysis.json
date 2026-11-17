@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Adobe",
   "premium": true,
-  "question": "Adobe Creative Cloud financial analysts are studying revenue contribution from customers who subscribe to Adobe Photoshop.\n\nWrite a query to calculate the total overall revenue generated from all software purchases made by customers who have purchased or subscribed to **Photoshop**.\n\nOutput the `customer_id` and their total aggregate Adobe software revenue (`revenue`), sorted by `customer_id` in ascending order.",
+  "question": "Adobe Creative Cloud financial analysts are studying the revenue that Photoshop customers generate from the rest of Adobe's product line.\n\nWrite a query to calculate, for every customer who has purchased **Photoshop**, their total revenue from all of their **other** Adobe products (exclude the Photoshop purchases themselves).\n\nOutput the `customer_id` and that total (`revenue`), sorted by `customer_id` in ascending order.",
   "notes": [],
   "tables": [
     {
@@ -52,12 +52,8 @@
   },
   "sample_output": [
     {
-      "customer_id": "123",
-      "revenue": "150"
-    },
-    {
-      "customer_id": "345",
-      "revenue": "150"
+      "customer_id": 345,
+      "revenue": 150
     }
   ],
   "reference_sql": "SELECT customer_id, SUM(revenue) AS revenue\nFROM adobe_transactions\nWHERE customer_id IN (\n  SELECT customer_id FROM adobe_transactions WHERE product = 'Photoshop'\n) AND product != 'Photoshop'\nGROUP BY customer_id\nORDER BY customer_id;",

@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Salesforce",
   "premium": true,
-  "question": "Salesforce enterprise account executives segment enterprise customer deals into three tiers based on license seat count:\n\n• `'Small'`: Under 20 seats (`num_seats < 20`)\n• `'Medium'`: Between 20 and 99 seats (`num_seats BETWEEN 20 AND 99`)\n• `'Large'`: 100 or more seats (`num_seats >= 100`)\n\nWrite a query to calculate the average deal size in revenue for each tier. Output the deal `tier` and the `avg_deal_size` rounded to 2 decimal places.",
+  "question": "Salesforce enterprise account executives segment enterprise customer deals into three tiers based on license seat count:\n\n• `'Small'`: Under 20 seats (`num_seats < 20`)\n• `'Medium'`: Between 20 and 99 seats (`num_seats BETWEEN 20 AND 99`)\n• `'Large'`: 100 or more seats (`num_seats >= 100`)\n\nOnly deals with status `'Won'` count. Write a query to calculate the average deal size in revenue for each tier, ordered by `avg_deal_size` from highest to lowest (then by `tier`). Output the deal `tier` and the `avg_deal_size` rounded to 2 decimal places.",
   "notes": [],
   "tables": [
     {
@@ -61,8 +61,8 @@
   },
   "sample_output": [
     {
-      "num_seats": 50,
-      "avg_deal_size": "30000.00"
+      "tier": "Medium",
+      "avg_deal_size": 30000
     }
   ],
   "reference_sql": "SELECT \n  CASE \n    WHEN num_seats < 20 THEN 'Small'\n    WHEN num_seats BETWEEN 20 AND 99 THEN 'Medium'\n    ELSE 'Large'\n  END AS tier,\n  ROUND(AVG(deal_size), 2) AS avg_deal_size\nFROM deals\nWHERE status = 'Won'\nGROUP BY \n  CASE \n    WHEN num_seats < 20 THEN 'Small'\n    WHEN num_seats BETWEEN 20 AND 99 THEN 'Medium'\n    ELSE 'Large'\n  END\nORDER BY avg_deal_size DESC, tier ASC;",
@@ -107,7 +107,7 @@
       "expected_output": [
         {
           "tier": "Medium",
-          "avg_deal_size": 30000.0
+          "avg_deal_size": 30000
         }
       ],
       "category": "normal"
@@ -164,7 +164,7 @@
       "expected_output": [
         {
           "tier": "Medium",
-          "avg_deal_size": 30000.0
+          "avg_deal_size": 30000
         }
       ],
       "category": "volume"
@@ -207,7 +207,7 @@
       "expected_output": [
         {
           "tier": "Medium",
-          "avg_deal_size": 30000.0
+          "avg_deal_size": 30000
         }
       ],
       "category": "edge"
@@ -266,7 +266,7 @@
       "expected_output": [
         {
           "tier": "Medium",
-          "avg_deal_size": 30000.0
+          "avg_deal_size": 30000
         }
       ],
       "category": "edge"

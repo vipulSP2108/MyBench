@@ -5,7 +5,7 @@
   "difficulty": "Easy",
   "company": "PayPal",
   "premium": false,
-  "question": "At PayPal, account balance tracking reconciles deposits, withdrawals, and transfers to calculate a customer's final balance.\n\nIn the transactions ledger:\n• A `'deposit'` transaction adds funds to the balance.\n• A `'withdrawal'` transaction subtracts funds from the balance.\n\nWrite a query to calculate the final balance for each `account_id` at the end of the reporting period. Output `account_id` and `final_balance`, sorted by `account_id`.",
+  "question": "At PayPal, account balance tracking reconciles deposits, withdrawals, and transfers to calculate a customer's final balance.\n\nIn the transactions ledger (matching `transaction_type` is case-insensitive):\n• A `'deposit'` transaction adds funds to the balance.\n• A `'withdrawal'` transaction subtracts funds from the balance.\n\nWrite a query to calculate the final balance for each `account_id` at the end of the reporting period. Output `account_id` and `final_balance`, sorted by `account_id`.",
   "notes": [
     "Using account ID 101 as an example, \\$30.00 was deposited into this account, while \\$5.00 was withdrawn. Therefore, the final account balance can be calculated as the difference between the total deposits and withdrawals which is \\$30.00 - \\$5.00, resulting in a final balance of \\$25.00."
   ],
@@ -68,15 +68,15 @@
   },
   "sample_output": [
     {
-      "account_id": "101",
-      "final_balance": "25.00"
+      "account_id": 101,
+      "final_balance": 25.0
     },
     {
-      "account_id": "201",
-      "final_balance": "10.00"
+      "account_id": 201,
+      "final_balance": 10.0
     }
   ],
-  "reference_sql": "SELECT \n  account_id,\n  SUM(CASE WHEN transaction_type = 'Deposit' THEN amount ELSE -amount END) AS final_balance\nFROM transactions\nGROUP BY account_id\nORDER BY account_id;",
+  "reference_sql": "SELECT\n  account_id,\n  SUM(CASE WHEN LOWER(transaction_type) = 'deposit' THEN amount\n           WHEN LOWER(transaction_type) = 'withdrawal' THEN -amount\n           ELSE 0 END) AS final_balance\nFROM transactions\nGROUP BY account_id\nORDER BY account_id;",
   "tags": [
     "aggregation",
     "easy",

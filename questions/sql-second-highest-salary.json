@@ -63,7 +63,7 @@
   },
   "sample_output": [
     {
-      "second_highest_salary": "2230"
+      "second_highest_salary": 2230
     }
   ],
   "reference_sql": "SELECT MAX(salary) AS second_highest_salary\nFROM employee\nWHERE salary < (SELECT MAX(salary) FROM employee);",

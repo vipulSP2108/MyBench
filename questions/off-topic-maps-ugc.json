@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Google",
   "premium": true,
-  "question": "Google Maps Trust & Safety moderators review User Generated Content (UGC) such as photos, reviews, and questions posted to local business profiles.\n\nWhen content violates community guidelines, moderators tag it as `'off-topic'`.\n\nWrite a query to identify which place category (e.g. `'Restaurant'`, `'Hotel'`, `'Museum'`) received the highest count of off-topic UGC uploads. Output the `place_category` and the count of off-topic uploads, breaking ties by `place_category` in alphabetical order.",
+  "question": "Google Maps Trust & Safety moderators review User Generated Content (UGC) such as photos, reviews, and questions posted to local business profiles.\n\nWhen content violates community guidelines, moderators tag it as `'off-topic'`.\n\nWrite a query to identify which place category (e.g. `'Restaurant'`, `'Hotel'`, `'Museum'`) received the highest count of off-topic UGC uploads. If several categories tie for the highest count, return all of them. Output `place_category` and the count of off-topic uploads as `off_topic_count`, sorted by `place_category`.",
   "notes": [],
   "tables": [
     {
@@ -101,13 +101,15 @@
   },
   "sample_output": [
     {
-      "off_topic_places": "Bar"
+      "place_category": "Bar",
+      "off_topic_count": 2
     },
     {
-      "off_topic_places": "Restaurant"
+      "place_category": "Restaurant",
+      "off_topic_count": 2
     }
   ],
-  "reference_sql": "WITH reviews AS (\n  SELECT place.place_category,\n         COUNT(ugc.content_id) AS content_count\n  FROM place_info place\n  JOIN maps_ugc_review ugc ON place.place_id = ugc.place_id\n  WHERE LOWER(ugc.content_tag) = 'off-topic'\n  GROUP BY place.place_category\n),\ntop_place_category AS (\n  SELECT place_category, content_count,\n         DENSE_RANK() OVER (ORDER BY content_count DESC) AS top_place\n  FROM reviews\n)\nSELECT place_category AS off_topic_places\nFROM top_place_category\nWHERE top_place = 1\nORDER BY place_category ASC;",
+  "reference_sql": "WITH counts AS (\n  SELECT p.place_category, COUNT(u.content_id) AS off_topic_count\n  FROM place_info p\n  JOIN maps_ugc_review u ON p.place_id = u.place_id\n  WHERE LOWER(u.content_tag) = 'off-topic'\n  GROUP BY p.place_category\n)\nSELECT place_category, off_topic_count\nFROM counts\nWHERE off_topic_count = (SELECT MAX(off_topic_count) FROM counts)\nORDER BY place_category;",
   "tags": [
     "aggregation",
     "cte",
@@ -181,10 +183,12 @@
       },
       "expected_output": [
         {
-          "off_topic_places": "Bar"
+          "place_category": "Bar",
+          "off_topic_count": 2
         },
         {
-          "off_topic_places": "Restaurant"
+          "place_category": "Restaurant",
+          "off_topic_count": 2
         }
       ],
       "category": "normal"
@@ -285,7 +289,8 @@
       },
       "expected_output": [
         {
-          "off_topic_places": "Park"
+          "place_category": "Park",
+          "off_topic_count": 3
         }
       ],
       "category": "volume"
@@ -326,7 +331,8 @@
       },
       "expected_output": [
         {
-          "off_topic_places": "Motel"
+          "place_category": "Motel",
+          "off_topic_count": 1
         }
       ],
       "category": "edge"
@@ -382,13 +388,16 @@
       },
       "expected_output": [
         {
-          "off_topic_places": "Bookstore"
+          "place_category": "Bookstore",
+          "off_topic_count": 1
         },
         {
-          "off_topic_places": "Cafe"
+          "place_category": "Cafe",
+          "off_topic_count": 1
         },
         {
-          "off_topic_places": "Diner"
+          "place_category": "Diner",
+          "off_topic_count": 1
         }
       ],
       "category": "edge"

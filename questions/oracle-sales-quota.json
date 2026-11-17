@@ -5,7 +5,7 @@
   "difficulty": "Easy",
   "company": "Oracle",
   "premium": true,
-  "question": "Oracle enterprise sales directors track quota attainment for regional sales representatives.\n\nA sales representative has met their target if the sum of all their closed deal sizes during the period is greater than or equal to their assigned sales quota.\n\nWrite a query to output each sales representative's `employee_id` and a quota status indicator: `1` if they met or exceeded their quota, and `0` if they fell short. Sort by `employee_id` in ascending order.",
+  "question": "Oracle enterprise sales directors track quota attainment for regional sales representatives.\n\nA sales representative has met their target if the sum of all their closed deal sizes during the period is greater than or equal to their assigned sales quota.\n\nWrite a query to output each sales representative's `employee_id` and a quota status indicator named `made_quota`: `1` if they met or exceeded their quota, and `0` if they fell short. Sort by `employee_id` in ascending order.",
   "notes": [],
   "tables": [
     {
@@ -72,15 +72,15 @@
   "sample_output": [
     {
       "employee_id": 101,
-      "made_quota": "yes"
+      "made_quota": 1
     },
     {
       "employee_id": 201,
-      "made_quota": "yes"
+      "made_quota": 1
     },
     {
       "employee_id": 301,
-      "made_quota": "no"
+      "made_quota": 0
     }
   ],
   "reference_sql": "SELECT q.employee_id,\n       CASE WHEN IFNULL(SUM(d.deal_size), 0) >= q.quota THEN 1 ELSE 0 END AS made_quota\nFROM sales_quotas q\nLEFT JOIN deals d ON q.employee_id = d.employee_id\nGROUP BY q.employee_id, q.quota\nORDER BY q.employee_id;",

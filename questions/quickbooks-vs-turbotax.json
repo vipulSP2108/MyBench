@@ -60,11 +60,11 @@
   },
   "sample_output": [
     {
-      "turbotax_total": 2,
-      "quickbooks_total": 2
+      "quickbooks_users": 2,
+      "turbotax_users": 2
     }
   ],
-  "reference_sql": "SELECT \n  SUM(CASE WHEN product LIKE '%QuickBooks%' THEN 1 ELSE 0 END) AS quickbooks_users,\n  SUM(CASE WHEN product LIKE '%TurboTax%' THEN 1 ELSE 0 END) AS turbotax_users\nFROM filed_taxes;",
+  "reference_sql": "SELECT\n  COUNT(DISTINCT CASE WHEN LOWER(product) LIKE '%quickbooks%' THEN user_id END) AS quickbooks_users,\n  COUNT(DISTINCT CASE WHEN LOWER(product) LIKE '%turbotax%' THEN user_id END) AS turbotax_users\nFROM filed_taxes;",
   "tags": [
     "aggregation",
     "easy",
@@ -234,8 +234,8 @@
       },
       "expected_output": [
         {
-          "quickbooks_users": null,
-          "turbotax_users": null
+          "quickbooks_users": 0,
+          "turbotax_users": 0
         }
       ],
       "category": "edge"

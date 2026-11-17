@@ -50,19 +50,19 @@
   "sample_output": [
     {
       "pizza": "Chicken,Pepperoni,Sausage",
-      "total_cost": "1.75"
+      "total_cost": 1.75
     },
     {
       "pizza": "Chicken,Extra Cheese,Sausage",
-      "total_cost": "1.65"
+      "total_cost": 1.65
     },
     {
       "pizza": "Extra Cheese,Pepperoni,Sausage",
-      "total_cost": "1.60"
+      "total_cost": 1.6
     },
     {
       "pizza": "Chicken,Extra Cheese,Pepperoni",
-      "total_cost": "1.45"
+      "total_cost": 1.45
     }
   ],
   "reference_sql": "SELECT \n  CONCAT(p1.topping_name, ',', p2.topping_name, ',', p3.topping_name) AS pizza,\n  ROUND(p1.ingredient_cost + p2.ingredient_cost + p3.ingredient_cost, 2) AS total_cost\nFROM pizza_toppings p1\nJOIN pizza_toppings p2 ON p1.topping_name < p2.topping_name\nJOIN pizza_toppings p3 ON p2.topping_name < p3.topping_name\nORDER BY total_cost DESC, pizza;",

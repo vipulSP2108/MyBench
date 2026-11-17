@@ -5,8 +5,10 @@
   "difficulty": "Hard",
   "company": "Google",
   "premium": false,
-  "question": "Google People Analytics audits organizational hierarchy to identify senior managers who oversee large team structures.\n\nA manager is considered a **Senior Manager** if they have **at least 5 direct report employees** assigned to them.\n\nWrite a query to output the `manager_name` and the count of direct reports (`direct_reports`) for all qualifying senior managers. Order the results by direct report count in descending order.",
-  "notes": [],
+  "question": "Google People Analytics audits the organizational hierarchy to find managers who oversee larger teams.\n\nEach row of `employees` is one employee (`emp_id`) together with the id and name of their direct manager (`manager_id`, `manager_name`).\n\nA manager is a **Senior Manager** if they have **at least 3 direct reports**.\n\nWrite a query to output the `manager_name` and the number of direct reports (`direct_reports`) for every senior manager, ordered by `direct_reports` in descending order, then by `manager_name`.",
+  "notes": [
+    "Rick (id 1001) manages employees 101, 103 and 104, so he has 3 direct reports. John has 2 and Duyen has 1, so neither is a senior manager."
+  ],
   "tables": [
     {
       "table_name": "employees",
@@ -44,7 +46,17 @@
         "manager_name": "Rick"
       },
       {
+        "emp_id": 104,
+        "manager_id": 1001,
+        "manager_name": "Rick"
+      },
+      {
         "emp_id": 1001,
+        "manager_id": 1008,
+        "manager_name": "John"
+      },
+      {
+        "emp_id": 1002,
         "manager_id": 1008,
         "manager_name": "John"
       }
@@ -53,10 +65,10 @@
   "sample_output": [
     {
       "manager_name": "Rick",
-      "direct_reportees": 1
+      "direct_reports": 3
     }
   ],
-  "reference_sql": "WITH managers AS (\n  SELECT DISTINCT manager_id\n  FROM employees\n  WHERE manager_id IS NOT NULL\n),\nmgr_reports AS (\n  SELECT e.manager_id, e.manager_name, e.emp_id\n  FROM employees e\n  WHERE e.emp_id IN (SELECT manager_id FROM managers)\n),\nsenior_mgr_candidates AS (\n  SELECT manager_id, manager_name, COUNT(DISTINCT emp_id) AS direct_reportees\n  FROM mgr_reports\n  GROUP BY manager_id, manager_name\n)\nSELECT manager_name, direct_reportees\nFROM senior_mgr_candidates\nWHERE manager_id NOT IN (\n  SELECT mr.manager_id\n  FROM mgr_reports mr\n  WHERE mr.emp_id IN (SELECT manager_id FROM senior_mgr_candidates)\n)\nORDER BY direct_reportees DESC, manager_name;",
+  "reference_sql": "SELECT manager_name, COUNT(DISTINCT emp_id) AS direct_reports\nFROM employees\nWHERE manager_id IS NOT NULL\nGROUP BY manager_id, manager_name\nHAVING COUNT(DISTINCT emp_id) >= 3\nORDER BY direct_reports DESC, manager_name;",
   "tags": [
     "aggregation",
     "cte",
@@ -90,7 +102,17 @@
             "manager_name": "Rick"
           },
           {
+            "emp_id": 104,
+            "manager_id": 1001,
+            "manager_name": "Rick"
+          },
+          {
             "emp_id": 1001,
+            "manager_id": 1008,
+            "manager_name": "John"
+          },
+          {
+            "emp_id": 1002,
             "manager_id": 1008,
             "manager_name": "John"
           }
@@ -99,7 +121,7 @@
       "expected_output": [
         {
           "manager_name": "Rick",
-          "direct_reportees": 1
+          "direct_reports": 3
         }
       ],
       "category": "normal"
@@ -154,11 +176,7 @@
       "expected_output": [
         {
           "manager_name": "Sarah",
-          "direct_reportees": 2
-        },
-        {
-          "manager_name": "Mike",
-          "direct_reportees": 1
+          "direct_reports": 3
         }
       ],
       "category": "edge"
@@ -196,12 +214,7 @@
           }
         ]
       },
-      "expected_output": [
-        {
-          "manager_name": "Senior Manager S",
-          "direct_reportees": 2
-        }
-      ]
+      "expected_output": []
     },
     {
       "test_case_id": "tc_4_descending_order_volume",
@@ -274,15 +287,7 @@
       "expected_output": [
         {
           "manager_name": "Manager Most",
-          "direct_reportees": 3
-        },
-        {
-          "manager_name": "Manager Med",
-          "direct_reportees": 2
-        },
-        {
-          "manager_name": "Manager Few",
-          "direct_reportees": 1
+          "direct_reports": 3
         }
       ]
     },
@@ -309,7 +314,12 @@
           }
         ]
       },
-      "expected_output": []
+      "expected_output": [
+        {
+          "manager_name": "Direct Manager",
+          "direct_reports": 3
+        }
+      ]
     },
     {
       "test_case_id": "tc_6_empty_employees",

@@ -6,7 +6,9 @@
   "company": "PayPal",
   "premium": true,
   "question": "PayPal risk management algorithms monitor peer-to-peer (P2P) money transfer relationships to prevent payment fraud.\n\nA **two-way relationship** exists between two users if User A has sent money to User B, and User B has also sent money back to User A.\n\nWrite a query to count how many distinct two-way payment relationships exist across the user base. Output the count as `relationships`.",
-  "notes": [],
+  "notes": [
+    "A pair of users counts once, no matter how many payments went each way."
+  ],
   "tables": [
     {
       "table_name": "payments",
@@ -57,10 +59,10 @@
   },
   "sample_output": [
     {
-      "unique_relationships": 2
+      "relationships": 2
     }
   ],
-  "reference_sql": "WITH unique_pairs AS (\n  SELECT DISTINCT\n    LEAST(payer_id, recipient_id) AS p1,\n    GREATEST(payer_id, recipient_id) AS p2\n  FROM payments\n)\nSELECT COUNT(*) AS unique_relationships FROM unique_pairs;",
+  "reference_sql": "SELECT COUNT(*) AS relationships\nFROM (SELECT DISTINCT payer_id, recipient_id FROM payments) p1\nJOIN (SELECT DISTINCT payer_id, recipient_id FROM payments) p2\n  ON p1.payer_id = p2.recipient_id AND p1.recipient_id = p2.payer_id\nWHERE p1.payer_id < p1.recipient_id;",
   "tags": [
     "finance",
     "medium",
@@ -103,7 +105,7 @@
       },
       "expected_output": [
         {
-          "unique_relationships": 3
+          "relationships": 2
         }
       ],
       "category": "normal"
@@ -167,7 +169,7 @@
       },
       "expected_output": [
         {
-          "unique_relationships": 6
+          "relationships": 4
         }
       ],
       "category": "volume"
@@ -216,7 +218,7 @@
       },
       "expected_output": [
         {
-          "unique_relationships": 4
+          "relationships": 3
         }
       ],
       "category": "edge"
@@ -229,7 +231,7 @@
       },
       "expected_output": [
         {
-          "unique_relationships": 0
+          "relationships": 0
         }
       ],
       "category": "edge"
@@ -278,7 +280,7 @@
       },
       "expected_output": [
         {
-          "unique_relationships": 5
+          "relationships": 2
         }
       ],
       "category": "edge"

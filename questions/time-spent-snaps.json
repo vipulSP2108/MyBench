@@ -110,14 +110,14 @@
   },
   "sample_output": [
     {
-      "age_bucket": "26-30",
-      "send_perc": "65.40",
-      "open_perc": "34.60"
+      "age_bucket": "31-35",
+      "send_perc": 43.75,
+      "open_perc": 56.25
     },
     {
-      "age_bucket": "31-35",
-      "send_perc": "43.75",
-      "open_perc": "56.25"
+      "age_bucket": "26-30",
+      "send_perc": 65.4,
+      "open_perc": 34.6
     }
   ],
   "reference_sql": "SELECT \n  ab.age_bucket,\n  ROUND(100.0 * SUM(CASE WHEN a.activity_type = 'send' THEN a.time_spent ELSE 0 END) / \n        SUM(CASE WHEN a.activity_type IN ('send', 'open') THEN a.time_spent ELSE 0 END), 2) AS send_perc,\n  ROUND(100.0 * SUM(CASE WHEN a.activity_type = 'open' THEN a.time_spent ELSE 0 END) / \n        SUM(CASE WHEN a.activity_type IN ('send', 'open') THEN a.time_spent ELSE 0 END), 2) AS open_perc\nFROM activities a\nJOIN age_breakdown ab ON a.user_id = ab.user_id\nWHERE a.activity_type IN ('send', 'open')\nGROUP BY ab.age_bucket;",
@@ -395,14 +395,14 @@
       },
       "expected_output": [
         {
-          "age_bucket": "31-35",
-          "send_perc": 43.75,
-          "open_perc": 56.25
-        },
-        {
           "age_bucket": "26-30",
           "send_perc": 65.4,
           "open_perc": 34.6
+        },
+        {
+          "age_bucket": "31-35",
+          "send_perc": 43.75,
+          "open_perc": 56.25
         }
       ],
       "category": "edge"
@@ -498,8 +498,8 @@
       "expected_output": [
         {
           "age_bucket": "31-35",
-          "send_perc": 28.0,
-          "open_perc": 72.0
+          "send_perc": 28,
+          "open_perc": 72
         },
         {
           "age_bucket": "26-30",

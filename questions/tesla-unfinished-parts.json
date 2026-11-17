@@ -72,11 +72,11 @@
   "sample_output": [
     {
       "part": "bumper",
-      "assembly_step": "3"
+      "assembly_step": 3
     },
     {
       "part": "bumper",
-      "assembly_step": "4"
+      "assembly_step": 4
     }
   ],
   "reference_sql": "SELECT part, assembly_step\nFROM parts_assembly\nWHERE finish_date IS NULL\nORDER BY part, assembly_step;",

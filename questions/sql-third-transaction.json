@@ -57,9 +57,9 @@
   },
   "sample_output": [
     {
-      "user_id": "111",
-      "spend": "89.60",
-      "transaction_date": "02/05/2022 12:00:00"
+      "user_id": 111,
+      "spend": 89.6,
+      "transaction_date": "2022-02-05 12:00:00"
     }
   ],
   "reference_sql": "WITH ranked AS (\n  SELECT user_id, spend, transaction_date,\n         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY transaction_date) AS rn\n  FROM transactions\n)\nSELECT user_id, spend, transaction_date\nFROM ranked\nWHERE rn = 3;",

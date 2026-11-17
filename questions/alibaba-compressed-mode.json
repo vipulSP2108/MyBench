@@ -45,7 +45,7 @@
   },
   "sample_output": [
     {
-      "mode": "2"
+      "mode": 2
     }
   ],
   "reference_sql": "SELECT item_count AS mode\nFROM items_per_order\nWHERE order_occurrences = (SELECT MAX(order_occurrences) FROM items_per_order)\nORDER BY item_count;",

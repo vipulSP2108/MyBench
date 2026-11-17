@@ -75,7 +75,7 @@
   },
   "sample_output": [
     {
-      "avg_delay": 1.0
+      "avg_delay": 1
     }
   ],
   "reference_sql": "WITH ranked_rides AS (\n  SELECT \n    user_id, \n    ride_date,\n    ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY ride_date) AS rn\n  FROM rides\n),\nfirst_rides AS (\n  SELECT user_id, ride_date AS first_ride_date\n  FROM ranked_rides\n  WHERE rn = 1\n),\nsecond_rides AS (\n  SELECT user_id, ride_date AS second_ride_date\n  FROM ranked_rides\n  WHERE rn = 2\n)\nSELECT \n  ROUND(AVG(DATEDIFF(s.second_ride_date, u.registration_date)), 2) AS avg_delay\nFROM users u\nJOIN first_rides f ON u.user_id = f.user_id AND u.registration_date = f.first_ride_date\nJOIN second_rides s ON u.user_id = s.user_id;",
@@ -130,7 +130,7 @@
       },
       "expected_output": [
         {
-          "avg_delay": 1.0
+          "avg_delay": 1
         }
       ],
       "category": "normal"
@@ -188,7 +188,7 @@
       },
       "expected_output": [
         {
-          "avg_delay": 5.0
+          "avg_delay": 5
         }
       ],
       "category": "edge"
@@ -232,7 +232,7 @@
       },
       "expected_output": [
         {
-          "avg_delay": 1.0
+          "avg_delay": 1
         }
       ],
       "category": "normal"
@@ -319,7 +319,7 @@
       },
       "expected_output": [
         {
-          "avg_delay": 4.0
+          "avg_delay": 4
         }
       ],
       "category": "volume"

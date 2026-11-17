@@ -1,12 +1,15 @@
 {
   "question_id": "q_095_first_month_retention",
   "slug": "first-month-retention",
-  "title": "Weekly Churn Rates",
+  "title": "First Month Retention",
   "difficulty": "Hard",
   "company": "Facebook",
   "premium": true,
-  "question": "Mobile gaming product managers track player retention to see how many new players continue playing after their install month.\n\nA player's **install month** is the calendar month of their earliest recorded login. A player is **retained in month 1** if they log into the game again during the calendar month immediately following their install month.\n\nWrite a query to calculate the percentage of new players who were retained in month 1 for each cohort install month. Round the retention percentage to 2 decimal places.",
-  "notes": [],
+  "question": "Mobile gaming product managers track player retention to see how many new players keep playing after their install month.\n\nA player's **install month** is the calendar month of their `signup_date` in `users`. A player is **retained in month 1** if `user_actions` contains at least one `'login'` action for them during the calendar month immediately after their install month (other action types such as `'post'` do not count).\n\nWrite a query to calculate, for each install month, the percentage of players who were retained in month 1, rounded to 2 decimal places. Output `install_month` (formatted `'YYYY-MM'`) and `retention_pct`, sorted by `install_month`.",
+  "notes": [
+    "June cohort: users 1, 2 and 3 signed up. Users 1 and 3 logged in during July, user 2 only posted, so 2 of 3 = 66.67%.",
+    "July cohort: user 4 logged in during August, so 100.00%."
+  ],
   "tables": [
     {
       "table_name": "users",
@@ -52,12 +55,21 @@
       {
         "user_id": 3,
         "signup_date": "06/08/2022 00:00:00"
+      },
+      {
+        "user_id": 4,
+        "signup_date": "07/03/2022 00:00:00"
       }
     ],
     "user_actions": [
       {
         "user_id": 1,
         "event_date": "06/10/2022 00:00:00",
+        "action_type": "login"
+      },
+      {
+        "user_id": 1,
+        "event_date": "07/10/2022 00:00:00",
         "action_type": "login"
       },
       {
@@ -69,20 +81,30 @@
         "user_id": 3,
         "event_date": "06/12/2022 00:00:00",
         "action_type": "login"
+      },
+      {
+        "user_id": 3,
+        "event_date": "07/20/2022 00:00:00",
+        "action_type": "login"
+      },
+      {
+        "user_id": 4,
+        "event_date": "08/05/2022 00:00:00",
+        "action_type": "login"
       }
     ]
   },
   "sample_output": [
     {
-      "signup_week": "05/30/2022",
-      "churn_rate": "50.00"
+      "install_month": "2022-06",
+      "retention_pct": 66.67
     },
     {
-      "signup_week": "06/06/2022",
-      "churn_rate": "0.00"
+      "install_month": "2022-07",
+      "retention_pct": 100
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(100.0 * COUNT(DISTINCT a.user_id) / COUNT(DISTINCT u.user_id), 2) AS retention_rate\nFROM users u\nLEFT JOIN user_actions a \n  ON u.user_id = a.user_id \n AND DATEDIFF(a.event_date, u.signup_date) BETWEEN 1 AND 30;",
+  "reference_sql": "SELECT\n  DATE_FORMAT(u.signup_date, '%Y-%m') AS install_month,\n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN a.user_id IS NOT NULL THEN u.user_id END)\n        / COUNT(DISTINCT u.user_id), 2) AS retention_pct\nFROM users u\nLEFT JOIN user_actions a\n  ON a.user_id = u.user_id\n AND a.action_type = 'login'\n AND DATE_FORMAT(a.event_date, '%Y-%m') = DATE_FORMAT(DATE_ADD(u.signup_date, INTERVAL 1 MONTH), '%Y-%m')\nGROUP BY DATE_FORMAT(u.signup_date, '%Y-%m')\nORDER BY install_month;",
   "tags": [
     "date-manipulation",
     "facebook",
@@ -109,12 +131,21 @@
           {
             "user_id": 3,
             "signup_date": "06/08/2022 00:00:00"
+          },
+          {
+            "user_id": 4,
+            "signup_date": "07/03/2022 00:00:00"
           }
         ],
         "user_actions": [
           {
             "user_id": 1,
             "event_date": "06/10/2022 00:00:00",
+            "action_type": "login"
+          },
+          {
+            "user_id": 1,
+            "event_date": "07/10/2022 00:00:00",
             "action_type": "login"
           },
           {
@@ -126,12 +157,27 @@
             "user_id": 3,
             "event_date": "06/12/2022 00:00:00",
             "action_type": "login"
+          },
+          {
+            "user_id": 3,
+            "event_date": "07/20/2022 00:00:00",
+            "action_type": "login"
+          },
+          {
+            "user_id": 4,
+            "event_date": "08/05/2022 00:00:00",
+            "action_type": "login"
           }
         ]
       },
       "expected_output": [
         {
-          "retention_rate": 66.67
+          "install_month": "2022-06",
+          "retention_pct": 66.67
+        },
+        {
+          "install_month": "2022-07",
+          "retention_pct": 100
         }
       ],
       "category": "normal"
@@ -201,7 +247,8 @@
       },
       "expected_output": [
         {
-          "retention_rate": 66.67
+          "install_month": "2022-06",
+          "retention_pct": 0
         }
       ],
       "category": "volume"
@@ -253,7 +300,12 @@
       },
       "expected_output": [
         {
-          "retention_rate": 75.0
+          "install_month": "2017-06",
+          "retention_pct": 0
+        },
+        {
+          "install_month": "2022-06",
+          "retention_pct": 0
         }
       ],
       "category": "edge"
@@ -265,11 +317,7 @@
         "users": [],
         "user_actions": []
       },
-      "expected_output": [
-        {
-          "retention_rate": null
-        }
-      ],
+      "expected_output": [],
       "category": "edge"
     },
     {
@@ -328,7 +376,8 @@
       },
       "expected_output": [
         {
-          "retention_rate": 60.0
+          "install_month": "2022-06",
+          "retention_pct": 0
         }
       ],
       "category": "edge"
@@ -398,7 +447,8 @@
       },
       "expected_output": [
         {
-          "retention_rate": 66.67
+          "install_month": "2022-06",
+          "retention_pct": 0
         }
       ],
       "category": "boundary"

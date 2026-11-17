@@ -77,19 +77,19 @@
   },
   "sample_output": [
     {
-      "mth": "6",
-      "product": "50001",
-      "avg_stars": "3.50"
+      "mth": 6,
+      "product_id": 50001,
+      "avg_stars": 3.5
     },
     {
-      "mth": "6",
-      "product": "69852",
-      "avg_stars": "4.00"
+      "mth": 6,
+      "product_id": 69852,
+      "avg_stars": 4
     },
     {
-      "mth": "7",
-      "product": "69852",
-      "avg_stars": "2.50"
+      "mth": 7,
+      "product_id": 69852,
+      "avg_stars": 2.5
     }
   ],
   "reference_sql": "SELECT \n  MONTH(submit_date) AS mth,\n  product_id,\n  ROUND(AVG(stars), 2) AS avg_stars\nFROM reviews\nGROUP BY MONTH(submit_date), product_id\nORDER BY mth, product_id;",
@@ -156,7 +156,7 @@
         {
           "mth": 6,
           "product_id": 69852,
-          "avg_stars": 4.0
+          "avg_stars": 4
         },
         {
           "mth": 7,
@@ -257,12 +257,12 @@
         {
           "mth": 6,
           "product_id": 69852,
-          "avg_stars": 4.0
+          "avg_stars": 4
         },
         {
           "mth": 6,
           "product_id": 70852,
-          "avg_stars": 4.0
+          "avg_stars": 4
         },
         {
           "mth": 7,
@@ -342,17 +342,17 @@
         {
           "mth": 6,
           "product_id": 55001,
-          "avg_stars": 1.0
+          "avg_stars": 1
         },
         {
           "mth": 6,
           "product_id": 69852,
-          "avg_stars": 4.0
+          "avg_stars": 4
         },
         {
           "mth": 6,
           "product_id": 74852,
-          "avg_stars": 1.0
+          "avg_stars": 1
         },
         {
           "mth": 7,

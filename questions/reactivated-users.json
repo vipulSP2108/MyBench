@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Facebook",
   "premium": false,
-  "question": "Facebook growth analytics tracks monthly user engagement transitions to measure reactivation after dormancy.\n\nA user is considered **reactivated** in month M if:\n1. They were active (logged in) during month M, AND\n2. They were completely inactive (zero logins) during month M - 1, AND\n3. They were active in at least one earlier month prior to month M - 1.\n\nWrite a query to count how many reactivated users logged in during each calendar month. Output the `month` and `reactivated_users` count.",
+  "question": "Facebook growth analytics tracks monthly user engagement transitions to measure reactivation after dormancy.\n\n`user_logins` only contains data for the year 2022. Assume that every user was already active at some point before 2022.\n\nA user is **reactivated** in month M (February to December) if they logged in during month M but had **no login at all** during month M - 1.\n\nWrite a query to count how many users were reactivated in each calendar month. Output `mth` (the month number) and `reactivated_users`, sorted by `mth`. Months with no reactivated users do not need to appear.",
   "notes": [
     "The user_logins table only contains data for the year 2022 and there are no missing dates within that period.",
     "For instance, if a user whose first login date is on 3 March 2022, we assume that they had previously logged in during the year 2021. Although the data for their previous logins is not present in the user_logins table, we consider these users as reactivated users.",
@@ -54,16 +54,16 @@
   },
   "sample_output": [
     {
-      "mth": "2",
-      "reactivated_users": "1"
+      "mth": 2,
+      "reactivated_users": 1
     },
     {
-      "mth": "3",
-      "reactivated_users": "2"
+      "mth": 3,
+      "reactivated_users": 2
     },
     {
-      "mth": "5",
-      "reactivated_users": "2"
+      "mth": 5,
+      "reactivated_users": 2
     }
   ],
   "reference_sql": "WITH user_months AS (\n  SELECT DISTINCT user_id, MONTH(login_date) AS mth\n  FROM user_logins\n)\nSELECT \n  curr.mth,\n  COUNT(DISTINCT curr.user_id) AS reactivated_users\nFROM user_months curr\nLEFT JOIN user_months prev ON curr.user_id = prev.user_id AND curr.mth = prev.mth + 1\nWHERE prev.user_id IS NULL AND curr.mth > 1\nGROUP BY curr.mth\nORDER BY curr.mth;",

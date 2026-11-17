@@ -79,18 +79,18 @@
   "sample_output": [
     {
       "manufacturer": "Biogen",
-      "drug_count": "1",
-      "total_loss": "297324.73"
+      "drug_count": 1,
+      "total_loss": 297324.73
     },
     {
       "manufacturer": "AbbVie",
-      "drug_count": "1",
-      "total_loss": "221429.36"
+      "drug_count": 1,
+      "total_loss": 221429.36
     },
     {
       "manufacturer": "Eli Lilly",
-      "drug_count": "1",
-      "total_loss": "221422.17"
+      "drug_count": 1,
+      "total_loss": 221422.17
     }
   ],
   "reference_sql": "SELECT \n  manufacturer,\n  COUNT(drug) AS drug_count,\n  SUM(cogs - total_sales) AS total_loss\nFROM pharmacy_sales\nWHERE total_sales < cogs\nGROUP BY manufacturer\nORDER BY total_loss DESC, manufacturer ASC;",

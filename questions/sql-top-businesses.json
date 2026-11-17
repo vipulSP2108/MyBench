@@ -5,7 +5,7 @@
   "difficulty": "Easy",
   "company": "Yelp",
   "premium": true,
-  "question": "Yelp business quality algorithms identify top-rated local establishments that consistently earn positive reviews.\n\nA business is considered top-tier if its lowest recorded review star rating is 4 stars or higher (`MIN(review_stars) >= 4`).\n\nWrite a query to find all businesses where every single customer review gave at least 4 stars. Output `business_id` and the business `name`, sorted by `business_id` in ascending order.",
+  "question": "Yelp business quality algorithms identify top-rated local establishments that consistently earn positive reviews.\n\nA business is **top-rated** if its lowest review rating is 4 stars or higher (`MIN(review_stars) >= 4`), meaning every customer review gave at least 4 stars.\n\nWrite a query to count the top-rated businesses and their share of all reviewed businesses. Output `top_rated_businesses` and `top_rated_pct` (rounded to 2 decimal places).",
   "notes": [],
   "tables": [
     {
@@ -103,11 +103,11 @@
   },
   "sample_output": [
     {
-      "top_rated_businesses": "3",
-      "top_rated_pct": "60.00"
+      "top_rated_businesses": 3,
+      "top_rated_pct": 60
     }
   ],
-  "reference_sql": "WITH biz AS (\n  SELECT business_id, MIN(review_stars) AS worst_review\n  FROM reviews\n  GROUP BY business_id\n)\nSELECT \n  SUM(CASE WHEN worst_review >= 4 THEN 1 ELSE 0 END) AS top_rated_businesses,\n  ROUND(100.0 * SUM(CASE WHEN worst_review >= 4 THEN 1 ELSE 0 END) / COUNT(*), 0) AS top_rated_pct\nFROM biz;",
+  "reference_sql": "WITH biz AS (\n  SELECT business_id, MIN(review_stars) AS worst_review\n  FROM reviews\n  GROUP BY business_id\n)\nSELECT\n  SUM(CASE WHEN worst_review >= 4 THEN 1 ELSE 0 END) AS top_rated_businesses,\n  ROUND(100.0 * SUM(CASE WHEN worst_review >= 4 THEN 1 ELSE 0 END) / COUNT(*), 2) AS top_rated_pct\nFROM biz;",
   "tags": [
     "aggregation",
     "cte",
@@ -191,7 +191,7 @@
       "expected_output": [
         {
           "top_rated_businesses": 3,
-          "top_rated_pct": 60.0
+          "top_rated_pct": 60
         }
       ],
       "category": "normal"
@@ -332,7 +332,7 @@
       "expected_output": [
         {
           "top_rated_businesses": 6,
-          "top_rated_pct": 60.0
+          "top_rated_pct": 60
         }
       ],
       "category": "volume"
@@ -438,7 +438,7 @@
       "expected_output": [
         {
           "top_rated_businesses": 3,
-          "top_rated_pct": 43.0
+          "top_rated_pct": 42.86
         }
       ],
       "category": "edge"

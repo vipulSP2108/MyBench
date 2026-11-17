@@ -64,10 +64,37 @@
   },
   "sample_output": [
     {
-      "matching_airbnb": 1
+      "rental_1": 1,
+      "rental_2": 2,
+      "matching_amenities": 2
+    },
+    {
+      "rental_1": 1,
+      "rental_2": 3,
+      "matching_amenities": 2
+    },
+    {
+      "rental_1": 2,
+      "rental_2": 3,
+      "matching_amenities": 2
+    },
+    {
+      "rental_1": 3,
+      "rental_2": 4,
+      "matching_amenities": 2
+    },
+    {
+      "rental_1": 1,
+      "rental_2": 4,
+      "matching_amenities": 1
+    },
+    {
+      "rental_1": 2,
+      "rental_2": 4,
+      "matching_amenities": 1
     }
   ],
-  "reference_sql": "SELECT a.rental_id AS rental_1, b.rental_id AS rental_2, COUNT(a.amenity) AS matching_amenities\nFROM rental_amenities a\nJOIN rental_amenities b ON a.amenity = b.amenity AND a.rental_id < b.rental_id\nGROUP BY a.rental_id, b.rental_id\nHAVING COUNT(a.amenity) >= 2\nORDER BY matching_amenities DESC, rental_1, rental_2;",
+  "reference_sql": "SELECT a.rental_id AS rental_1, b.rental_id AS rental_2, COUNT(*) AS matching_amenities\nFROM rental_amenities a\nJOIN rental_amenities b ON a.amenity = b.amenity AND a.rental_id < b.rental_id\nGROUP BY a.rental_id, b.rental_id\nORDER BY matching_amenities DESC, rental_1, rental_2;",
   "tags": [
     "aggregation",
     "airbnb",
@@ -141,6 +168,16 @@
           "rental_1": 3,
           "rental_2": 4,
           "matching_amenities": 2
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 4,
+          "matching_amenities": 1
         }
       ],
       "category": "normal"
@@ -324,6 +361,46 @@
           "rental_1": 1003,
           "rental_2": 1004,
           "matching_amenities": 2
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 1004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 1004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 1001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 1002,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1001,
+          "rental_2": 1004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1002,
+          "rental_2": 1004,
+          "matching_amenities": 1
         }
       ],
       "category": "volume"
@@ -442,6 +519,26 @@
           "rental_1": 5001,
           "rental_2": 5002,
           "matching_amenities": 2
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 5001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 5002,
+          "matching_amenities": 1
         }
       ],
       "category": "edge"
@@ -526,6 +623,51 @@
           "rental_1": 3,
           "rental_2": 4,
           "matching_amenities": 2
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 9001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 9501,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 9001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 9501,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 3,
+          "rental_2": 9001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 3,
+          "rental_2": 9501,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 9501,
+          "matching_amenities": 1
         }
       ],
       "category": "edge"
@@ -709,6 +851,46 @@
           "rental_1": 8003,
           "rental_2": 8004,
           "matching_amenities": 2
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 1,
+          "rental_2": 8004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 4,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 2,
+          "rental_2": 8004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 8001,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 4,
+          "rental_2": 8002,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 8001,
+          "rental_2": 8004,
+          "matching_amenities": 1
+        },
+        {
+          "rental_1": 8002,
+          "rental_2": 8004,
+          "matching_amenities": 1
         }
       ],
       "category": "boundary"

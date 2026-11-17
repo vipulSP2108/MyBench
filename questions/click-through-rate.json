@@ -62,15 +62,15 @@
   },
   "sample_output": [
     {
-      "app_id": "123",
-      "ctr": "50.00"
+      "app_id": 234,
+      "ctr": 100
     },
     {
-      "app_id": "234",
-      "ctr": "100.00"
+      "app_id": 123,
+      "ctr": 50
     }
   ],
-  "reference_sql": "SELECT \n  app_id,\n  ROUND(100.0 * SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END), 0), 2) AS ctr\nFROM events\nWHERE YEAR(timestamp) = 2022\nGROUP BY app_id\nORDER BY app_id;",
+  "reference_sql": "SELECT\n  app_id,\n  ROUND(100.0 * SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END)\n        / NULLIF(SUM(CASE WHEN event_type = 'impression' THEN 1 ELSE 0 END), 0), 2) AS ctr\nFROM events\nWHERE YEAR(timestamp) = 2022\nGROUP BY app_id\nORDER BY ctr DESC, app_id ASC;",
   "tags": [
     "easy",
     "facebook",
@@ -114,12 +114,12 @@
       },
       "expected_output": [
         {
-          "app_id": 123,
-          "ctr": 50.0
+          "app_id": 234,
+          "ctr": 100
         },
         {
-          "app_id": 234,
-          "ctr": 100.0
+          "app_id": 123,
+          "ctr": 50
         }
       ],
       "category": "normal"
@@ -183,20 +183,20 @@
       },
       "expected_output": [
         {
-          "app_id": 123,
-          "ctr": 50.0
-        },
-        {
           "app_id": 234,
-          "ctr": 100.0
-        },
-        {
-          "app_id": 1123,
-          "ctr": 50.0
+          "ctr": 100
         },
         {
           "app_id": 1234,
-          "ctr": 100.0
+          "ctr": 100
+        },
+        {
+          "app_id": 123,
+          "ctr": 50
+        },
+        {
+          "app_id": 1123,
+          "ctr": 50
         }
       ],
       "category": "volume"
@@ -245,12 +245,12 @@
       },
       "expected_output": [
         {
-          "app_id": 123,
-          "ctr": 50.0
+          "app_id": 234,
+          "ctr": 100
         },
         {
-          "app_id": 234,
-          "ctr": 100.0
+          "app_id": 123,
+          "ctr": 50
         }
       ],
       "category": "edge"

@@ -40,6 +40,12 @@ export const ShortcutsController = {
     el("nav-logo")?.addEventListener("click", () => state.emit("switchView", "home"));
 
     el("nav-btn-home")?.addEventListener("click", () => state.emit("switchView", "home"));
+    el("nav-btn-insights")?.addEventListener("click", () => state.emit("switchView", "insights"));
+    el("btn-topics-toggle")?.addEventListener("click", () => {
+      state.showTopics = !state.showTopics;
+      try { localStorage.setItem("sqlmaster_show_topics", String(state.showTopics)); } catch (e) {}
+      HomePage.applyTopicsVisibility();
+    });
     el("nav-btn-notes")?.addEventListener("click", () => state.emit("switchView", "notes"));
     el("nav-btn-settings")?.addEventListener("click", () => state.emit("switchView", "settings"));
     el("header-progress-pill")?.addEventListener("click", () => state.emit("switchView", "home"));
@@ -238,11 +244,7 @@ export const ShortcutsController = {
     });
 
     el("home-btn-resume")?.addEventListener("click", () => {
-      const savedSlug = localStorage.getItem("sqlmaster_current_slug");
-      const target = (savedSlug && state.questions.find(q => q.slug === savedSlug)) ||
-                     state.questions.find(q => isQuestionAttempted(q.slug)) || 
-                     state.questions.find(q => !isQuestionSolved(q.slug)) || 
-                     state.questions[0];
+      const target = HomePage.getContinueTarget();
       if (target) {
         state.emit("navigateToQuestion", target.slug);
       }
@@ -344,6 +346,8 @@ export const ShortcutsController = {
       state.homeDiffFilters.clear();
       state.homeCompany = "all";
       state.homeSearch = "";
+      state.homeTag = null;
+      HomePage.renderTopics();
 
       document.querySelectorAll(".seg-btn").forEach(b => b.classList.toggle("active", b.dataset.segment === "all"));
       document.querySelectorAll(".filter-cb-status, .filter-cb-diff").forEach(cb => cb.checked = false);
@@ -373,8 +377,24 @@ export const ShortcutsController = {
       HomePage.renderHomeProblemsTable();
     });
 
-    el("btn-streak-prev")?.addEventListener("click", () => showToast("Viewing previous month streak"));
-    el("btn-streak-next")?.addEventListener("click", () => showToast("Viewing current month streak"));
+    el("btn-streak-prev")?.addEventListener("click", () => {
+      state.calMonthOffset = (state.calMonthOffset || 0) - 1;
+      HomePage.renderStreakCalendar();
+    });
+    el("btn-streak-next")?.addEventListener("click", () => {
+      if ((state.calMonthOffset || 0) < 0) state.calMonthOffset++;
+      HomePage.renderStreakCalendar();
+    });
+
+    const sortSel = el("home-sort");
+    if (sortSel) {
+      sortSel.value = state.homeSort || "default";
+      sortSel.addEventListener("change", () => {
+        state.homeSort = sortSel.value;
+        try { localStorage.setItem("sqlmaster_home_sort", state.homeSort); } catch (e) {}
+        HomePage.renderHomeProblemsTable();
+      });
+    }
 
     el("home-btn-view-all-starred")?.addEventListener("click", () => {
       state.homeSegment = "starred";

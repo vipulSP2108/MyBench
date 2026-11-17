@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Bloomberg",
   "premium": true,
-  "question": "Bloomberg portfolio managers evaluate monthly price momentum across equities.\n\nFor each stock, calculate the change in closing price comparing the current calendar month to the previous calendar month.\n\nWrite a query to output the `ticker`, year-month (`'YYYY-MM'`), the current month close, and the price difference from the previous month. Order by `ticker` and date.",
+  "question": "Bloomberg portfolio managers evaluate monthly price momentum across equities.\n\nFor each stock, calculate the change in closing price comparing the current calendar month to the previous calendar month.\n\nUse each month's last recorded closing price. Output `ticker`, `month` (formatted `'YYYY-MM'`), `month_close` and `change_vs_prev_month` (NULL for a ticker's first month), ordered by `ticker` and `month`.",
   "notes": [],
   "tables": [
     {
@@ -101,42 +101,42 @@
   "sample_output": [
     {
       "ticker": "AAPL",
-      "month": "01/01/2023",
-      "month_close": "144.00",
-      "change_vs_prev_month": "NULL"
+      "month": "2023-01",
+      "month_close": 144.0,
+      "change_vs_prev_month": null
     },
     {
       "ticker": "AAPL",
-      "month": "02/01/2023",
-      "month_close": "147.00",
-      "change_vs_prev_month": "3.00"
+      "month": "2023-02",
+      "month_close": 147.0,
+      "change_vs_prev_month": 3.0
     },
     {
       "ticker": "AAPL",
-      "month": "03/01/2023",
-      "month_close": "164.00",
-      "change_vs_prev_month": "17.00"
+      "month": "2023-03",
+      "month_close": 164.0,
+      "change_vs_prev_month": 17.0
     },
     {
       "ticker": "AMZN",
-      "month": "01/01/2023",
-      "month_close": "102.00",
-      "change_vs_prev_month": "NULL"
+      "month": "2023-01",
+      "month_close": 102.0,
+      "change_vs_prev_month": null
     },
     {
       "ticker": "AMZN",
-      "month": "02/01/2023",
-      "month_close": "94.00",
-      "change_vs_prev_month": "-8.00"
+      "month": "2023-02",
+      "month_close": 94.0,
+      "change_vs_prev_month": -8.0
     },
     {
       "ticker": "AMZN",
-      "month": "03/01/2023",
-      "month_close": "101.00",
-      "change_vs_prev_month": "7.00"
+      "month": "2023-03",
+      "month_close": 101.0,
+      "change_vs_prev_month": 7.0
     }
   ],
-  "reference_sql": "WITH monthly AS (\n  SELECT \n    ticker,\n    DATE_FORMAT(date, '%Y-%m') AS ym,\n    close,\n    ROW_NUMBER() OVER (PARTITION BY ticker, DATE_FORMAT(date, '%Y-%m') ORDER BY date DESC) AS rn\n  FROM stock_prices\n),\neom AS (\n  SELECT ticker, ym, close\n  FROM monthly\n  WHERE rn = 1\n)\nSELECT \n  ticker,\n  ym,\n  close,\n  ROUND(close - LAG(close) OVER (PARTITION BY ticker ORDER BY ym), 2) AS change_amt\nFROM eom\nORDER BY ticker, ym;",
+  "reference_sql": "WITH monthly AS (\n  SELECT\n    ticker,\n    DATE_FORMAT(date, '%Y-%m') AS ym,\n    close,\n    ROW_NUMBER() OVER (PARTITION BY ticker, DATE_FORMAT(date, '%Y-%m') ORDER BY date DESC) AS rn\n  FROM stock_prices\n),\neom AS (\n  SELECT ticker, ym, close FROM monthly WHERE rn = 1\n)\nSELECT\n  ticker,\n  ym AS month,\n  close AS month_close,\n  ROUND(close - LAG(close) OVER (PARTITION BY ticker ORDER BY ym), 2) AS change_vs_prev_month\nFROM eom\nORDER BY ticker, month;",
   "tags": [
     "bloomberg",
     "cte",
@@ -220,39 +220,39 @@
       "expected_output": [
         {
           "ticker": "AAPL",
-          "ym": "2023-01",
-          "close": 144.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 144.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-02",
-          "close": 147.0,
-          "change_amt": 3.0
+          "month": "2023-02",
+          "month_close": 147.0,
+          "change_vs_prev_month": 3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-03",
-          "close": 164.0,
-          "change_amt": 17.0
+          "month": "2023-03",
+          "month_close": 164.0,
+          "change_vs_prev_month": 17.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-01",
-          "close": 102.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 102.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-02",
-          "close": 94.0,
-          "change_amt": -8.0
+          "month": "2023-02",
+          "month_close": 94.0,
+          "change_vs_prev_month": -8.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-03",
-          "close": 101.0,
-          "change_amt": 7.0
+          "month": "2023-03",
+          "month_close": 101.0,
+          "change_vs_prev_month": 7.0
         }
       ],
       "category": "normal"
@@ -379,39 +379,39 @@
       "expected_output": [
         {
           "ticker": "AAPL",
-          "ym": "2023-01",
-          "close": 144.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 144.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-02",
-          "close": 147.0,
-          "change_amt": 3.0
+          "month": "2023-02",
+          "month_close": 147.0,
+          "change_vs_prev_month": 3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-03",
-          "close": 164.0,
-          "change_amt": 17.0
+          "month": "2023-03",
+          "month_close": 164.0,
+          "change_vs_prev_month": 17.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-01",
-          "close": 102.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 102.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-02",
-          "close": 94.0,
-          "change_amt": -8.0
+          "month": "2023-02",
+          "month_close": 94.0,
+          "change_vs_prev_month": -8.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-03",
-          "close": 101.0,
-          "change_amt": 7.0
+          "month": "2023-03",
+          "month_close": 101.0,
+          "change_vs_prev_month": 7.0
         }
       ],
       "category": "volume"
@@ -506,51 +506,51 @@
       "expected_output": [
         {
           "ticker": "AAPL",
-          "ym": "2018-01",
-          "close": 144.0,
-          "change_amt": null
+          "month": "2018-01",
+          "month_close": 144.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AAPL",
-          "ym": "2018-02",
-          "close": 147.0,
-          "change_amt": 3.0
+          "month": "2018-02",
+          "month_close": 147.0,
+          "change_vs_prev_month": 3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-01",
-          "close": 144.0,
-          "change_amt": -3.0
+          "month": "2023-01",
+          "month_close": 144.0,
+          "change_vs_prev_month": -3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-02",
-          "close": 147.0,
-          "change_amt": 3.0
+          "month": "2023-02",
+          "month_close": 147.0,
+          "change_vs_prev_month": 3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-03",
-          "close": 164.0,
-          "change_amt": 17.0
+          "month": "2023-03",
+          "month_close": 164.0,
+          "change_vs_prev_month": 17.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-01",
-          "close": 102.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 102.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-02",
-          "close": 94.0,
-          "change_amt": -8.0
+          "month": "2023-02",
+          "month_close": 94.0,
+          "change_vs_prev_month": -8.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-03",
-          "close": 101.0,
-          "change_amt": 7.0
+          "month": "2023-03",
+          "month_close": 101.0,
+          "change_vs_prev_month": 7.0
         }
       ],
       "category": "edge"
@@ -646,39 +646,39 @@
       "expected_output": [
         {
           "ticker": "AAPL",
-          "ym": "2023-01",
-          "close": 144.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 144.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-02",
-          "close": 147.0,
-          "change_amt": 3.0
+          "month": "2023-02",
+          "month_close": 147.0,
+          "change_vs_prev_month": 3.0
         },
         {
           "ticker": "AAPL",
-          "ym": "2023-03",
-          "close": 164.0,
-          "change_amt": 17.0
+          "month": "2023-03",
+          "month_close": 164.0,
+          "change_vs_prev_month": 17.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-01",
-          "close": 102.0,
-          "change_amt": null
+          "month": "2023-01",
+          "month_close": 102.0,
+          "change_vs_prev_month": null
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-02",
-          "close": 94.0,
-          "change_amt": -8.0
+          "month": "2023-02",
+          "month_close": 94.0,
+          "change_vs_prev_month": -8.0
         },
         {
           "ticker": "AMZN",
-          "ym": "2023-03",
-          "close": 101.0,
-          "change_amt": 7.0
+          "month": "2023-03",
+          "month_close": 101.0,
+          "change_vs_prev_month": 7.0
         }
       ],
       "category": "edge"

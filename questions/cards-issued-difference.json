@@ -82,11 +82,11 @@
   "sample_output": [
     {
       "card_name": "Chase Freedom Flex",
-      "difference": "15000"
+      "difference": 15000
     },
     {
       "card_name": "Chase Sapphire Reserve",
-      "difference": "10000"
+      "difference": 10000
     }
   ],
   "reference_sql": "SELECT \n  card_name,\n  MAX(issued_amount) - MIN(issued_amount) AS difference\nFROM monthly_cards_issued\nGROUP BY card_name\nORDER BY difference DESC, card_name ASC;",

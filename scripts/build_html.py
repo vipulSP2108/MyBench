@@ -39,6 +39,7 @@ TEMPLATE_PARTS = [
     ("__views_start__", "Views Wrapper Opening"),
     ("views/practice.html", "View 1: Practice Workspace"),
     ("views/home.html", "View 2: Home Dashboard"),
+    ("views/insights.html", "View: Progress Insights"),
     ("views/notes.html", "View 3: Personal Notes Hub"),
     ("views/settings.html", "View 4: Settings & Preferences"),
     ("__views_end__", "Views Wrapper Closing"),

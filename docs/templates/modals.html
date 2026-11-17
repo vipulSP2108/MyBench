@@ -130,3 +130,15 @@
     </div>
   </div>
 
+  <!-- Command Palette (Ctrl/Cmd + K) -->
+  <div id="palette-backdrop" class="palette-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-label="Quick search">
+    <div class="palette-card">
+      <div class="palette-input-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Search questions, companies, topics or actions..." />
+        <kbd class="kbd-hint">Esc</kbd>
+      </div>
+      <div id="palette-list" class="palette-list" role="listbox"></div>
+      <div class="palette-foot"><span><kbd class="kbd-hint">↑</kbd> <kbd class="kbd-hint">↓</kbd> navigate</span><span><kbd class="kbd-hint">Enter</kbd> open</span></div>
+    </div>
+  </div>

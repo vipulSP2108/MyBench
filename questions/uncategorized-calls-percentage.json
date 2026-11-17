@@ -77,10 +77,10 @@
   },
   "sample_output": [
     {
-      "uncategorised_call_pct": "20.0"
+      "call_percentage": 20
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(100.0 * SUM(CASE WHEN call_category IS NULL OR call_category = 'n/a' THEN 1 ELSE 0 END) / COUNT(*), 1) AS uncategorised_call_pct\nFROM callers;",
+  "reference_sql": "SELECT\n  ROUND(100.0 * SUM(CASE WHEN call_category IS NULL OR LOWER(call_category) = 'n/a' THEN 1 ELSE 0 END) / COUNT(*), 1) AS call_percentage\nFROM callers;",
   "tags": [
     "healthcare",
     "math",
@@ -139,7 +139,7 @@
       },
       "expected_output": [
         {
-          "uncategorised_call_pct": 20.0
+          "call_percentage": 20
         }
       ],
       "category": "normal"
@@ -223,7 +223,7 @@
       },
       "expected_output": [
         {
-          "uncategorised_call_pct": 20.0
+          "call_percentage": 20
         }
       ],
       "category": "volume"
@@ -286,7 +286,7 @@
       },
       "expected_output": [
         {
-          "uncategorised_call_pct": 14.3
+          "call_percentage": 14.3
         }
       ],
       "category": "edge"
@@ -299,7 +299,7 @@
       },
       "expected_output": [
         {
-          "uncategorised_call_pct": null
+          "call_percentage": null
         }
       ],
       "category": "edge"
@@ -362,7 +362,7 @@
       },
       "expected_output": [
         {
-          "uncategorised_call_pct": 28.6
+          "call_percentage": 28.6
         }
       ],
       "category": "edge"

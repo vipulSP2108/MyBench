@@ -82,7 +82,7 @@
       "payment_count": 1
     }
   ],
-  "reference_sql": "WITH ordered_payments AS (\n  SELECT \n    merchant_id,\n    credit_card_id,\n    amount,\n    transaction_timestamp,\n    LAG(transaction_timestamp) OVER (\n      PARTITION BY merchant_id, credit_card_id, amount \n      ORDER BY transaction_timestamp\n    ) AS prev_timestamp\n  FROM transactions\n)\nSELECT COUNT(*) AS payment_count\nFROM ordered_payments\nWHERE prev_timestamp IS NOT NULL\n  AND TIMESTAMPDIFF(MINUTE, prev_timestamp, transaction_timestamp) <= 10;",
+  "reference_sql": "WITH ordered_payments AS (\n  SELECT merchant_id, credit_card_id, amount, transaction_timestamp,\n         LAG(transaction_timestamp) OVER (\n           PARTITION BY merchant_id, credit_card_id, amount\n           ORDER BY transaction_timestamp\n         ) AS prev_timestamp\n  FROM transactions\n)\nSELECT COUNT(*) AS payment_count\nFROM ordered_payments\nWHERE prev_timestamp IS NOT NULL\n  AND TIMESTAMPDIFF(SECOND, prev_timestamp, transaction_timestamp) <= 600;",
   "tags": [
     "aggregation",
     "finance",

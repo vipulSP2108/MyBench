@@ -5,8 +5,11 @@
   "difficulty": "Hard",
   "company": "Facebook",
   "premium": true,
-  "question": "Facebook social recommendations team wants to recommend upcoming events to users based on what their direct friends are attending.\n\nA user should receive an event recommendation if at least two of their friends have registered for that event, provided the user has not already registered for it themselves.\n\nWrite a query to generate event recommendations. Output the `user_id` and the recommended `event_id`, sorted by `user_id` and then `event_id`.",
-  "notes": [],
+  "question": "Facebook's social recommendations team wants to recommend upcoming events to users based on what their friends are attending.\n\n• `friendship_status` stores one row per direction with a `status` of `'friends'` or `'not_friends'`.\n• In `event_rsvp`, a person is **registered** for an event when their `attendance_status` is `'going'` (`'maybe'` and `'not_going'` do not count).\n\nRecommend an event to a user if **at least two of their friends** are registered for it and the user is not already registered for it themselves.\n\nWrite a query to output the `user_id` and the recommended `event_id`, sorted by `user_id` and then `event_id`.",
+  "notes": [
+    "Users 111, 222 and 333 are all friends of user 444.",
+    "Friends 111 and 222 are going to event 789, so it is recommended to 444. Event 234 has three friends going, so it is recommended too."
+  ],
   "tables": [
     {
       "table_name": "friendship_status",
@@ -55,18 +58,8 @@
     "friendship_status": [
       {
         "user_a_id": 111,
-        "user_b_id": 333,
-        "status": "not_friends"
-      },
-      {
-        "user_a_id": 222,
-        "user_b_id": 333,
-        "status": "not_friends"
-      },
-      {
-        "user_a_id": 333,
         "user_b_id": 222,
-        "status": "not_friends"
+        "status": "friends"
       },
       {
         "user_a_id": 222,
@@ -74,9 +67,39 @@
         "status": "friends"
       },
       {
+        "user_a_id": 444,
+        "user_b_id": 111,
+        "status": "friends"
+      },
+      {
         "user_a_id": 111,
+        "user_b_id": 444,
+        "status": "friends"
+      },
+      {
+        "user_a_id": 444,
         "user_b_id": 222,
         "status": "friends"
+      },
+      {
+        "user_a_id": 222,
+        "user_b_id": 444,
+        "status": "friends"
+      },
+      {
+        "user_a_id": 444,
+        "user_b_id": 333,
+        "status": "friends"
+      },
+      {
+        "user_a_id": 333,
+        "user_b_id": 444,
+        "status": "friends"
+      },
+      {
+        "user_a_id": 111,
+        "user_b_id": 333,
+        "status": "not_friends"
       },
       {
         "user_a_id": 333,
@@ -87,30 +110,23 @@
     "event_rsvp": [
       {
         "user_id": 111,
-        "event_id": 567,
-        "event_type": "public",
-        "attendance_status": "going",
-        "event_date": "07/12/2022"
-      },
-      {
-        "user_id": 222,
         "event_id": 789,
-        "event_type": "private",
+        "event_type": "public",
         "attendance_status": "going",
         "event_date": "07/15/2022"
       },
       {
-        "user_id": 333,
+        "user_id": 222,
         "event_id": 789,
-        "event_type": "private",
-        "attendance_status": "maybe",
+        "event_type": "public",
+        "attendance_status": "going",
         "event_date": "07/15/2022"
       },
       {
         "user_id": 111,
         "event_id": 234,
         "event_type": "private",
-        "attendance_status": "not_going",
+        "attendance_status": "going",
         "event_date": "07/18/2022"
       },
       {
@@ -126,20 +142,41 @@
         "event_type": "private",
         "attendance_status": "going",
         "event_date": "07/18/2022"
+      },
+      {
+        "user_id": 333,
+        "event_id": 567,
+        "event_type": "public",
+        "attendance_status": "going",
+        "event_date": "07/12/2022"
+      },
+      {
+        "user_id": 444,
+        "event_id": 567,
+        "event_type": "public",
+        "attendance_status": "maybe",
+        "event_date": "07/12/2022"
+      },
+      {
+        "user_id": 111,
+        "event_id": 567,
+        "event_type": "public",
+        "attendance_status": "not_going",
+        "event_date": "07/12/2022"
       }
     ]
   },
   "sample_output": [
     {
-      "user_a_id": 222,
-      "user_b_id": 333
+      "user_id": 444,
+      "event_id": 234
     },
     {
-      "user_a_id": 333,
-      "user_b_id": 222
+      "user_id": 444,
+      "event_id": 789
     }
   ],
-  "reference_sql": "SELECT DISTINCT e1.user_id, e2.user_id AS friend_id\nFROM event_rsvp e1\nJOIN event_rsvp e2 ON e1.event_id = e2.event_id AND e1.user_id < e2.user_id\nLEFT JOIN friendship_status f ON (e1.user_id = f.user_a_id AND e2.user_id = f.user_b_id)\n                              OR (e1.user_id = f.user_b_id AND e2.user_id = f.user_a_id)\nWHERE f.status IS NULL OR f.status != 'Friends'\nORDER BY e1.user_id, friend_id;",
+  "reference_sql": "WITH friends AS (\n  SELECT user_a_id AS user_id, user_b_id AS friend_id FROM friendship_status WHERE status = 'friends'\n  UNION\n  SELECT user_b_id AS user_id, user_a_id AS friend_id FROM friendship_status WHERE status = 'friends'\n),\ngoing AS (\n  SELECT user_id, event_id FROM event_rsvp WHERE attendance_status = 'going'\n)\nSELECT f.user_id, g.event_id\nFROM friends f\nJOIN going g ON g.user_id = f.friend_id\nLEFT JOIN going me ON me.user_id = f.user_id AND me.event_id = g.event_id\nWHERE me.user_id IS NULL\nGROUP BY f.user_id, g.event_id\nHAVING COUNT(DISTINCT f.friend_id) >= 2\nORDER BY f.user_id, g.event_id;",
   "tags": [
     "aggregation",
     "cte",
@@ -159,18 +196,8 @@
         "friendship_status": [
           {
             "user_a_id": 111,
-            "user_b_id": 333,
-            "status": "not_friends"
-          },
-          {
-            "user_a_id": 222,
-            "user_b_id": 333,
-            "status": "not_friends"
-          },
-          {
-            "user_a_id": 333,
             "user_b_id": 222,
-            "status": "not_friends"
+            "status": "friends"
           },
           {
             "user_a_id": 222,
@@ -178,9 +205,39 @@
             "status": "friends"
           },
           {
+            "user_a_id": 444,
+            "user_b_id": 111,
+            "status": "friends"
+          },
+          {
             "user_a_id": 111,
+            "user_b_id": 444,
+            "status": "friends"
+          },
+          {
+            "user_a_id": 444,
             "user_b_id": 222,
             "status": "friends"
+          },
+          {
+            "user_a_id": 222,
+            "user_b_id": 444,
+            "status": "friends"
+          },
+          {
+            "user_a_id": 444,
+            "user_b_id": 333,
+            "status": "friends"
+          },
+          {
+            "user_a_id": 333,
+            "user_b_id": 444,
+            "status": "friends"
+          },
+          {
+            "user_a_id": 111,
+            "user_b_id": 333,
+            "status": "not_friends"
           },
           {
             "user_a_id": 333,
@@ -191,30 +248,23 @@
         "event_rsvp": [
           {
             "user_id": 111,
-            "event_id": 567,
-            "event_type": "public",
-            "attendance_status": "going",
-            "event_date": "07/12/2022"
-          },
-          {
-            "user_id": 222,
             "event_id": 789,
-            "event_type": "private",
+            "event_type": "public",
             "attendance_status": "going",
             "event_date": "07/15/2022"
           },
           {
-            "user_id": 333,
+            "user_id": 222,
             "event_id": 789,
-            "event_type": "private",
-            "attendance_status": "maybe",
+            "event_type": "public",
+            "attendance_status": "going",
             "event_date": "07/15/2022"
           },
           {
             "user_id": 111,
             "event_id": 234,
             "event_type": "private",
-            "attendance_status": "not_going",
+            "attendance_status": "going",
             "event_date": "07/18/2022"
           },
           {
@@ -230,21 +280,38 @@
             "event_type": "private",
             "attendance_status": "going",
             "event_date": "07/18/2022"
+          },
+          {
+            "user_id": 333,
+            "event_id": 567,
+            "event_type": "public",
+            "attendance_status": "going",
+            "event_date": "07/12/2022"
+          },
+          {
+            "user_id": 444,
+            "event_id": 567,
+            "event_type": "public",
+            "attendance_status": "maybe",
+            "event_date": "07/12/2022"
+          },
+          {
+            "user_id": 111,
+            "event_id": 567,
+            "event_type": "public",
+            "attendance_status": "not_going",
+            "event_date": "07/12/2022"
           }
         ]
       },
       "expected_output": [
         {
-          "user_id": 111,
-          "friend_id": 222
+          "user_id": 444,
+          "event_id": 234
         },
         {
-          "user_id": 111,
-          "friend_id": 333
-        },
-        {
-          "user_id": 222,
-          "friend_id": 333
+          "user_id": 444,
+          "event_id": 789
         }
       ],
       "category": "normal"
@@ -402,32 +469,7 @@
           }
         ]
       },
-      "expected_output": [
-        {
-          "user_id": 111,
-          "friend_id": 222
-        },
-        {
-          "user_id": 111,
-          "friend_id": 333
-        },
-        {
-          "user_id": 222,
-          "friend_id": 333
-        },
-        {
-          "user_id": 1111,
-          "friend_id": 1222
-        },
-        {
-          "user_id": 1111,
-          "friend_id": 1333
-        },
-        {
-          "user_id": 1222,
-          "friend_id": 1333
-        }
-      ],
+      "expected_output": [],
       "category": "volume"
     },
     {
@@ -547,24 +589,7 @@
           }
         ]
       },
-      "expected_output": [
-        {
-          "user_id": 111,
-          "friend_id": 222
-        },
-        {
-          "user_id": 111,
-          "friend_id": 333
-        },
-        {
-          "user_id": 222,
-          "friend_id": 333
-        },
-        {
-          "user_id": 5222,
-          "friend_id": 5333
-        }
-      ],
+      "expected_output": [],
       "category": "edge"
     },
     {
@@ -682,20 +707,7 @@
           }
         ]
       },
-      "expected_output": [
-        {
-          "user_id": 111,
-          "friend_id": 222
-        },
-        {
-          "user_id": 111,
-          "friend_id": 333
-        },
-        {
-          "user_id": 222,
-          "friend_id": 333
-        }
-      ],
+      "expected_output": [],
       "category": "edge"
     },
     {
@@ -851,32 +863,7 @@
           }
         ]
       },
-      "expected_output": [
-        {
-          "user_id": 111,
-          "friend_id": 222
-        },
-        {
-          "user_id": 111,
-          "friend_id": 333
-        },
-        {
-          "user_id": 222,
-          "friend_id": 333
-        },
-        {
-          "user_id": 8111,
-          "friend_id": 8222
-        },
-        {
-          "user_id": 8111,
-          "friend_id": 8333
-        },
-        {
-          "user_id": 8222,
-          "friend_id": 8333
-        }
-      ],
+      "expected_output": [],
       "category": "boundary"
     }
   ],

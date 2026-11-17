@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Pinterest",
   "premium": true,
-  "question": "Platform reliability engineers need to monitor peak server demand by finding the maximum number of users active at the exact same moment.\n\nA user session is considered active from its `start_time` up to its `end_time`.\n\nWrite a query to calculate the maximum number of concurrent user sessions that overlapped at any point in time.",
+  "question": "Platform reliability engineers need to monitor peak server demand by finding the maximum number of user sessions that were active at the exact same moment.\n\nA session is active from its `start_time` up to, but not including, its `end_time`. A session that ends at the exact moment another one starts does **not** overlap with it.\n\nWrite a query to calculate the maximum number of concurrent sessions at any point in time. Output it as `max_concurrent_sessions`.",
   "notes": [],
   "tables": [
     {
@@ -60,11 +60,10 @@
   },
   "sample_output": [
     {
-      "session_id": 2,
-      "concurrent_sessions": 3
+      "max_concurrent_sessions": 3
     }
   ],
-  "reference_sql": "SELECT \n  a.session_id,\n  COUNT(b.session_id) AS concurrent_sessions\nFROM user_sessions a\nJOIN user_sessions b \n  ON a.session_id != b.session_id \n AND a.start_time < b.end_time \n AND a.end_time > b.start_time\nGROUP BY a.session_id\nORDER BY concurrent_sessions DESC, a.session_id\nLIMIT 1;",
+  "reference_sql": "WITH events AS (\n  SELECT start_time AS t, 1 AS delta FROM user_sessions\n  UNION ALL\n  SELECT end_time AS t, -1 AS delta FROM user_sessions\n),\nrunning AS (\n  SELECT SUM(delta) OVER (ORDER BY t, delta ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS concurrent\n  FROM events\n)\nSELECT MAX(concurrent) AS max_concurrent_sessions\nFROM running;",
   "tags": [
     "aggregation",
     "hard",
@@ -108,8 +107,7 @@
       },
       "expected_output": [
         {
-          "session_id": 2,
-          "concurrent_sessions": 3
+          "max_concurrent_sessions": 3
         }
       ],
       "category": "normal"
@@ -133,7 +131,11 @@
           }
         ]
       },
-      "expected_output": [],
+      "expected_output": [
+        {
+          "max_concurrent_sessions": 1
+        }
+      ],
       "category": "edge"
     },
     {
@@ -162,7 +164,11 @@
           }
         ]
       },
-      "expected_output": []
+      "expected_output": [
+        {
+          "max_concurrent_sessions": 1
+        }
+      ]
     },
     {
       "test_case_id": "tc_4_tie_breaker_lower_session_id",
@@ -198,8 +204,7 @@
       },
       "expected_output": [
         {
-          "session_id": 10,
-          "concurrent_sessions": 1
+          "max_concurrent_sessions": 2
         }
       ]
     },
@@ -243,8 +248,7 @@
       },
       "expected_output": [
         {
-          "session_id": 500,
-          "concurrent_sessions": 4
+          "max_concurrent_sessions": 2
         }
       ]
     },
@@ -255,7 +259,11 @@
       "input_data": {
         "user_sessions": []
       },
-      "expected_output": []
+      "expected_output": [
+        {
+          "max_concurrent_sessions": null
+        }
+      ]
     }
   ],
   "order_sensitive": true,

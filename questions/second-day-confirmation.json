@@ -86,10 +86,10 @@
   },
   "sample_output": [
     {
-      "user_id": "1052"
+      "user_id": 1052
     }
   ],
-  "reference_sql": "SELECT DISTINCT e.user_id\nFROM emails e\nJOIN texts t ON e.email_id = t.email_id\nWHERE t.signup_action = 'Confirmed'\n  AND DATEDIFF(t.action_date, e.signup_date) = 1\nORDER BY e.user_id;",
+  "reference_sql": "SELECT DISTINCT e.user_id\nFROM emails e\nJOIN texts t ON e.email_id = t.email_id\nWHERE t.signup_action = 'Confirmed'\n  AND DATEDIFF(t.action_date, e.signup_date) = 1\n  AND NOT EXISTS (\n    SELECT 1 FROM texts t0\n    WHERE t0.email_id = e.email_id\n      AND t0.signup_action = 'Confirmed'\n      AND DATEDIFF(t0.action_date, e.signup_date) = 0\n  )\nORDER BY e.user_id;",
   "tags": [
     "aggregation",
     "easy",

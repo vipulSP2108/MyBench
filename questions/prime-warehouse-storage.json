@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Amazon",
   "premium": false,
-  "question": "Amazon Fulfillment Operations needs to organize inventory storage inside a 500,000 square-foot warehouse facility.\n\nProducts arrive in fixed batch sets. To uphold fast delivery commitments, warehouse protocol mandates **prioritizing Prime-eligible product batches first**:\n1. Stock as many complete Prime product batches as possible into the 500,000 sq ft facility.\n2. Allocate any remaining square footage to stock as many complete non-Prime batches as possible.\n\nWrite a query to calculate the maximum number of Prime batches and non-Prime batches that can be stocked in the warehouse.",
+  "question": "Amazon Fulfillment Operations needs to organize inventory storage inside a 500,000 square-foot warehouse facility.\n\nProducts arrive in fixed batch sets. To uphold fast delivery commitments, warehouse protocol mandates **prioritizing Prime-eligible product batches first**:\n1. Stock as many complete Prime product batches as possible into the 500,000 sq ft facility.\n2. Allocate any remaining square footage to stock as many complete non-Prime batches as possible.\n\nWrite a query to calculate the maximum number of items of each type (`item_type` is `'prime_eligible'` or `'not_prime'`) that can be stocked. Output `item_type` and `item_count`, where `item_count` is the total number of items across all the batches stocked.",
   "notes": [
     "Prioritize stocking prime batches",
     "After accommodating prime items, allocate any remaining space to non-prime batches",
@@ -73,14 +73,14 @@
   "sample_output": [
     {
       "item_type": "prime_eligible",
-      "item_count": "9285"
+      "item_count": 9285
     },
     {
       "item_type": "not_prime",
-      "item_count": "6"
+      "item_count": 6
     }
   ],
-  "reference_sql": "WITH summary AS (\n  SELECT \n    item_type,\n    SUM(square_footage) AS total_sqft,\n    COUNT(item_id) AS item_count\n  FROM inventory\n  GROUP BY item_type\n),\nprime_calc AS (\n  SELECT \n    'prime_eligible' AS item_type,\n    FLOOR(500000 / total_sqft) * item_count AS total_items,\n    FLOOR(500000 / total_sqft) * total_sqft AS total_sqft_used\n  FROM summary\n  WHERE item_type = 'prime_eligible'\n),\nnot_prime_calc AS (\n  SELECT \n    'not_prime' AS item_type,\n    FLOOR((500000 - p.total_sqft_used) / s.total_sqft) * s.item_count AS total_items\n  FROM summary s\n  CROSS JOIN prime_calc p\n  WHERE s.item_type = 'not_prime'\n)\nSELECT item_type, total_items FROM prime_calc\nUNION ALL\nSELECT item_type, total_items FROM not_prime_calc;",
+  "reference_sql": "WITH summary AS (\n  SELECT \n    item_type,\n    SUM(square_footage) AS total_sqft,\n    COUNT(item_id) AS item_count\n  FROM inventory\n  GROUP BY item_type\n),\nprime_calc AS (\n  SELECT \n    'prime_eligible' AS item_type,\n    FLOOR(500000 / total_sqft) * item_count AS item_count,\n    FLOOR(500000 / total_sqft) * total_sqft AS total_sqft_used\n  FROM summary\n  WHERE item_type = 'prime_eligible'\n),\nnot_prime_calc AS (\n  SELECT \n    'not_prime' AS item_type,\n    FLOOR((500000 - p.total_sqft_used) / s.total_sqft) * s.item_count AS item_count\n  FROM summary s\n  CROSS JOIN prime_calc p\n  WHERE s.item_type = 'not_prime'\n)\nSELECT item_type, item_count FROM prime_calc\nUNION ALL\nSELECT item_type, item_count FROM not_prime_calc;",
   "tags": [
     "aggregation",
     "amazon",
@@ -132,11 +132,11 @@
       "expected_output": [
         {
           "item_type": "prime_eligible",
-          "total_items": 9285.0
+          "item_count": 9285
         },
         {
           "item_type": "not_prime",
-          "total_items": 6.0
+          "item_count": 6
         }
       ],
       "category": "normal"
@@ -211,11 +211,11 @@
       "expected_output": [
         {
           "item_type": "prime_eligible",
-          "total_items": 9282.0
+          "item_count": 9282
         },
         {
           "item_type": "not_prime",
-          "total_items": 12.0
+          "item_count": 12
         }
       ],
       "category": "volume"
@@ -272,11 +272,11 @@
       "expected_output": [
         {
           "item_type": "prime_eligible",
-          "total_items": 8712.0
+          "item_count": 8712
         },
         {
           "item_type": "not_prime",
-          "total_items": 3.0
+          "item_count": 3
         }
       ],
       "category": "edge"
@@ -342,11 +342,11 @@
       "expected_output": [
         {
           "item_type": "prime_eligible",
-          "total_items": 8712.0
+          "item_count": 8712
         },
         {
           "item_type": "not_prime",
-          "total_items": 6.0
+          "item_count": 6
         }
       ],
       "category": "edge"
@@ -421,11 +421,11 @@
       "expected_output": [
         {
           "item_type": "prime_eligible",
-          "total_items": 9282.0
+          "item_count": 9282
         },
         {
           "item_type": "not_prime",
-          "total_items": 12.0
+          "item_count": 12
         }
       ],
       "category": "boundary"

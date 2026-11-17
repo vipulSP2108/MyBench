@@ -70,12 +70,12 @@
   },
   "sample_output": [
     {
-      "sender_id": "3601",
-      "message_count": "2"
+      "sender_id": 3601,
+      "message_count": 2
     },
     {
-      "sender_id": "4500",
-      "message_count": "1"
+      "sender_id": 4500,
+      "message_count": 1
     }
   ],
   "reference_sql": "SELECT sender_id, COUNT(message_id) AS message_count\nFROM messages\nWHERE YEAR(sent_date) = 2022 AND MONTH(sent_date) = 8\nGROUP BY sender_id\nORDER BY message_count DESC, sender_id ASC\nLIMIT 2;",

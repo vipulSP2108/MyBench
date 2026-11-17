@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Google",
   "premium": false,
-  "question": "Google Search query infrastructure tracks search volume distribution across millions of daily active users.\n\nIn the frequency table `search_category`, the data is summarized by:\n• `searches`: The number of search queries performed.\n• `num_users`: The number of users who performed that exact number of searches.\n\nWrite a query to calculate the **median number of searches per user**. Round the median to 1 decimal place.",
+  "question": "Google Search query infrastructure tracks search volume distribution across millions of daily active users.\n\nIn the frequency table `search_frequency`, the data is summarized by:\n• `searches`: The number of search queries performed.\n• `num_users`: The number of users who performed that exact number of searches.\n\nWrite a query to calculate the **median number of searches per user**. Round the median to 1 decimal place.",
   "notes": [
     "By expanding the search_frequency table, we get [1, 1, 2, 2, 3, 3, 3, 4] which has a median of 2.5 searches per user."
   ],
@@ -46,10 +46,10 @@
   },
   "sample_output": [
     {
-      "median": "2.5"
+      "median": 2.5
     }
   ],
-  "reference_sql": "WITH expanded AS (\n  SELECT searches, num_users,\n         SUM(num_users) OVER (ORDER BY searches) AS cum_users,\n         SUM(num_users) OVER () AS total_users\n  FROM search_frequency\n)\nSELECT ROUND(AVG(searches), 1) AS median\nFROM expanded\nWHERE cum_users >= total_users / 2.0\nLIMIT 1;",
+  "reference_sql": "WITH r AS (\n  SELECT searches, num_users,\n         SUM(num_users) OVER (ORDER BY searches ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum,\n         SUM(num_users) OVER () AS total\n  FROM search_frequency\n)\nSELECT ROUND(AVG(searches), 1) AS median\nFROM r\nWHERE (FLOOR((total + 1) / 2) > cum - num_users AND FLOOR((total + 1) / 2) <= cum)\n   OR (FLOOR(total / 2) + 1 > cum - num_users AND FLOOR(total / 2) + 1 <= cum);",
   "tags": [
     "date-manipulation",
     "google",
@@ -84,7 +84,7 @@
       },
       "expected_output": [
         {
-          "median": 3.0
+          "median": 2.5
         }
       ],
       "category": "normal"
@@ -130,7 +130,7 @@
       },
       "expected_output": [
         {
-          "median": 3.0
+          "median": 2.5
         }
       ],
       "category": "volume"
@@ -168,7 +168,7 @@
       },
       "expected_output": [
         {
-          "median": 2.8
+          "median": 2
         }
       ],
       "category": "edge"
@@ -219,7 +219,7 @@
       },
       "expected_output": [
         {
-          "median": 2.8
+          "median": 2
         }
       ],
       "category": "edge"
@@ -265,7 +265,7 @@
       },
       "expected_output": [
         {
-          "median": 3.0
+          "median": 2.5
         }
       ],
       "category": "boundary"

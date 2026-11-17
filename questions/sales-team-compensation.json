@@ -5,8 +5,11 @@
   "difficulty": "Medium",
   "company": "Oracle",
   "premium": true,
-  "question": "Oracle enterprise sales operations calculates annual bonuses based on individual quota performance.\n\nA sales representative earns their base salary plus a commission percentage on all closed deals. If their total sales volume exceeds their quota, they also receive an accelerator bonus.\n\nWrite a query to calculate the total overall compensation for each sales employee. Output `employee_id` and `total_compensation`, sorted by `employee_id` in ascending order.",
-  "notes": [],
+  "question": "Oracle enterprise sales operations calculates annual compensation from each rep's contract.\n\nEvery rep earns their `base` salary. On deal volume **up to their quota** they earn the `commission` rate (for example `0.1` is 10%). Any deal volume **above the quota** earns an accelerated rate of `commission * accelerator` (for example `0.1 * 1.5 = 15%`).\n\n`total_compensation = base + commission * min(total_deals, quota) + commission * accelerator * max(total_deals - quota, 0)`\n\nReps with no deals have a total deal volume of 0. Write a query to calculate each rep's total compensation, rounded to 2 decimal places. Output `employee_id` and `total_compensation`, sorted by `employee_id` in ascending order.",
+  "notes": [
+    "Employee 101 closed 800,000 against a 500,000 quota: 60,000 base + 10% of 500,000 + 15% of the 300,000 above quota = 155,000.",
+    "Employee 102 stayed under quota: 50,000 base + 10% of 300,000 = 80,000."
+  ],
   "tables": [
     {
       "table_name": "employee_contract",
@@ -93,7 +96,7 @@
       "total_compensation": 80000
     }
   ],
-  "reference_sql": "WITH deal_totals AS (\n  SELECT employee_id, SUM(deal_size) AS total_deals\n  FROM deals\n  GROUP BY employee_id\n)\nSELECT \n  c.employee_id,\n  ROUND(c.base + \n    CASE \n      WHEN IFNULL(d.total_deals, 0) >= c.quota THEN (c.commission * c.quota) + (c.accelerator * (d.total_deals - c.quota))\n      ELSE c.commission * IFNULL(d.total_deals, 0)\n    END, 2) AS total_compensation\nFROM employee_contract c\nLEFT JOIN deal_totals d ON c.employee_id = d.employee_id\nORDER BY total_compensation DESC, c.employee_id;",
+  "reference_sql": "WITH deal_totals AS (\n  SELECT employee_id, SUM(deal_size) AS total_deals\n  FROM deals\n  GROUP BY employee_id\n)\nSELECT\n  c.employee_id,\n  ROUND(c.base\n        + c.commission * LEAST(IFNULL(d.total_deals, 0), c.quota)\n        + c.commission * c.accelerator * GREATEST(IFNULL(d.total_deals, 0) - c.quota, 0), 2) AS total_compensation\nFROM employee_contract c\nLEFT JOIN deal_totals d ON c.employee_id = d.employee_id\nORDER BY c.employee_id;",
   "tags": [
     "aggregation",
     "conditional-logic",
@@ -153,11 +156,11 @@
       "expected_output": [
         {
           "employee_id": 101,
-          "total_compensation": 560000.0
+          "total_compensation": 155000
         },
         {
           "employee_id": 102,
-          "total_compensation": 80000.0
+          "total_compensation": 80000
         }
       ],
       "category": "normal"
@@ -234,19 +237,19 @@
       "expected_output": [
         {
           "employee_id": 101,
-          "total_compensation": 560000.0
-        },
-        {
-          "employee_id": 1101,
-          "total_compensation": 560000.0
+          "total_compensation": 155000
         },
         {
           "employee_id": 102,
-          "total_compensation": 80000.0
+          "total_compensation": 80000
+        },
+        {
+          "employee_id": 1101,
+          "total_compensation": 155000
         },
         {
           "employee_id": 1102,
-          "total_compensation": 80000.0
+          "total_compensation": 80000
         }
       ],
       "category": "volume"
@@ -308,15 +311,15 @@
       "expected_output": [
         {
           "employee_id": 101,
-          "total_compensation": 560000.0
-        },
-        {
-          "employee_id": 5101,
-          "total_compensation": 560000.0
+          "total_compensation": 155000
         },
         {
           "employee_id": 102,
-          "total_compensation": 80000.0
+          "total_compensation": 80000
+        },
+        {
+          "employee_id": 5101,
+          "total_compensation": 155000
         }
       ],
       "category": "edge"
@@ -395,19 +398,19 @@
       "expected_output": [
         {
           "employee_id": 101,
-          "total_compensation": 560000.0
-        },
-        {
-          "employee_id": 9101,
-          "total_compensation": 100000.0
+          "total_compensation": 155000
         },
         {
           "employee_id": 102,
-          "total_compensation": 80000.0
+          "total_compensation": 80000
+        },
+        {
+          "employee_id": 9101,
+          "total_compensation": 100000
         },
         {
           "employee_id": 9602,
-          "total_compensation": 50000.0
+          "total_compensation": 50000
         }
       ],
       "category": "edge"

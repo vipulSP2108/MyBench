@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Airbnb",
   "premium": true,
-  "question": "Airbnb market managers analyze property utilization across different cities to help hosts optimize pricing.\n\nA property's **vacant days** in a year (assuming a standard 365-day year) is calculated as:\n• Vacant Days = 365 - Total Days Booked\n\nWrite a query to calculate the average number of vacant days per listing for each city in the year 2021. Round the average vacant days to 1 decimal place, and sort by city name.",
+  "question": "Airbnb market managers analyze property utilization to help hosts optimize pricing.\n\nA listing's **vacant days** in 2021 (a 365-day year) is `365 - days booked in 2021`. A booking occupies every night from `checkin_date` (inclusive) up to `checkout_date` (exclusive). Bookings can start before or end after 2021, so only nights that fall inside 2021 count. A listing's bookings never overlap each other.\n\nOnly active listings (`is_active = 1`) are considered, including active listings that have no bookings at all.\n\nWrite a query to calculate the average number of vacant days per active listing in 2021, rounded to 1 decimal place. Output it as `avg_vacant_days`.",
   "notes": [],
   "tables": [
     {
@@ -79,10 +79,10 @@
   },
   "sample_output": [
     {
-      "avg_vacant_days": 357
+      "avg_vacant_days": 356.5
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(AVG(365 - IFNULL(DATEDIFF(b.checkout_date, b.checkin_date), 0)), 1) AS avg_vacant_days\nFROM listings l\nLEFT JOIN bookings b ON l.listing_id = b.listing_id\nWHERE l.is_active = 1;",
+  "reference_sql": "WITH booked AS (\n  SELECT listing_id,\n         SUM(GREATEST(DATEDIFF(LEAST(checkout_date, CAST('2022-01-01' AS DATE)),\n                               GREATEST(checkin_date, CAST('2021-01-01' AS DATE))), 0)) AS booked_days\n  FROM bookings\n  GROUP BY listing_id\n)\nSELECT ROUND(AVG(365 - IFNULL(b.booked_days, 0)), 1) AS avg_vacant_days\nFROM listings l\nLEFT JOIN booked b ON l.listing_id = b.listing_id\nWHERE l.is_active = 1;",
   "tags": [
     "aggregation",
     "airbnb",
@@ -136,7 +136,7 @@
       },
       "expected_output": [
         {
-          "avg_vacant_days": 358.0
+          "avg_vacant_days": 356.5
         }
       ],
       "category": "normal"
@@ -278,7 +278,7 @@
       },
       "expected_output": [
         {
-          "avg_vacant_days": 359.2
+          "avg_vacant_days": 359.3
         }
       ],
       "category": "edge"
@@ -358,7 +358,7 @@
       },
       "expected_output": [
         {
-          "avg_vacant_days": 359.3
+          "avg_vacant_days": 358.7
         }
       ],
       "category": "edge"
@@ -438,7 +438,7 @@
       },
       "expected_output": [
         {
-          "avg_vacant_days": 358.0
+          "avg_vacant_days": 356.8
         }
       ],
       "category": "boundary"

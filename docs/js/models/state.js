@@ -37,6 +37,10 @@ export const state = {
   homeCompany: "all",
   homeSearch: "",
   homeMatchMode: "all", // "all" | "any"
+  showTopics: localStorage.getItem("sqlmaster_show_topics") !== "false",
+  homeTag: null, // topic id filter
+  homeSort: localStorage.getItem("sqlmaster_home_sort") || "default",
+  calMonthOffset: 0,
 
   // Question Bank Drawer Filter Rules State
   advFilterOpen: true,

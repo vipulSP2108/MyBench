@@ -55,15 +55,15 @@
   "sample_output": [
     {
       "advertiser_id": 1,
-      "roas": "0.90"
+      "roas": 0.9
     },
     {
       "advertiser_id": 2,
-      "roas": "4.00"
+      "roas": 4
     },
     {
       "advertiser_id": 3,
-      "roas": "1.50"
+      "roas": 1.5
     }
   ],
   "reference_sql": "SELECT advertiser_id,\n       ROUND(SUM(revenue) / SUM(spend), 2) AS roas\nFROM ad_campaigns\nGROUP BY advertiser_id\nORDER BY advertiser_id;",
@@ -110,7 +110,7 @@
         },
         {
           "advertiser_id": 2,
-          "roas": 4.0
+          "roas": 4
         },
         {
           "advertiser_id": 3,
@@ -169,7 +169,7 @@
         },
         {
           "advertiser_id": 2,
-          "roas": 4.0
+          "roas": 4
         },
         {
           "advertiser_id": 3,
@@ -181,7 +181,7 @@
         },
         {
           "advertiser_id": 1002,
-          "roas": 4.0
+          "roas": 4
         },
         {
           "advertiser_id": 1003,
@@ -228,7 +228,7 @@
         },
         {
           "advertiser_id": 2,
-          "roas": 4.0
+          "roas": 4
         },
         {
           "advertiser_id": 3,

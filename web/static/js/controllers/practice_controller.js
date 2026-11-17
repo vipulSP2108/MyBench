@@ -4,6 +4,7 @@
  */
 
 import { state, recordAttempt } from "../models/state.js";
+import { Activity } from "../models/activity.js";
 import { Engine } from "../models/engine.js";
 import { Storage } from "../models/storage.js";
 import { EditorComponent } from "../views/components/editor.js";
@@ -65,8 +66,10 @@ FROM ${firstTbl};
 
       Storage.recordSubmission();
       recordAttempt(state.currentQuestion.slug, "submit");
+      Activity.log("submit");
 
       if (data.all_passed) {
+        if (!state.solvedSlugs.has(state.currentQuestion.slug)) Activity.log("solve");
         state.solvedSlugs.add(state.currentQuestion.slug);
         state.attemptedSlugs.delete(state.currentQuestion.slug);
         localStorage.setItem("sqlmaster_solved", JSON.stringify(Array.from(state.solvedSlugs)));
@@ -151,6 +154,7 @@ FROM ${firstTbl};
       const data = await Engine.executeRunRequest(state.currentQuestion.slug, sql, state.currentQuestion.test_cases);
 
       recordAttempt(state.currentQuestion.slug, "run");
+      Activity.log("run");
 
       if (data.error) {
         if (statusBadge) {

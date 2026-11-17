@@ -86,16 +86,16 @@
   },
   "sample_output": [
     {
-      "datacenter_id": "1",
-      "spare_capacity": "25"
+      "datacenter_id": 1,
+      "spare_capacity": 15
     },
     {
-      "datacenter_id": "3",
-      "spare_capacity": "70"
+      "datacenter_id": 3,
+      "spare_capacity": 240
     },
     {
-      "datacenter_id": "4",
-      "spare_capacity": "60"
+      "datacenter_id": 4,
+      "spare_capacity": 400
     }
   ],
   "reference_sql": "SELECT d.datacenter_id,\n       d.monthly_capacity - IFNULL(SUM(f.monthly_demand), 0) AS spare_capacity\nFROM datacenters d\nLEFT JOIN forecasted_demand f ON d.datacenter_id = f.datacenter_id\nGROUP BY d.datacenter_id, d.monthly_capacity\nORDER BY d.datacenter_id;",

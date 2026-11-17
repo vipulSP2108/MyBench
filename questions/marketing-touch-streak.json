@@ -5,10 +5,10 @@
   "difficulty": "Hard",
   "company": "Snowflake",
   "premium": false,
-  "question": "Snowflake enterprise marketing tracks prospective enterprise accounts through sequential touchpoints (emails, webinars, product demos).\n\nA sales lead is considered **highly engaged** if they interacted with marketing outreach for at least three consecutive weeks.\n\nWrite a query to identify the email addresses of all sales leads who engaged with marketing materials across at least three consecutive weeks. Return unique emails sorted in alphabetical order.",
+  "question": "Snowflake enterprise marketing tracks prospective enterprise accounts through sequential touchpoints (emails, webinars, product demos).\n\nA sales lead is **highly engaged** if they had a marketing touch in at least **three consecutive calendar weeks**. Weeks start on Monday, and several touches in the same week count as one week.\n\nWrite a query to return the email addresses of all highly engaged leads. Return unique emails sorted alphabetically.",
   "notes": [
-    "Among the contacts, only Contact ID 1 (andy.markus@att.net) satisfies both conditions specified in the problem. Contact ID 1 had a marketing touch with an event type of 'trial_request' and the marketing touch points occurred consecutively over a period of 3 weeks. This meets both conditions of having a marketing touch for three or more consecutive weeks.",
-    "On the other hand, Contact ID 2 (rajan.bhatt@capitalone.com) is not included in the generated list. Although they had a marketing touch with the event type 'trial_request', their touch points took place within the same week. Consequently, this does not meet the requirement of consecutive marketing touches for 3 weeks."
+    "Contact 1 had touches in the weeks of Apr 11, Apr 18 and Apr 25 (three consecutive weeks), so andy.markus@att.net qualifies.",
+    "Contact 2 had all of their touches within the single week of Apr 18, so they do not qualify."
   ],
   "tables": [
     {
@@ -127,7 +127,7 @@
       "email": "andy.markus@att.net"
     }
   ],
-  "reference_sql": "SELECT c.email\nFROM crm_contacts c\nJOIN marketing_touches m ON c.contact_id = m.contact_id\nWHERE m.event_type = 'webinar'\nGROUP BY c.email\nHAVING COUNT(m.event_id) >= 2\nORDER BY c.email;",
+  "reference_sql": "WITH weeks AS (\n  SELECT DISTINCT contact_id,\n         FLOOR(DATEDIFF(event_date, CAST('1970-01-05' AS DATE)) / 7) AS wk\n  FROM marketing_touches\n),\nislands AS (\n  SELECT contact_id, wk,\n         wk - ROW_NUMBER() OVER (PARTITION BY contact_id ORDER BY wk) AS grp\n  FROM weeks\n),\nengaged AS (\n  SELECT contact_id\n  FROM islands\n  GROUP BY contact_id, grp\n  HAVING COUNT(*) >= 3\n)\nSELECT DISTINCT c.email\nFROM crm_contacts c\nJOIN engaged e ON e.contact_id = c.contact_id\nORDER BY c.email;",
   "tags": [
     "date-manipulation",
     "ecommerce",
@@ -218,7 +218,11 @@
           }
         ]
       },
-      "expected_output": [],
+      "expected_output": [
+        {
+          "email": "andy.markus@att.net"
+        }
+      ],
       "category": "normal"
     },
     {
@@ -373,9 +377,6 @@
       "expected_output": [
         {
           "email": "andy.markus@att.net"
-        },
-        {
-          "email": "kevinliu@square.com"
         }
       ],
       "category": "volume"
@@ -766,9 +767,6 @@
       "expected_output": [
         {
           "email": "andy.markus@att.net"
-        },
-        {
-          "email": "kevinliu@square.com"
         }
       ],
       "category": "boundary"

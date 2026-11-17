@@ -6,7 +6,10 @@
   "company": "Alibaba",
   "premium": true,
   "question": "Alibaba's logistics planning team wants to determine the **median number of items per order** from a compressed order frequency table.\n\nThe table `items_per_order` contains:\n• `item_count`: The number of items in an order.\n• `order_occurrences`: The total count of orders with that item count.\n\nWrite a query to compute the median items per order. Round the median value to 1 decimal place.\n\nNote: The median represents the middle value when all individual orders are expanded in sorted order. If the total number of orders is even, the median is the average of the two middle values.",
-  "notes": [],
+  "notes": [
+    "Expand the table mentally: 2 orders of 1 item and 3 orders of 4 items is [1, 1, 4, 4, 4]. The median is the middle value, 4.",
+    "With an even number of orders the median is the average of the two middle values."
+  ],
   "tables": [
     {
       "table_name": "items_per_order",
@@ -44,10 +47,10 @@
   },
   "sample_output": [
     {
-      "median": "3.00"
+      "median": 3
     }
   ],
-  "reference_sql": "WITH running AS (\n  SELECT \n    item_count,\n    order_occurrences,\n    SUM(order_occurrences) OVER (ORDER BY item_count) AS cum_orders,\n    SUM(order_occurrences) OVER () AS total_orders\n  FROM items_per_order\n)\nSELECT ROUND(AVG(item_count), 1) AS median\nFROM running\nWHERE cum_orders >= total_orders / 2.0\nLIMIT 1;",
+  "reference_sql": "WITH r AS (\n  SELECT item_count, order_occurrences,\n         SUM(order_occurrences) OVER (ORDER BY item_count ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum,\n         SUM(order_occurrences) OVER () AS total\n  FROM items_per_order\n)\nSELECT ROUND(AVG(item_count), 1) AS median\nFROM r\nWHERE (FLOOR((total + 1) / 2) > cum - order_occurrences AND FLOOR((total + 1) / 2) <= cum)\n   OR (FLOOR(total / 2) + 1 > cum - order_occurrences AND FLOOR(total / 2) + 1 <= cum);",
   "tags": [
     "aggregation",
     "alibaba",
@@ -89,7 +92,7 @@
       },
       "expected_output": [
         {
-          "median": 3.5
+          "median": 3
         }
       ],
       "category": "normal"
@@ -135,7 +138,7 @@
       },
       "expected_output": [
         {
-          "median": 3.5
+          "median": 3
         }
       ],
       "category": "volume"
@@ -173,7 +176,7 @@
       },
       "expected_output": [
         {
-          "median": 2.8
+          "median": 2
         }
       ],
       "category": "edge"
@@ -224,7 +227,7 @@
       },
       "expected_output": [
         {
-          "median": 2.8
+          "median": 2
         }
       ],
       "category": "edge"
@@ -270,7 +273,7 @@
       },
       "expected_output": [
         {
-          "median": 3.5
+          "median": 3
         }
       ],
       "category": "boundary"

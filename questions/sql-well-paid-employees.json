@@ -5,7 +5,7 @@
   "difficulty": "Easy",
   "company": "FAANG",
   "premium": false,
-  "question": "Corporate governance committees review internal pay equity across management hierarchies.\n\nWrite a query to identify all employees who earn a higher salary than their direct manager.\n\nOutput the `employee_id` and employee `name` for all employees whose salary exceeds their manager's salary. Sort by `employee_id` in ascending order.",
+  "question": "Corporate governance committees review internal pay equity across management hierarchies.\n\nWrite a query to identify all employees who earn a higher salary than their direct manager.\n\nOutput `employee_id` and `employee_name` for all employees whose salary exceeds their manager's salary. Sort by `employee_id` in ascending order.",
   "notes": [
     "The output shows that Olivia Smith earns \\$7,000, surpassing her manager, William David who earns \\$6,800."
   ],
@@ -98,7 +98,7 @@
   },
   "sample_output": [
     {
-      "employee_id": "3",
+      "employee_id": 3,
       "employee_name": "Olivia Smith"
     }
   ],

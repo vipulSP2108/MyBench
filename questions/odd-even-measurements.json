@@ -8,7 +8,6 @@
   "question": "Google hardware quality engineers collect environmental sensor readings multiple times throughout each day.\n\nFor each calendar day, sensor measurements are ordered by time and assigned a ranking:\n• 1st, 3rd, 5th measurements are **odd-numbered measurements**.\n• 2nd, 4th, 6th measurements are **even-numbered measurements**.\n\nWrite a query to calculate the sum of odd-numbered measurements (`odd_sum`) and the sum of even-numbered measurements (`even_sum`) for each day. Output `measurement_day`, `odd_sum`, and `even_sum`, sorted by `measurement_day`.",
   "notes": [
     "Within a day, measurements taken at 1st, 3rd, and 5th times are considered odd-numbered measurements, and measurements taken at 2nd, 4th, and 6th times are considered even-numbered measurements.",
-    "Based on the results,",
     "On 07/10/2022, the sum of the odd-numbered measurements is 2355.75, while the sum of the even-numbered measurements is 1662.74.",
     "On 07/11/2022, there are only two measurements available. The sum of the odd-numbered measurements is 1124.50, and the sum of the even-numbered measurements is 1234.14."
   ],
@@ -62,14 +61,14 @@
   },
   "sample_output": [
     {
-      "measurement_day": "07/10/2022 00:00:00",
-      "odd_sum": "2355.75",
-      "even_sum": "1662.74"
+      "measurement_day": "2022-07-10",
+      "odd_sum": 2355.75,
+      "even_sum": 1662.74
     },
     {
-      "measurement_day": "07/11/2022 00:00:00",
-      "odd_sum": "1124.50",
-      "even_sum": "1234.14"
+      "measurement_day": "2022-07-11",
+      "odd_sum": 1124.5,
+      "even_sum": 1234.14
     }
   ],
   "reference_sql": "WITH ranked AS (\n  SELECT \n    CAST(measurement_time AS DATE) AS measurement_day,\n    measurement_value,\n    ROW_NUMBER() OVER (PARTITION BY CAST(measurement_time AS DATE) ORDER BY measurement_time) AS rn\n  FROM measurements\n)\nSELECT \n  measurement_day,\n  SUM(CASE WHEN rn % 2 = 1 THEN measurement_value ELSE 0 END) AS odd_sum,\n  SUM(CASE WHEN rn % 2 = 0 THEN measurement_value ELSE 0 END) AS even_sum\nFROM ranked\nGROUP BY measurement_day\nORDER BY measurement_day;",

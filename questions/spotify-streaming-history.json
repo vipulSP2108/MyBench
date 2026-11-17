@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Spotify",
   "premium": false,
-  "question": "Spotify music recommendation algorithms maintain lifetime streaming statistics by consolidating historical listening archives with recent weekly play logs.\n\nGiven historical listening records (`songs_history`) and recent weekly streams (`songs_weekly`), write a query to calculate the total cumulative play count for each user and song pair as of the latest tracking date.\n\nOutput `user_id`, `song_id`, and `song_plays`, ordered by total play count in descending order.",
+  "question": "Spotify music recommendation algorithms maintain lifetime streaming statistics by consolidating historical listening archives with recent weekly play logs.\n\nGiven historical listening records (`songs_history`) and recent weekly streams (`songs_weekly`), write a query to calculate the total cumulative play count for each user and song pair as of August 4, 2022 (inclusive). Weekly streams after that date must be ignored.\n\nOutput `user_id`, `song_id`, and `song_plays`, ordered by total play count in descending order.",
   "notes": [
     "song_weeklytable only contains data for the week of August 1st to August 7th, 2022.",
     "songs_history table contains data up to July 31st, 2022. The query should include historical data from this table.",
@@ -93,19 +93,19 @@
   },
   "sample_output": [
     {
-      "user_id": "777",
-      "song_id": "1238",
-      "song_plays": "12"
+      "user_id": 777,
+      "song_id": 1238,
+      "song_plays": 12
     },
     {
-      "user_id": "695",
-      "song_id": "4520",
-      "song_plays": "2"
+      "user_id": 695,
+      "song_id": 4520,
+      "song_plays": 2
     },
     {
-      "user_id": "125",
-      "song_id": "9630",
-      "song_plays": "1"
+      "user_id": 125,
+      "song_id": 9630,
+      "song_plays": 1
     }
   ],
   "reference_sql": "WITH weekly_summary AS (\n  SELECT user_id, song_id, COUNT(*) AS weekly_plays\n  FROM songs_weekly\n  WHERE listen_time <= '2022-08-04 23:59:59'\n  GROUP BY user_id, song_id\n),\ncombined AS (\n  SELECT user_id, song_id, song_plays FROM songs_history\n  UNION ALL\n  SELECT user_id, song_id, weekly_plays FROM weekly_summary\n)\nSELECT user_id, song_id, SUM(song_plays) AS song_plays\nFROM combined\nGROUP BY user_id, song_id\nORDER BY song_plays DESC, user_id ASC, song_id ASC;",

@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Microsoft",
   "premium": true,
-  "question": "Microsoft Outlook telemetry engineers analyze daily inbox statistics across enterprise accounts.\n\nGiven daily incoming email counts, write a query to compute the three central tendency metrics:\n• `mean`: The arithmetic average email count, rounded to the nearest integer.\n• `median`: The middle email count value when sorted.\n• `mode`: The most frequently occurring email count.\n\nOutput all three metrics in a single row with column names `mean`, `median`, and `mode`.",
+  "question": "Microsoft Outlook telemetry engineers analyze daily inbox statistics across enterprise accounts.\n\nGiven each user's daily incoming email count, write a query to compute three central tendency metrics in a single row:\n• `mean`: the arithmetic average, rounded to the nearest integer.\n• `median`: the middle value when sorted. With an even number of users, it is the average of the two middle values.\n• `mode`: the most frequent email count. If several counts tie, return the smallest.",
   "notes": [],
   "tables": [
     {
@@ -53,7 +53,7 @@
       "mode": 200
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(AVG(email_count)) AS mean,\n  (SELECT email_count FROM inbox_stats ORDER BY email_count LIMIT 1 OFFSET (SELECT COUNT(*)/2 FROM inbox_stats)) AS median,\n  (SELECT email_count FROM inbox_stats GROUP BY email_count ORDER BY COUNT(*) DESC LIMIT 1) AS mode\nFROM inbox_stats;",
+  "reference_sql": "WITH ordered AS (\n  SELECT email_count,\n         ROW_NUMBER() OVER (ORDER BY email_count) AS rn,\n         COUNT(*) OVER () AS cnt\n  FROM inbox_stats\n),\nfreq AS (\n  SELECT email_count, COUNT(*) AS c FROM inbox_stats GROUP BY email_count\n)\nSELECT\n  ROUND(AVG(email_count)) AS mean,\n  (SELECT AVG(email_count) FROM ordered\n    WHERE rn IN (FLOOR((cnt + 1) / 2), FLOOR(cnt / 2) + 1)) AS median,\n  (SELECT MIN(email_count) FROM freq WHERE c = (SELECT MAX(c) FROM freq)) AS mode\nFROM inbox_stats;",
   "tags": [
     "aggregation",
     "ecommerce",
@@ -93,7 +93,7 @@
       },
       "expected_output": [
         {
-          "mean": 200.0,
+          "mean": 200,
           "median": 200,
           "mode": 200
         }
@@ -149,7 +149,7 @@
       },
       "expected_output": [
         {
-          "mean": 200.0,
+          "mean": 200,
           "median": 200,
           "mode": 200
         }
@@ -193,7 +193,7 @@
       },
       "expected_output": [
         {
-          "mean": 186.0,
+          "mean": 186,
           "median": 200,
           "mode": 200
         }
@@ -252,7 +252,7 @@
       },
       "expected_output": [
         {
-          "mean": 186.0,
+          "mean": 186,
           "median": 200,
           "mode": 200
         }
@@ -280,7 +280,7 @@
       },
       "expected_output": [
         {
-          "mean": 10.0,
+          "mean": 10,
           "median": 10,
           "mode": 10
         }

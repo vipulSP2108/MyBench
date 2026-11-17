@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Google",
   "premium": true,
-  "question": "Google Search quality engineers monitor search reliability to improve query fulfillment.\n\nA search query is considered an **invalid search** if either:\n1. The search query was flagged as invalid (`is_invalid = 1`), OR\n2. The search returned zero search results (`num_results = 0`).\n\nWrite a query to calculate the percentage of all searches that were invalid. Round the percentage to 2 decimal places.",
+  "question": "Google Search quality engineers monitor search reliability to improve query fulfillment.\n\nA search query is considered an **invalid search** if either:\n1. The search query was flagged as invalid (`is_invalid = 1`), OR\n2. The search returned zero search results (`num_results = 0`).\n\nWrite a query to calculate the percentage of all searches that were invalid. Round the percentage to 2 decimal places and output it as `invalid_search_pct`.",
   "notes": [],
   "tables": [
     {
@@ -60,10 +60,10 @@
   },
   "sample_output": [
     {
-      "invalid_search_pct": "50.00"
+      "invalid_search_pct": 50
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(100.0 * SUM(CASE WHEN is_invalid = 1 OR num_results = 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS invalid_pct\nFROM search_category;",
+  "reference_sql": "SELECT\n  ROUND(100.0 * SUM(CASE WHEN is_invalid = 1 OR num_results = 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS invalid_search_pct\nFROM search_category;",
   "tags": [
     "google",
     "math",
@@ -105,7 +105,7 @@
       },
       "expected_output": [
         {
-          "invalid_pct": 50.0
+          "invalid_search_pct": 50
         }
       ],
       "category": "normal"
@@ -167,7 +167,7 @@
       },
       "expected_output": [
         {
-          "invalid_pct": 50.0
+          "invalid_search_pct": 50
         }
       ],
       "category": "volume"
@@ -217,7 +217,7 @@
       },
       "expected_output": [
         {
-          "invalid_pct": 50.0
+          "invalid_search_pct": 50
         }
       ],
       "category": "edge"
@@ -230,7 +230,7 @@
       },
       "expected_output": [
         {
-          "invalid_pct": null
+          "invalid_search_pct": null
         }
       ],
       "category": "edge"
@@ -280,7 +280,7 @@
       },
       "expected_output": [
         {
-          "invalid_pct": 50.0
+          "invalid_search_pct": 50
         }
       ],
       "category": "edge"

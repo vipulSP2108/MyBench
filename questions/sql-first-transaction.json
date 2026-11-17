@@ -66,10 +66,10 @@
   },
   "sample_output": [
     {
-      "users": 1
+      "users_count": 1
     }
   ],
-  "reference_sql": "WITH first_orders AS (\n  SELECT user_id, spend,\n         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY transaction_date) AS rn\n  FROM user_transactions\n)\nSELECT COUNT(user_id) AS users\nFROM first_orders\nWHERE rn = 1 AND spend >= 50;",
+  "reference_sql": "WITH first_orders AS (\n  SELECT user_id, spend,\n         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY transaction_date) AS rn\n  FROM user_transactions\n)\nSELECT COUNT(user_id) AS users_count\nFROM first_orders\nWHERE rn = 1 AND spend >= 50;",
   "tags": [
     "aggregation",
     "ecommerce",
@@ -119,7 +119,7 @@
       },
       "expected_output": [
         {
-          "users": 1
+          "users_count": 1
         }
       ],
       "category": "normal"
@@ -193,7 +193,7 @@
       },
       "expected_output": [
         {
-          "users": 4
+          "users_count": 4
         }
       ],
       "category": "volume"
@@ -249,7 +249,7 @@
       },
       "expected_output": [
         {
-          "users": 1
+          "users_count": 1
         }
       ],
       "category": "edge"
@@ -262,7 +262,7 @@
       },
       "expected_output": [
         {
-          "users": 0
+          "users_count": 0
         }
       ],
       "category": "edge"
@@ -318,7 +318,7 @@
       },
       "expected_output": [
         {
-          "users": 2
+          "users_count": 2
         }
       ],
       "category": "edge"

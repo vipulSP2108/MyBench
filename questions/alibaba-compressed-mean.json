@@ -7,8 +7,7 @@
   "premium": false,
   "question": "On Alibaba's wholesale marketplace, order volume is summarized in a compressed frequency table rather than storing millions of individual order rows.\n\nThe table `items_per_order` stores:\n• `item_count`: The number of items purchased in an order.\n• `order_occurrences`: How many orders contained that exact number of items.\n\nWrite a query to calculate the average (arithmetic mean) number of items per order across all orders. Round your result to 1 decimal place.",
   "notes": [
-    "There are a total of 500 orders with one item per order, 1000 orders with two items per order, and 800 orders with three items per order.\"",
-    "Let's calculate the arithmetic average:",
+    "The table holds 500 orders with one item, 1000 with two items, 800 with three items and 1000 with four items.",
     "Total items = (1*500) + (2*1000) + (3*800) + (4*1000) = 8900",
     "Total orders = 500 + 1000 + 800 + 1000 = 3300",
     "Mean = 8900 / 3300 = 2.7"
@@ -50,7 +49,7 @@
   },
   "sample_output": [
     {
-      "mean": "2.7"
+      "mean": 2.7
     }
   ],
   "reference_sql": "SELECT \n  ROUND(SUM(item_count * order_occurrences) / SUM(order_occurrences), 1) AS mean\nFROM items_per_order;",

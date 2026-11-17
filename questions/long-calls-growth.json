@@ -5,15 +5,10 @@
   "difficulty": "Hard",
   "company": "UnitedHealth",
   "premium": false,
-  "question": "UnitedHealth customer operations monitors call center volume growth over time.\n\nA call is defined as a **long call** if its duration lasts longer than 300 seconds (5 minutes).\n\nWrite a query to calculate the percentage growth in long calls comparing the current month to the previous month. Output the year-month format (`'YYYY-MM'`), long call count, and the month-over-month growth percentage rounded to 1 decimal place.",
+  "question": "UnitedHealth customer operations monitors call center volume growth over time.\n\nA call is a **long call** if `call_duration_secs` is greater than 300 (5 minutes).\n\nFor every calendar month that has at least one call of any kind in `callers`, count the long calls and compute the month-over-month growth versus the previous month in the data:\n• `growth_pct = 100 * (current - previous) / previous`, rounded to 1 decimal place.\n• It is `NULL` for the first month, and whenever the previous month had zero long calls.\n\nOutput `call_month` (formatted `'YYYY-MM'`), `long_call_count` and `growth_pct`, ordered by `call_month`.",
   "notes": [
-    "Call counts: Jan - 1 call; Feb - 0 call; Mar - 1 call; Apr - 3 calls; May - 2 calls; Jun - 2 calls",
-    "January: With no previous month's call information, the growth percentage is shown as NULL.",
-    "February: The absence of calls compared to January results in a 0.0% growth rate.",
-    "March: Witnessing an increase of 1 call compared to February, the growth percentage is +100.0%.",
-    "April: Experiencing a surge of 3 calls compared to March, the growth percentage is +200.0%.",
-    "May: With a decrease of 1 call compared to April, the growth percentage is -33.3%.",
-    "June: Maintaining the same number of calls as May, the growth percentage remains at 0.0%."
+    "Months that have calls but no long calls count as 0 long calls.",
+    "Growth is NULL for the first month, and whenever the previous month had 0 long calls (division by zero)."
   ],
   "tables": [
     {
@@ -111,37 +106,32 @@
   },
   "sample_output": [
     {
-      "yr": "2023",
-      "mth": "1",
-      "long_calls_growth_pct": "NULL"
+      "call_month": "2023-01",
+      "long_call_count": 1,
+      "growth_pct": null
     },
     {
-      "yr": "2023",
-      "mth": "2",
-      "long_calls_growth_pct": "0.0"
+      "call_month": "2023-03",
+      "long_call_count": 0,
+      "growth_pct": -100
     },
     {
-      "yr": "2023",
-      "mth": "2",
-      "long_calls_growth_pct": "100.0"
+      "call_month": "2023-04",
+      "long_call_count": 1,
+      "growth_pct": null
     },
     {
-      "yr": "2023",
-      "mth": "4",
-      "long_calls_growth_pct": "200.0"
+      "call_month": "2023-05",
+      "long_call_count": 2,
+      "growth_pct": 100
     },
     {
-      "yr": "2023",
-      "mth": "5",
-      "long_calls_growth_pct": "-33.3"
-    },
-    {
-      "yr": "2023",
-      "mth": "6",
-      "long_calls_growth_pct": "0.0"
+      "call_month": "2023-06",
+      "long_call_count": 1,
+      "growth_pct": -50
     }
   ],
-  "reference_sql": "WITH monthly_calls AS (\n  SELECT \n    DATE_FORMAT(call_date, '%Y-%m') AS ym,\n    COUNT(case_id) AS long_call_count\n  FROM callers\n  WHERE call_duration_secs > 300\n  GROUP BY DATE_FORMAT(call_date, '%Y-%m')\n)\nSELECT \n  ym,\n  long_call_count,\n  ROUND(100.0 * (long_call_count - LAG(long_call_count) OVER (ORDER BY ym)) / \n        NULLIF(LAG(long_call_count) OVER (ORDER BY ym), 0), 1) AS growth_pct\nFROM monthly_calls\nORDER BY ym;",
+  "reference_sql": "WITH monthly AS (\n  SELECT DATE_FORMAT(call_date, '%Y-%m') AS call_month,\n         SUM(CASE WHEN call_duration_secs > 300 THEN 1 ELSE 0 END) AS long_call_count\n  FROM callers\n  GROUP BY DATE_FORMAT(call_date, '%Y-%m')\n)\nSELECT call_month,\n       long_call_count,\n       ROUND(100.0 * (long_call_count - LAG(long_call_count) OVER (ORDER BY call_month))\n             / NULLIF(LAG(long_call_count) OVER (ORDER BY call_month), 0), 1) AS growth_pct\nFROM monthly\nORDER BY call_month;",
   "tags": [
     "date-manipulation",
     "ecommerce",
@@ -230,24 +220,29 @@
       },
       "expected_output": [
         {
-          "ym": "2023-01",
+          "call_month": "2023-01",
           "long_call_count": 1,
           "growth_pct": null
         },
         {
-          "ym": "2023-04",
-          "long_call_count": 1,
-          "growth_pct": 0.0
+          "call_month": "2023-03",
+          "long_call_count": 0,
+          "growth_pct": -100
         },
         {
-          "ym": "2023-05",
+          "call_month": "2023-04",
+          "long_call_count": 1,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2023-05",
           "long_call_count": 2,
-          "growth_pct": 100.0
+          "growth_pct": 100
         },
         {
-          "ym": "2023-06",
+          "call_month": "2023-06",
           "long_call_count": 1,
-          "growth_pct": -50.0
+          "growth_pct": -50
         }
       ],
       "category": "normal"
@@ -387,24 +382,29 @@
       },
       "expected_output": [
         {
-          "ym": "2023-01",
+          "call_month": "2023-01",
           "long_call_count": 2,
           "growth_pct": null
         },
         {
-          "ym": "2023-04",
-          "long_call_count": 2,
-          "growth_pct": 0.0
+          "call_month": "2023-03",
+          "long_call_count": 0,
+          "growth_pct": -100
         },
         {
-          "ym": "2023-05",
+          "call_month": "2023-04",
+          "long_call_count": 2,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2023-05",
           "long_call_count": 4,
-          "growth_pct": 100.0
+          "growth_pct": 100
         },
         {
-          "ym": "2023-06",
+          "call_month": "2023-06",
           "long_call_count": 2,
-          "growth_pct": -50.0
+          "growth_pct": -50
         }
       ],
       "category": "volume"
@@ -509,34 +509,49 @@
       },
       "expected_output": [
         {
-          "ym": "2018-05",
+          "call_month": "2018-03",
+          "long_call_count": 0,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2018-04",
+          "long_call_count": 0,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2018-05",
           "long_call_count": 1,
           "growth_pct": null
         },
         {
-          "ym": "2018-06",
+          "call_month": "2018-06",
           "long_call_count": 1,
-          "growth_pct": 0.0
+          "growth_pct": 0
         },
         {
-          "ym": "2023-01",
+          "call_month": "2023-01",
           "long_call_count": 1,
-          "growth_pct": 0.0
+          "growth_pct": 0
         },
         {
-          "ym": "2023-04",
-          "long_call_count": 1,
-          "growth_pct": 0.0
+          "call_month": "2023-03",
+          "long_call_count": 0,
+          "growth_pct": -100
         },
         {
-          "ym": "2023-05",
+          "call_month": "2023-04",
+          "long_call_count": 1,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2023-05",
           "long_call_count": 2,
-          "growth_pct": 100.0
+          "growth_pct": 100
         },
         {
-          "ym": "2023-06",
+          "call_month": "2023-06",
           "long_call_count": 1,
-          "growth_pct": -50.0
+          "growth_pct": -50
         }
       ],
       "category": "edge"
@@ -636,22 +651,27 @@
       },
       "expected_output": [
         {
-          "ym": "2023-01",
+          "call_month": "2023-01",
           "long_call_count": 1,
           "growth_pct": null
         },
         {
-          "ym": "2023-04",
+          "call_month": "2023-03",
+          "long_call_count": 0,
+          "growth_pct": -100
+        },
+        {
+          "call_month": "2023-04",
           "long_call_count": 1,
-          "growth_pct": 0.0
+          "growth_pct": null
         },
         {
-          "ym": "2023-05",
+          "call_month": "2023-05",
           "long_call_count": 3,
-          "growth_pct": 200.0
+          "growth_pct": 200
         },
         {
-          "ym": "2023-06",
+          "call_month": "2023-06",
           "long_call_count": 1,
           "growth_pct": -66.7
         }
@@ -793,24 +813,29 @@
       },
       "expected_output": [
         {
-          "ym": "2023-01",
+          "call_month": "2023-01",
           "long_call_count": 2,
           "growth_pct": null
         },
         {
-          "ym": "2023-04",
-          "long_call_count": 2,
-          "growth_pct": 0.0
+          "call_month": "2023-03",
+          "long_call_count": 0,
+          "growth_pct": -100
         },
         {
-          "ym": "2023-05",
+          "call_month": "2023-04",
+          "long_call_count": 2,
+          "growth_pct": null
+        },
+        {
+          "call_month": "2023-05",
           "long_call_count": 4,
-          "growth_pct": 100.0
+          "growth_pct": 100
         },
         {
-          "ym": "2023-06",
+          "call_month": "2023-06",
           "long_call_count": 2,
-          "growth_pct": -50.0
+          "growth_pct": -50
         }
       ],
       "category": "boundary"

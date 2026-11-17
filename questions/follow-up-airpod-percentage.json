@@ -69,7 +69,7 @@
       "follow_up_percentage": 50
     }
   ],
-  "reference_sql": "WITH ordered_purchases AS (\n  SELECT \n    customer_id,\n    product_name,\n    transaction_timestamp,\n    LEAD(product_name) OVER (PARTITION BY customer_id ORDER BY transaction_timestamp) AS next_product\n  FROM transactions\n)\nSELECT \n  ROUND(100.0 * COUNT(DISTINCT CASE WHEN product_name = 'iPhone' AND next_product = 'AirPods' THEN customer_id END) / \n        NULLIF(COUNT(DISTINCT CASE WHEN product_name = 'iPhone' THEN customer_id END), 0), 0) AS follow_up_percentage\nFROM ordered_purchases;",
+  "reference_sql": "WITH iphone AS (\n  SELECT customer_id, MIN(transaction_timestamp) AS first_iphone\n  FROM transactions\n  WHERE product_name = 'iPhone'\n  GROUP BY customer_id\n),\nfollowed AS (\n  SELECT DISTINCT i.customer_id\n  FROM iphone i\n  JOIN transactions t\n    ON t.customer_id = i.customer_id\n   AND t.product_name = 'AirPods'\n   AND t.transaction_timestamp > i.first_iphone\n)\nSELECT ROUND(100.0 * (SELECT COUNT(*) FROM followed) / NULLIF((SELECT COUNT(*) FROM iphone), 0), 0) AS follow_up_percentage;",
   "tags": [
     "aggregation",
     "apple",
@@ -123,7 +123,7 @@
       },
       "expected_output": [
         {
-          "follow_up_percentage": 50.0
+          "follow_up_percentage": 50
         }
       ],
       "category": "normal"
@@ -197,7 +197,7 @@
       },
       "expected_output": [
         {
-          "follow_up_percentage": 50.0
+          "follow_up_percentage": 50
         }
       ],
       "category": "volume"
@@ -253,7 +253,7 @@
       },
       "expected_output": [
         {
-          "follow_up_percentage": 67.0
+          "follow_up_percentage": 33
         }
       ],
       "category": "edge"
@@ -322,7 +322,7 @@
       },
       "expected_output": [
         {
-          "follow_up_percentage": 50.0
+          "follow_up_percentage": 50
         }
       ],
       "category": "edge"
@@ -396,7 +396,7 @@
       },
       "expected_output": [
         {
-          "follow_up_percentage": 50.0
+          "follow_up_percentage": 50
         }
       ],
       "category": "boundary"

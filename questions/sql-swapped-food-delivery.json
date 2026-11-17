@@ -7,8 +7,6 @@
   "premium": false,
   "question": "Zomato dispatch systems experienced an order sequencing bug that swapped every pair of consecutive delivery orders.\n\nSpecifically, Order 1 was swapped with Order 2, Order 3 was swapped with Order 4, and so on. If the total number of orders is odd, the final order ID remains unchanged.\n\nWrite a query to correct the order IDs by swapping every consecutive pair of orders, while keeping the last odd order unchanged. Output the corrected `order_id` and the associated `item`, sorted by `order_id` in ascending order.",
   "notes": [
-    "Here's a sample of the initial incorrect data:",
-    "The corrected data should look like this:",
     "Order ID 1 is now associated with Pizza and Order ID 2 is paired with Chow Mein. This adjustment ensures that each order is correctly aligned with its respective item, addressing the initial swapping error.",
     "Order ID 7 remains unchanged and is still associated with Tandoori Chicken. This preserves the order sequence ensuring that the last odd order ID remains unaltered."
   ],
@@ -61,31 +59,31 @@
   },
   "sample_output": [
     {
-      "corrected_order_id": "1",
+      "order_id": 1,
       "item": "Pizza"
     },
     {
-      "corrected_order_id": "2",
+      "order_id": 2,
       "item": "Chow Mein"
     },
     {
-      "corrected_order_id": "3",
+      "order_id": 3,
       "item": "Butter Chicken"
     },
     {
-      "corrected_order_id": "4",
+      "order_id": 4,
       "item": "Pad Thai"
     },
     {
-      "corrected_order_id": "5",
+      "order_id": 5,
       "item": "Burger"
     },
     {
-      "corrected_order_id": "6",
+      "order_id": 6,
       "item": "Eggrolls"
     },
     {
-      "corrected_order_id": "7",
+      "order_id": 7,
       "item": "Tandoori Chicken"
     }
   ],

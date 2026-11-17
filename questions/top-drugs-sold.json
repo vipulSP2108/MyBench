@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "CVS Health",
   "premium": true,
-  "question": "CVS Health pharmacy inventory managers want to identify the top 3 best-selling medications produced by each pharmaceutical manufacturer.\n\nRank medications within each manufacturer based on the total quantity of units sold.\n\nWrite a query to output the `manufacturer`, `drug`, and sales ranking (`sales_rank`). Return the top 3 ranked drugs per manufacturer, breaking ties by unit sales in descending order.",
+  "question": "CVS Health pharmacy inventory managers want to identify the top 3 best-selling medications produced by each pharmaceutical manufacturer.\n\nRank the medications within each manufacturer by `units_sold` in descending order. Break ties alphabetically by `drug` so every rank is unique (1, 2, 3).\n\nWrite a query to output `manufacturer`, `drug` and `sales_rank` for the top 3 drugs of each manufacturer, ordered by `manufacturer` and `sales_rank`.",
   "notes": [],
   "tables": [
     {
@@ -69,16 +69,21 @@
   "sample_output": [
     {
       "manufacturer": "Novartis",
-      "top_drug": "Entresto",
-      "total_sales": "200000.00"
+      "drug": "Entresto",
+      "sales_rank": 1
     },
     {
       "manufacturer": "Pfizer",
-      "top_drug": "Lipitor",
-      "total_sales": "150000.00"
+      "drug": "Lipitor",
+      "sales_rank": 1
+    },
+    {
+      "manufacturer": "Pfizer",
+      "drug": "Chantix",
+      "sales_rank": 2
     }
   ],
-  "reference_sql": "WITH ranked AS (\n  SELECT manufacturer, drug,\n         ROW_NUMBER() OVER (PARTITION BY manufacturer ORDER BY units_sold DESC) AS rn\n  FROM pharmacy_sales\n)\nSELECT manufacturer, drug\nFROM ranked\nWHERE rn <= 2\nORDER BY manufacturer, rn;",
+  "reference_sql": "WITH ranked AS (\n  SELECT manufacturer, drug,\n         ROW_NUMBER() OVER (PARTITION BY manufacturer ORDER BY units_sold DESC, drug ASC) AS sales_rank\n  FROM pharmacy_sales\n)\nSELECT manufacturer, drug, sales_rank\nFROM ranked\nWHERE sales_rank <= 3\nORDER BY manufacturer, sales_rank;",
   "tags": [
     "aggregation",
     "cvs health",
@@ -127,15 +132,18 @@
       "expected_output": [
         {
           "manufacturer": "Novartis",
-          "drug": "Entresto"
+          "drug": "Entresto",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Chantix"
+          "drug": "Chantix",
+          "sales_rank": 2
         }
       ],
       "category": "normal"
@@ -198,19 +206,28 @@
       "expected_output": [
         {
           "manufacturer": "Novartis",
-          "drug": "Entresto"
+          "drug": "Entresto",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Novartis",
-          "drug": "Entresto"
+          "drug": "Entresto",
+          "sales_rank": 2
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 2
+        },
+        {
+          "manufacturer": "Pfizer",
+          "drug": "Chantix",
+          "sales_rank": 3
         }
       ],
       "category": "volume"
@@ -257,15 +274,23 @@
       "expected_output": [
         {
           "manufacturer": "Novartis",
-          "drug": "Entresto"
+          "drug": "Entresto",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 2
+        },
+        {
+          "manufacturer": "Pfizer",
+          "drug": "Chantix",
+          "sales_rank": 3
         }
       ],
       "category": "edge"
@@ -329,15 +354,23 @@
       "expected_output": [
         {
           "manufacturer": "Novartis",
-          "drug": "Entresto"
+          "drug": "Entresto",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 1
         },
         {
           "manufacturer": "Pfizer",
-          "drug": "Lipitor"
+          "drug": "Lipitor",
+          "sales_rank": 2
+        },
+        {
+          "manufacturer": "Pfizer",
+          "drug": "Chantix",
+          "sales_rank": 3
         }
       ],
       "category": "edge"

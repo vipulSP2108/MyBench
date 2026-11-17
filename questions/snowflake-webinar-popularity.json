@@ -90,10 +90,10 @@
   },
   "sample_output": [
     {
-      "webinar_pct": 13.0
+      "webinar_pct": 22.22
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(100.0 * SUM(CASE WHEN event_type = 'webinar' THEN 1 ELSE 0 END) / COUNT(*), 0) AS webinar_pct\nFROM webinar_attendance\nWHERE event_date >= '2022-04-01' AND event_date <= '2022-04-30';",
+  "reference_sql": "SELECT\n  ROUND(100.0 * SUM(CASE WHEN event_type = 'webinar' THEN 1 ELSE 0 END) / COUNT(*), 2) AS webinar_pct\nFROM webinar_attendance;",
   "tags": [
     "easy",
     "ecommerce",
@@ -166,7 +166,7 @@
       },
       "expected_output": [
         {
-          "webinar_pct": 13.0
+          "webinar_pct": 22.22
         }
       ],
       "category": "normal"
@@ -210,7 +210,7 @@
       },
       "expected_output": [
         {
-          "webinar_pct": 50.0
+          "webinar_pct": 60
         }
       ],
       "category": "edge"
@@ -237,7 +237,7 @@
       },
       "expected_output": [
         {
-          "webinar_pct": 0.0
+          "webinar_pct": 0
         }
       ]
     },
@@ -263,7 +263,7 @@
       },
       "expected_output": [
         {
-          "webinar_pct": 100.0
+          "webinar_pct": 100
         }
       ]
     },
@@ -301,7 +301,7 @@
       },
       "expected_output": [
         {
-          "webinar_pct": 50.0
+          "webinar_pct": 75
         }
       ]
     }

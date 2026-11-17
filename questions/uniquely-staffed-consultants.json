@@ -5,8 +5,11 @@
   "difficulty": "Hard",
   "company": "Accenture",
   "premium": true,
-  "question": "Accenture client staffing managers need to identify versatile consultants who have been staffed across multiple client engagements.\n\nWrite a query to find all consultants who have worked on at least two distinct client projects.\n\nOutput the `employee_id` for qualifying consultants, ordered by `employee_id` in ascending order.",
-  "notes": [],
+  "question": "Accenture client staffing managers want to know how much of each client's team is dedicated to that client alone.\n\nA consultant is **exclusive** to a client if every engagement they have been staffed on belongs to that one client. A consultant can work on several engagements for the same client and still be exclusive.\n\nFor each client, count the distinct consultants staffed on any of its engagements (`total_staffed`) and how many of them are exclusive to that client (`exclusive_staffed`).\n\nOutput `client_name`, `total_staffed` and `exclusive_staffed`, sorted by `client_name`.",
+  "notes": [
+    "Employee 1001 worked for two clients, so they count toward both clients' totals but are exclusive to neither.",
+    "Both Google consultants only worked for Google, so Google has 2 total and 2 exclusive."
+  ],
   "tables": [
     {
       "table_name": "staffing",
@@ -102,7 +105,7 @@
       "exclusive_staffed": 2
     }
   ],
-  "reference_sql": "SELECT s.employee_id\nFROM staffing s\nJOIN engagements e ON s.engagement_id = e.engagement_id\nGROUP BY s.employee_id\nHAVING COUNT(DISTINCT e.client_name) = 1\nORDER BY s.employee_id;",
+  "reference_sql": "WITH emp_client AS (\n  SELECT s.employee_id, e.client_name\n  FROM staffing s\n  JOIN engagements e ON s.engagement_id = e.engagement_id\n  GROUP BY s.employee_id, e.client_name\n),\nclient_counts AS (\n  SELECT employee_id, COUNT(*) AS num_clients\n  FROM emp_client\n  GROUP BY employee_id\n)\nSELECT\n  ec.client_name,\n  COUNT(*) AS total_staffed,\n  SUM(CASE WHEN cc.num_clients = 1 THEN 1 ELSE 0 END) AS exclusive_staffed\nFROM emp_client ec\nJOIN client_counts cc ON ec.employee_id = cc.employee_id\nGROUP BY ec.client_name\nORDER BY ec.client_name;",
   "tags": [
     "accenture",
     "aggregation",
@@ -166,13 +169,19 @@
       },
       "expected_output": [
         {
-          "employee_id": 1002
+          "client_name": "Department of Defense",
+          "total_staffed": 2,
+          "exclusive_staffed": 1
         },
         {
-          "employee_id": 1003
+          "client_name": "Department of Education",
+          "total_staffed": 1,
+          "exclusive_staffed": 0
         },
         {
-          "employee_id": 1004
+          "client_name": "Google",
+          "total_staffed": 2,
+          "exclusive_staffed": 2
         }
       ],
       "category": "normal"
@@ -268,22 +277,19 @@
       },
       "expected_output": [
         {
-          "employee_id": 1002
+          "client_name": "Department of Defense",
+          "total_staffed": 4,
+          "exclusive_staffed": 2
         },
         {
-          "employee_id": 1003
+          "client_name": "Department of Education",
+          "total_staffed": 2,
+          "exclusive_staffed": 0
         },
         {
-          "employee_id": 1004
-        },
-        {
-          "employee_id": 2002
-        },
-        {
-          "employee_id": 2003
-        },
-        {
-          "employee_id": 2004
+          "client_name": "Google",
+          "total_staffed": 4,
+          "exclusive_staffed": 4
         }
       ],
       "category": "volume"
@@ -357,13 +363,19 @@
       },
       "expected_output": [
         {
-          "employee_id": 1002
+          "client_name": "Department of Defense",
+          "total_staffed": 3,
+          "exclusive_staffed": 1
         },
         {
-          "employee_id": 1003
+          "client_name": "Department of Education",
+          "total_staffed": 2,
+          "exclusive_staffed": 0
         },
         {
-          "employee_id": 1004
+          "client_name": "Google",
+          "total_staffed": 2,
+          "exclusive_staffed": 2
         }
       ],
       "category": "edge"
@@ -447,19 +459,24 @@
       },
       "expected_output": [
         {
-          "employee_id": 1002
+          "client_name": "Department of Defense",
+          "total_staffed": 2,
+          "exclusive_staffed": 1
         },
         {
-          "employee_id": 1003
+          "client_name": "Department of Defense Duplicate",
+          "total_staffed": 1,
+          "exclusive_staffed": 1
         },
         {
-          "employee_id": 1004
+          "client_name": "Department of Education",
+          "total_staffed": 2,
+          "exclusive_staffed": 1
         },
         {
-          "employee_id": 10001
-        },
-        {
-          "employee_id": 10501
+          "client_name": "Google",
+          "total_staffed": 2,
+          "exclusive_staffed": 2
         }
       ],
       "category": "edge"
@@ -555,22 +572,19 @@
       },
       "expected_output": [
         {
-          "employee_id": 1002
+          "client_name": "Department of Defense",
+          "total_staffed": 4,
+          "exclusive_staffed": 2
         },
         {
-          "employee_id": 1003
+          "client_name": "Department of Education",
+          "total_staffed": 2,
+          "exclusive_staffed": 0
         },
         {
-          "employee_id": 1004
-        },
-        {
-          "employee_id": 9002
-        },
-        {
-          "employee_id": 9003
-        },
-        {
-          "employee_id": 9004
+          "client_name": "Google",
+          "total_staffed": 4,
+          "exclusive_staffed": 4
         }
       ],
       "category": "boundary"

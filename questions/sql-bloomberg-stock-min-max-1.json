@@ -89,12 +89,12 @@
     {
       "ticker": "AAPL",
       "highest_mth": "May-2023",
-      "highest_open": "176.76",
+      "highest_open": 176.76,
       "lowest_mth": "Jan-2023",
-      "lowest_open": "142.28"
+      "lowest_open": 142.28
     }
   ],
-  "reference_sql": "WITH ranked AS (\n  SELECT \n    ticker,\n    DATE_FORMAT(date, '%b-%Y') AS mth,\n    open AS open_price,\n    ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY open DESC) AS rn_high,\n    ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY open ASC) AS rn_low\n  FROM stock_prices\n)\nSELECT \n  h.ticker, \n  h.mth AS highest_mth, \n  h.open_price AS highest_open, \n  l.mth AS lowest_mth, \n  l.open_price AS lowest_open\nFROM (SELECT ticker, mth, open_price FROM ranked WHERE rn_high = 1) h\nJOIN (SELECT ticker, mth, open_price FROM ranked WHERE rn_low = 1) l ON h.ticker = l.ticker\nORDER BY h.ticker;",
+  "reference_sql": "WITH ranked AS (\n  SELECT\n    ticker,\n    DATE_FORMAT(date, '%b-%Y') AS mth,\n    open AS open_price,\n    ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY open DESC, date ASC) AS rn_high,\n    ROW_NUMBER() OVER (PARTITION BY ticker ORDER BY open ASC, date ASC) AS rn_low\n  FROM stock_prices\n)\nSELECT\n  h.ticker,\n  h.mth AS highest_mth,\n  h.open_price AS highest_open,\n  l.mth AS lowest_mth,\n  l.open_price AS lowest_open\nFROM (SELECT ticker, mth, open_price FROM ranked WHERE rn_high = 1) h\nJOIN (SELECT ticker, mth, open_price FROM ranked WHERE rn_low = 1) l ON h.ticker = l.ticker\nORDER BY h.ticker;",
   "tags": [
     "bloomberg",
     "date-manipulation",
@@ -331,7 +331,7 @@
           "ticker": "AAPL",
           "highest_mth": "May-2023",
           "highest_open": 176.76,
-          "lowest_mth": "Jan-2023",
+          "lowest_mth": "Jan-2018",
           "lowest_open": 142.28
         }
       ],

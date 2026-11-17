@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Amazon",
   "premium": false,
-  "question": "Amazon retail category leaders need an automated weekly report identifying the top performing merchandise.\n\nFor each product category, identify the top 2 best-selling products based on total sales quantity.\n\nWrite a query to display the category name, product name, and total sales quantity. Rank the products within each category from highest sales to lowest. If sales are tied, break ties by product name in ascending alphabetical order.",
+  "question": "Amazon retail category leaders need an automated weekly report identifying the top performing merchandise.\n\nFor each product category, find the top 2 best-selling products by **total sales quantity** (the sum of `sales_quantity` across all rows in `product_sales`). If total quantities are tied, break the tie by product name in ascending alphabetical order, so each category returns at most 2 products.\n\nOutput `category_name`, `product_name` and `total_quantity`, ordered by category name, then by total quantity (highest first), then by product name.",
   "notes": [],
   "tables": [
     {
@@ -92,14 +92,26 @@
   "sample_output": [
     {
       "category_name": "Books",
-      "product_name": "Game of Thrones"
+      "product_name": "Game of Thrones",
+      "total_quantity": 300
+    },
+    {
+      "category_name": "Books",
+      "product_name": "IKGAI",
+      "total_quantity": 290
     },
     {
       "category_name": "Home Appliances",
-      "product_name": "Dishwasher"
+      "product_name": "Dishwasher",
+      "total_quantity": 70
+    },
+    {
+      "category_name": "Home Appliances",
+      "product_name": "Refrigerator",
+      "total_quantity": 70
     }
   ],
-  "reference_sql": "WITH ranked AS (\n  SELECT p.category_name, p.product_name, ps.sales_quantity,\n         ROW_NUMBER() OVER (PARTITION BY p.category_name ORDER BY ps.sales_quantity DESC) AS rn\n  FROM products p\n  JOIN product_sales ps ON p.product_id = ps.product_id\n)\nSELECT category_name, product_name, sales_quantity\nFROM ranked\nWHERE rn = 1\nORDER BY category_name;",
+  "reference_sql": "WITH totals AS (\n  SELECT p.category_name, p.product_name, SUM(ps.sales_quantity) AS total_quantity\n  FROM products p\n  JOIN product_sales ps ON p.product_id = ps.product_id\n  GROUP BY p.category_name, p.product_name\n),\nranked AS (\n  SELECT category_name, product_name, total_quantity,\n         ROW_NUMBER() OVER (PARTITION BY category_name ORDER BY total_quantity DESC, product_name) AS rn\n  FROM totals\n)\nSELECT category_name, product_name, total_quantity\nFROM ranked\nWHERE rn <= 2\nORDER BY category_name, total_quantity DESC, product_name;",
   "tags": [
     "amazon",
     "ecommerce",
@@ -161,12 +173,22 @@
         {
           "category_name": "Books",
           "product_name": "Game of Thrones",
-          "sales_quantity": 300
+          "total_quantity": 300
+        },
+        {
+          "category_name": "Books",
+          "product_name": "IKGAI",
+          "total_quantity": 290
+        },
+        {
+          "category_name": "Home Appliances",
+          "product_name": "Dishwasher",
+          "total_quantity": 70
         },
         {
           "category_name": "Home Appliances",
           "product_name": "Refrigerator",
-          "sales_quantity": 70
+          "total_quantity": 70
         }
       ],
       "category": "normal"
@@ -264,12 +286,22 @@
         {
           "category_name": "Books",
           "product_name": "Game of Thrones",
-          "sales_quantity": 450
+          "total_quantity": 750
+        },
+        {
+          "category_name": "Books",
+          "product_name": "IKGAI",
+          "total_quantity": 725
+        },
+        {
+          "category_name": "Home Appliances",
+          "product_name": "Dishwasher",
+          "total_quantity": 175
         },
         {
           "category_name": "Home Appliances",
           "product_name": "Refrigerator",
-          "sales_quantity": 105
+          "total_quantity": 175
         }
       ],
       "category": "volume"
@@ -347,12 +379,22 @@
         {
           "category_name": "Books",
           "product_name": "Game of Thrones",
-          "sales_quantity": 300
+          "total_quantity": 600
+        },
+        {
+          "category_name": "Books",
+          "product_name": "IKGAI",
+          "total_quantity": 290
         },
         {
           "category_name": "Home Appliances",
           "product_name": "Refrigerator",
-          "sales_quantity": 70
+          "total_quantity": 140
+        },
+        {
+          "category_name": "Home Appliances",
+          "product_name": "Dishwasher",
+          "total_quantity": 70
         }
       ],
       "category": "edge"
@@ -440,22 +482,32 @@
         {
           "category_name": null,
           "product_name": "Refrigerator",
-          "sales_quantity": 70
+          "total_quantity": 70
         },
         {
           "category_name": "Books",
           "product_name": "Game of Thrones",
-          "sales_quantity": 300
+          "total_quantity": 300
+        },
+        {
+          "category_name": "Books",
+          "product_name": "IKGAI",
+          "total_quantity": 290
         },
         {
           "category_name": "Books Duplicate",
           "product_name": "Game of Thrones Duplicate",
-          "sales_quantity": 300
+          "total_quantity": 300
+        },
+        {
+          "category_name": "Home Appliances",
+          "product_name": "Dishwasher",
+          "total_quantity": 70
         },
         {
           "category_name": "Home Appliances",
           "product_name": "Refrigerator",
-          "sales_quantity": 70
+          "total_quantity": 70
         }
       ],
       "category": "edge"

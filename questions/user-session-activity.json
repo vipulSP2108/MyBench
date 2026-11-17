@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Twitter",
   "premium": true,
-  "question": "Twitter platform analytics measures daily user engagement session length across device types.\n\nWrite a query to rank users within each session type based on their total session duration in descending order.\n\nOutput `user_id`, `session_type`, and the assigned `ranking` within that session category.",
+  "question": "Twitter platform analytics measures daily user engagement session length across device types.\n\nOnly sessions that started in January 2020 count. Write a query to rank users within each session type by their total session duration in descending order, using `RANK()` so tied users share a rank.\n\nOutput `user_id`, `session_type`, and the assigned `ranking` within that session category.",
   "notes": [],
   "tables": [
     {
@@ -96,34 +96,34 @@
   },
   "sample_output": [
     {
-      "user_id": "101",
+      "user_id": 101,
       "session_type": "Chat",
-      "ranking": "1"
+      "ranking": 1
     },
     {
-      "user_id": "102",
+      "user_id": 102,
       "session_type": "Chat",
-      "ranking": "1"
+      "ranking": 1
     },
     {
-      "user_id": "103",
+      "user_id": 103,
       "session_type": "Chat",
-      "ranking": "3"
+      "ranking": 3
     },
     {
-      "user_id": "101",
+      "user_id": 101,
       "session_type": "Live",
-      "ranking": "1"
+      "ranking": 1
     },
     {
-      "user_id": "102",
+      "user_id": 102,
       "session_type": "Live",
-      "ranking": "2"
+      "ranking": 2
     },
     {
-      "user_id": "103",
+      "user_id": 103,
       "session_type": "Live",
-      "ranking": "3"
+      "ranking": 3
     }
   ],
   "reference_sql": "SELECT user_id,\n       session_type,\n       RANK() OVER (PARTITION BY session_type ORDER BY SUM(duration) DESC) AS ranking\nFROM sessions\nWHERE start_date >= '2020-01-01' AND start_date < '2020-02-01'\nGROUP BY user_id, session_type\nORDER BY session_type, ranking, user_id;",

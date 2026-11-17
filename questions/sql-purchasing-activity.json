@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Amazon",
   "premium": true,
-  "question": "Amazon retail finance analysts evaluate cumulative sales trends by computing running total spend for each product category over time.\n\nFor each order date, compute the cumulative running total spend partitioned by product category, ordered chronologically.\n\nWrite a query to output `order_date`, `product_type`, and the cumulative running total spend (`cum_spend`) rounded to 2 decimal places. Order the results by `product_type` and `order_date`.",
+  "question": "Amazon retail finance analysts evaluate cumulative sales trends by computing running total spend for each product category over time.\n\nFor each category and order date (several orders on the same date are combined into one row), compute the cumulative running total spend partitioned by product category, ordered chronologically.\n\nWrite a query to output `order_date`, `product_type`, and the cumulative running total spend (`cum_spend`) rounded to 2 decimal places. Order the results by `product_type` and `order_date`.",
   "notes": [],
   "tables": [
     {
@@ -72,37 +72,37 @@
   },
   "sample_output": [
     {
+      "order_date": "2022-01-01",
       "product_type": "Books",
-      "order_date": "01/01/2022",
-      "cumulative_spend": "20.00"
+      "cum_spend": 20.0
     },
     {
+      "order_date": "2022-01-02",
       "product_type": "Books",
-      "order_date": "01/02/2022",
-      "cumulative_spend": "50.00"
+      "cum_spend": 50.0
     },
     {
+      "order_date": "2022-01-03",
       "product_type": "Books",
-      "order_date": "01/03/2022",
-      "cumulative_spend": "62.25"
+      "cum_spend": 62.25
     },
     {
+      "order_date": "2022-01-01",
       "product_type": "Toys",
-      "order_date": "01/01/2022",
-      "cumulative_spend": "15.50"
+      "cum_spend": 15.5
     },
     {
+      "order_date": "2022-01-03",
       "product_type": "Toys",
-      "order_date": "01/03/2022",
-      "cumulative_spend": "23.50"
+      "cum_spend": 23.5
     },
     {
+      "order_date": "2022-01-05",
       "product_type": "Toys",
-      "order_date": "01/05/2022",
-      "cumulative_spend": "43.50"
+      "cum_spend": 43.5
     }
   ],
-  "reference_sql": "SELECT \n  order_date,\n  product_type,\n  ROUND(SUM(spend) OVER (PARTITION BY product_type ORDER BY order_date), 2) AS cum_spend\nFROM purchases\nORDER BY product_type, order_date;",
+  "reference_sql": "SELECT\n  order_date,\n  product_type,\n  ROUND(SUM(SUM(spend)) OVER (PARTITION BY product_type ORDER BY order_date), 2) AS cum_spend\nFROM purchases\nGROUP BY order_date, product_type\nORDER BY product_type, order_date;",
   "tags": [
     "aggregation",
     "amazon",
@@ -512,11 +512,6 @@
           "order_date": "2022-01-01",
           "product_type": null,
           "cum_spend": 15.5
-        },
-        {
-          "order_date": "2022-01-01",
-          "product_type": "Books",
-          "cum_spend": 40.0
         },
         {
           "order_date": "2022-01-01",

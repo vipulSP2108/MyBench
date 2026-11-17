@@ -69,10 +69,10 @@
   },
   "sample_output": [
     {
-      "duplicate_companies": "1"
+      "co_w_dup_jobs": 1
     }
   ],
-  "reference_sql": "WITH job_counts AS (\n  SELECT company_id, title, description, COUNT(job_id) AS post_count\n  FROM job_listings\n  GROUP BY company_id, title, description\n  HAVING COUNT(job_id) > 1\n)\nSELECT COUNT(DISTINCT company_id) AS duplicate_companies\nFROM job_counts;",
+  "reference_sql": "WITH job_counts AS (\n  SELECT company_id, title, description, COUNT(job_id) AS post_count\n  FROM job_listings\n  GROUP BY company_id, title, description\n  HAVING COUNT(job_id) > 1\n)\nSELECT COUNT(DISTINCT company_id) AS co_w_dup_jobs\nFROM job_counts;",
   "tags": [
     "aggregation",
     "easy",
@@ -122,7 +122,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 1
+          "co_w_dup_jobs": 1
         }
       ],
       "category": "normal"
@@ -196,7 +196,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 2
+          "co_w_dup_jobs": 2
         }
       ],
       "category": "volume"
@@ -252,7 +252,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 1
+          "co_w_dup_jobs": 1
         }
       ],
       "category": "edge"
@@ -265,7 +265,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 0
+          "co_w_dup_jobs": 0
         }
       ],
       "category": "edge"
@@ -297,7 +297,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 0
+          "co_w_dup_jobs": 0
         }
       ],
       "category": "boundary"
@@ -323,7 +323,7 @@
       },
       "expected_output": [
         {
-          "duplicate_companies": 0
+          "co_w_dup_jobs": 0
         }
       ],
       "category": "boundary"

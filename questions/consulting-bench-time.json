@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Google",
   "premium": true,
-  "question": "At Google Operations Consulting, resource managers track employee 'bench time'—the total days an active consultant was not staffed on a billable client project during a calendar year.\n\nGiven employee hire dates and consulting project engagement dates, write a query to calculate each consultant's total bench time in days for the year 2021.\n\nAssume all consultants were active throughout 2021 (hired before 2021). Add 1 inclusive day for each engagement day worked. Output `employee_id` and `bench_days`.",
+  "question": "At Google Operations Consulting, resource managers track consultant 'bench time': the days in a calendar year that a consultant was not staffed on a billable client project.\n\n`staffing` lists each employee and the jobs they are staffed on (`is_consultant` flags consultants). `consulting_engagements` holds each job's `start_date` and `end_date`, both **inclusive**.\n\nWrite a query to calculate every consultant's bench time for the year 2021:\n• `bench_days = 365 - days worked on engagements in 2021` (engagements can start before or end after 2021, so only days inside 2021 count).\n• A consultant's engagements never overlap, and consultants with no engagement at all have 365 bench days.\n• Ignore employees who are not consultants.\n\nOutput `employee_id` and `bench_days`, sorted by `employee_id`.",
   "notes": [],
   "tables": [
     {
@@ -115,7 +115,7 @@
       "bench_days": 238
     }
   ],
-  "reference_sql": "SELECT \n  s.employee_id,\n  365 - SUM(DATEDIFF(e.end_date, e.start_date) + 1) AS bench_days\nFROM staffing s\nJOIN consulting_engagements e ON s.job_id = e.job_id\nWHERE s.is_consultant = 1 OR s.is_consultant = 'true'\nGROUP BY s.employee_id\nORDER BY s.employee_id;",
+  "reference_sql": "SELECT\n  s.employee_id,\n  365 - IFNULL(SUM(GREATEST(DATEDIFF(LEAST(e.end_date, CAST('2021-12-31' AS DATE)),\n                                      GREATEST(e.start_date, CAST('2021-01-01' AS DATE))) + 1, 0)), 0) AS bench_days\nFROM staffing s\nLEFT JOIN consulting_engagements e ON s.job_id = e.job_id\nWHERE s.is_consultant = 1 OR s.is_consultant = 'true'\nGROUP BY s.employee_id\nORDER BY s.employee_id;",
   "tags": [
     "aggregation",
     "date-manipulation",

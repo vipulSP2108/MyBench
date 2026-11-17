@@ -74,7 +74,7 @@
   },
   "sample_output": [
     {
-      "page_id": "20701"
+      "page_id": 20701
     }
   ],
   "reference_sql": "SELECT p.page_id\nFROM pages p\nLEFT JOIN page_likes l ON p.page_id = l.page_id\nWHERE l.page_id IS NULL\nORDER BY p.page_id;",

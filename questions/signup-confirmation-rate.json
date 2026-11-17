@@ -88,10 +88,10 @@
   },
   "sample_output": [
     {
-      "confirm_rate": "0.67"
+      "confirm_rate": 0.67
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(COUNT(t.email_id) / COUNT(e.email_id), 2) AS confirm_rate\nFROM emails e\nLEFT JOIN texts t ON e.email_id = t.email_id AND t.signup_action = 'Confirmed';",
+  "reference_sql": "SELECT ROUND(COUNT(DISTINCT t.email_id) / COUNT(DISTINCT e.email_id), 2) AS confirm_rate\nFROM emails e\nLEFT JOIN texts t ON e.email_id = t.email_id AND t.signup_action = 'Confirmed';",
   "tags": [
     "aggregation",
     "math",

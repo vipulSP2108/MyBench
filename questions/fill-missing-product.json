@@ -5,7 +5,7 @@
   "difficulty": "Medium",
   "company": "Accenture",
   "premium": true,
-  "question": "Walmart supply chain inventory spreadsheets occasionally have missing category names due to merged header cells during data entry.\n\nWhen a product's `category_id` is missing (`NULL`), it should inherit the category of the preceding row when sorted by `product_id` (standard forward-fill / carry-over logic).\n\nWrite a query to fill in the missing category values and output the full list of products with their resolved categories.",
+  "question": "Accenture client inventory spreadsheets occasionally have missing category names due to merged header cells during data entry.\n\nWhen a product's `category` is missing (`NULL`), it should inherit the category of the preceding row when sorted by `product_id` (standard forward-fill / carry-over logic).\n\nWrite a query to fill in the missing category values and output the full list of products with their resolved categories.",
   "notes": [],
   "tables": [
     {

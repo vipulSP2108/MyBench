@@ -156,15 +156,15 @@
   "sample_output": [
     {
       "city": "San Francisco",
-      "total_orders": "3"
+      "total_orders": 3
     },
     {
       "city": "Boston",
-      "total_orders": "2"
+      "total_orders": 2
     },
     {
       "city": "Denver",
-      "total_orders": "1"
+      "total_orders": 1
     }
   ],
   "reference_sql": "SELECT u.city, COUNT(t.order_id) AS total_orders\nFROM trades t\nJOIN users u ON t.user_id = u.user_id\nWHERE t.status = 'Completed'\nGROUP BY u.city\nORDER BY total_orders DESC, u.city ASC\nLIMIT 3;",

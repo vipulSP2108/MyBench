@@ -77,7 +77,7 @@
   },
   "sample_output": [
     {
-      "policy_holder_count": "1"
+      "policy_holder_count": 1
     }
   ],
   "reference_sql": "WITH policy_calls AS (\n  SELECT policy_holder_id, COUNT(case_id) AS call_count\n  FROM callers\n  GROUP BY policy_holder_id\n  HAVING COUNT(case_id) >= 3\n)\nSELECT COUNT(policy_holder_id) AS policy_holder_count\nFROM policy_calls;",

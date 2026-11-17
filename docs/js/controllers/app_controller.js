@@ -12,7 +12,9 @@ import { EditorComponent } from "../views/components/editor.js";
 import { DescriptionComponent } from "../views/components/description.js";
 import { TestcaseComponent } from "../views/components/testcase.js";
 import { SplitterComponent } from "../views/components/splitter.js";
+import { PaletteComponent } from "../views/components/palette.js";
 import { HomePage } from "../views/pages/home_page.js";
+import { InsightsPage } from "../views/pages/insights_page.js";
 import { NotesPage } from "../views/pages/notes_page.js";
 import { SettingsPage } from "../views/pages/settings_page.js";
 import { FilterController } from "./filter_controller.js";
@@ -26,6 +28,7 @@ export const AppController = {
     AppController.restorePreferences();
     EditorComponent.initEditor();
     ShortcutsController.setupEventListeners();
+    PaletteComponent.init();
     TimerComponent.setupTimerControls();
     NavbarComponent.updateProgressUI();
     DescriptionComponent.updateNotesCountBadge();
@@ -155,6 +158,7 @@ export const AppController = {
     const views = [
       { name: "practice", el: el("view-practice") },
       { name: "home", el: el("view-home") },
+      { name: "insights", el: el("view-insights") },
       { name: "notes", el: el("view-notes") },
       { name: "settings", el: el("view-settings") }
     ];
@@ -171,6 +175,7 @@ export const AppController = {
     if (headerPracticeActions) headerPracticeActions.style.display = isPractice ? "flex" : "none";
 
     el("nav-btn-home")?.classList.toggle("active", viewName === "home");
+    el("nav-btn-insights")?.classList.toggle("active", viewName === "insights");
     el("nav-btn-notes")?.classList.toggle("active", viewName === "notes");
     el("nav-btn-settings")?.classList.toggle("active", viewName === "settings");
 
@@ -188,6 +193,8 @@ export const AppController = {
         if (window.location.hash !== "#home" && window.location.hash !== "") {
           window.location.hash = "home";
         }
+      } else if (viewName === "insights") {
+        if (window.location.hash !== "#insights") window.location.hash = "insights";
       } else if (viewName === "notes") {
         if (window.location.hash !== "#notes") {
           window.location.hash = "notes";
@@ -205,6 +212,8 @@ export const AppController = {
       }
     } else if (viewName === "home") {
       HomePage.renderHomeDashboard();
+    } else if (viewName === "insights") {
+      InsightsPage.render();
     } else if (viewName === "notes") {
       NotesPage.renderNotesHub();
     } else if (viewName === "settings") {
@@ -294,6 +303,10 @@ export const AppController = {
     const rawHash = (window.location.hash || "").replace(/^#/, "").trim();
     if (!rawHash || rawHash === "home") {
       AppController.switchView("home", false);
+      return;
+    }
+    if (rawHash === "insights") {
+      AppController.switchView("insights", false);
       return;
     }
     if (rawHash === "notes") {

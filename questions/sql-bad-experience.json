@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "DoorDash",
   "premium": true,
-  "question": "DoorDash customer support tracks orders where diners experienced an unsatisfactory delivery delivery issue.\n\nAn order is classified as a **bad customer experience** if the order status is either `'completed incorrectly'` or `'never_received'`, or if the customer submitted an urgent support ticket.\n\nWrite a query to calculate the percentage of all orders that resulted in a bad customer experience. Round the percentage to 2 decimal places as `bad_experience_pct`.",
+  "question": "DoorDash customer support tracks how new customers experience their first orders.\n\nConsider only customers who **signed up in June 2022**, and only the orders they placed within **14 days of signing up** (day 0 to day 14 inclusive).\n\nAn order is a **bad experience** if its `status` is `'completed incorrectly'` or `'never_received'`.\n\nWrite a query to calculate the percentage of those orders that were a bad experience, rounded to 2 decimal places. Output it as `bad_experience_pct`.",
   "notes": [],
   "tables": [
     {
@@ -166,7 +166,7 @@
       "bad_experience_pct": 66.67
     }
   ],
-  "reference_sql": "SELECT \n  ROUND(100.0 * COUNT(CASE \n    WHEN o.status IN ('completed incorrectly', 'never_received') \n      OR t.actual_delivery_timestamp > t.estimated_delivery_timestamp \n    THEN 1 END) / COUNT(*), 2) AS bad_experience_pct\nFROM orders o\nJOIN trips t ON o.trip_id = t.trip_id\nJOIN customers c ON o.customer_id = c.customer_id\nWHERE c.signup_timestamp >= '2022-06-01' AND c.signup_timestamp < '2022-07-01'\n  AND DATEDIFF(o.order_timestamp, c.signup_timestamp) BETWEEN 0 AND 14;",
+  "reference_sql": "SELECT\n  ROUND(100.0 * SUM(CASE WHEN o.status IN ('completed incorrectly', 'never_received') THEN 1 ELSE 0 END)\n        / COUNT(*), 2) AS bad_experience_pct\nFROM orders o\nJOIN customers c ON o.customer_id = c.customer_id\nWHERE c.signup_timestamp >= '2022-06-01' AND c.signup_timestamp < '2022-07-01'\n  AND DATEDIFF(o.order_timestamp, c.signup_timestamp) BETWEEN 0 AND 14;",
   "tags": [
     "date-manipulation",
     "doordash",
@@ -325,7 +325,7 @@
       },
       "expected_output": [
         {
-          "bad_experience_pct": 100.0
+          "bad_experience_pct": 50
         }
       ],
       "category": "volume"
@@ -360,7 +360,7 @@
       },
       "expected_output": [
         {
-          "bad_experience_pct": 0.0
+          "bad_experience_pct": 0
         }
       ],
       "category": "normal"
@@ -425,7 +425,7 @@
       },
       "expected_output": [
         {
-          "bad_experience_pct": 100.0
+          "bad_experience_pct": 100
         }
       ],
       "category": "boundary"

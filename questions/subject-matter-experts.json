@@ -71,9 +71,12 @@
     },
     {
       "employee_id": 102
+    },
+    {
+      "employee_id": 104
     }
   ],
-  "reference_sql": "SELECT employee_id\nFROM employee_expertise\nGROUP BY employee_id\nHAVING MAX(years_of_experience) >= 8 \n    OR (COUNT(DISTINCT domain) = 2 AND SUM(years_of_experience) >= 12)\nORDER BY employee_id;",
+  "reference_sql": "SELECT employee_id\nFROM employee_expertise\nGROUP BY employee_id\nHAVING MAX(years_of_experience) >= 8\n    OR COUNT(DISTINCT CASE WHEN years_of_experience >= 5 THEN domain END) >= 2\nORDER BY employee_id;",
   "tags": [
     "accenture",
     "aggregation",
@@ -132,6 +135,9 @@
         },
         {
           "employee_id": 102
+        },
+        {
+          "employee_id": 104
         }
       ],
       "category": "normal"
@@ -221,10 +227,16 @@
           "employee_id": 102
         },
         {
+          "employee_id": 104
+        },
+        {
           "employee_id": 1101
         },
         {
           "employee_id": 1102
+        },
+        {
+          "employee_id": 1104
         }
       ],
       "category": "volume"
@@ -292,6 +304,9 @@
         },
         {
           "employee_id": 102
+        },
+        {
+          "employee_id": 104
         }
       ],
       "category": "edge"
@@ -359,6 +374,9 @@
       "expected_output": [
         {
           "employee_id": 3
+        },
+        {
+          "employee_id": 4
         }
       ],
       "category": "boundary"

@@ -5,7 +5,7 @@
   "difficulty": "Hard",
   "company": "Bloomberg",
   "premium": true,
-  "question": "Bloomberg equity research algorithms identify stocks that persistently underperformed the benchmark S&P 500 index over consecutive quarters.\n\nWrite a query to find all stock tickers that failed to beat the market benchmark for at least three consecutive quarters. Output the qualifying `ticker` symbols in alphabetical order.",
+  "question": "Bloomberg equity research algorithms flag stocks that lag behind the rest of the portfolio.\n\nFor each calendar month, compare every ticker's **average closing price** to the **portfolio average closing price**, which is the average closing price across all rows of all tickers in that month. A ticker **underperforms** in a month if its average is strictly lower than the portfolio average.\n\nWrite a query that lists every underperforming ticker-month. Output `issue_month` (formatted `'MM/YYYY'`), `ticker`, `ticker_avg_close` and `portfolio_avg_close` (both rounded to 2 decimal places), ordered chronologically by month and then by `ticker`.",
   "notes": [],
   "tables": [
     {
@@ -70,14 +70,14 @@
     {
       "issue_month": "01/2023",
       "ticker": "AMZN",
-      "ticker_avg_close": "99.00",
-      "portfolio_avg_close": "124.00"
+      "ticker_avg_close": 99,
+      "portfolio_avg_close": 124
     },
     {
       "issue_month": "01/2023",
       "ticker": "META",
-      "ticker_avg_close": "121.00",
-      "portfolio_avg_close": "124.00"
+      "ticker_avg_close": 121,
+      "portfolio_avg_close": 124
     }
   ],
   "reference_sql": "WITH monthly_ticker AS (\n  SELECT \n    DATE_FORMAT(date, '%m/%Y') AS issue_month,\n    YEAR(date) AS yr,\n    MONTH(date) AS mo,\n    ticker,\n    ROUND(AVG(close), 2) AS ticker_avg_close\n  FROM stock_prices\n  GROUP BY DATE_FORMAT(date, '%m/%Y'), YEAR(date), MONTH(date), ticker\n),\nmonthly_portfolio AS (\n  SELECT \n    DATE_FORMAT(date, '%m/%Y') AS issue_month,\n    ROUND(AVG(close), 2) AS portfolio_avg_close\n  FROM stock_prices\n  GROUP BY DATE_FORMAT(date, '%m/%Y')\n)\nSELECT \n  t.issue_month,\n  t.ticker,\n  t.ticker_avg_close,\n  p.portfolio_avg_close\nFROM monthly_ticker t\nJOIN monthly_portfolio p ON t.issue_month = p.issue_month\nWHERE t.ticker_avg_close < p.portfolio_avg_close\nORDER BY t.yr ASC, t.mo ASC, t.ticker ASC;",
@@ -132,14 +132,14 @@
         {
           "issue_month": "01/2023",
           "ticker": "AMZN",
-          "ticker_avg_close": 99.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 99,
+          "portfolio_avg_close": 124
         },
         {
           "issue_month": "01/2023",
           "ticker": "META",
-          "ticker_avg_close": 121.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 121,
+          "portfolio_avg_close": 124
         }
       ],
       "category": "normal"
@@ -203,26 +203,26 @@
         {
           "issue_month": "01/2023",
           "ticker": "AMZN",
-          "ticker_avg_close": 99.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 99,
+          "portfolio_avg_close": 124
         },
         {
           "issue_month": "01/2023",
           "ticker": "META",
-          "ticker_avg_close": 121.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 121,
+          "portfolio_avg_close": 124
         },
         {
           "issue_month": "02/2023",
           "ticker": "AAPL",
-          "ticker_avg_close": 162.0,
-          "portfolio_avg_close": 167.0
+          "ticker_avg_close": 162,
+          "portfolio_avg_close": 167
         },
         {
           "issue_month": "02/2023",
           "ticker": "GOOGL",
-          "ticker_avg_close": 89.0,
-          "portfolio_avg_close": 167.0
+          "ticker_avg_close": 89,
+          "portfolio_avg_close": 167
         }
       ],
       "category": "volume"
@@ -321,13 +321,13 @@
         {
           "issue_month": "01/2023",
           "ticker": "AMZN",
-          "ticker_avg_close": 99.0,
+          "ticker_avg_close": 99,
           "portfolio_avg_close": 124.6
         },
         {
           "issue_month": "01/2023",
           "ticker": "META",
-          "ticker_avg_close": 121.0,
+          "ticker_avg_close": 121,
           "portfolio_avg_close": 124.6
         }
       ],
@@ -392,14 +392,14 @@
         {
           "issue_month": "01/2023",
           "ticker": "AMZN",
-          "ticker_avg_close": 99.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 99,
+          "portfolio_avg_close": 124
         },
         {
           "issue_month": "01/2023",
           "ticker": "META",
-          "ticker_avg_close": 121.0,
-          "portfolio_avg_close": 124.0
+          "ticker_avg_close": 121,
+          "portfolio_avg_close": 124
         }
       ],
       "category": "boundary"

@@ -8,7 +8,7 @@
   "question": "LinkedIn creator partnerships team is expanding their Power Creator program to account for professionals who consult or work with multiple companies.\n\nIn this multi-employer scenario, an individual is a **Power Creator** if their personal profile follower count is strictly greater than the follower count of **every single company** they work for.\n\nWrite a query to find the `profile_id` of these elite creators, sorted by `profile_id` in ascending order.",
   "notes": [
     "A person can work at multiple companies.",
-    "Compare personal followers against the sum of company followers for all companies they are associated with."
+    "Their personal follower count must beat the follower count of every company they work for, not the total across all of them."
   ],
   "tables": [
     {
@@ -138,7 +138,7 @@
       "profile_id": 3
     }
   ],
-  "reference_sql": "SELECT \n  pp.profile_id\nFROM personal_profiles pp\nJOIN employee_company ec ON pp.profile_id = ec.personal_profile_id\nJOIN company_pages cp ON ec.company_id = cp.company_id\nGROUP BY pp.profile_id, pp.followers\nHAVING pp.followers > SUM(cp.followers)\nORDER BY pp.profile_id ASC;",
+  "reference_sql": "SELECT pp.profile_id\nFROM personal_profiles pp\nJOIN employee_company ec ON pp.profile_id = ec.personal_profile_id\nJOIN company_pages cp ON ec.company_id = cp.company_id\nGROUP BY pp.profile_id, pp.followers\nHAVING pp.followers > MAX(cp.followers)\nORDER BY pp.profile_id ASC;",
   "tags": [
     "aggregation",
     "linkedin",

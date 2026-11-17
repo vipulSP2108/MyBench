@@ -66,12 +66,12 @@
   },
   "sample_output": [
     {
-      "user_id": "151652",
-      "days_between": "2"
+      "user_id": 151652,
+      "days_between": 2
     },
     {
-      "user_id": "661093",
-      "days_between": "21"
+      "user_id": 661093,
+      "days_between": 21
     }
   ],
   "reference_sql": "SELECT \n  user_id,\n  DATEDIFF(MAX(post_date), MIN(post_date)) AS days_between\nFROM posts\nWHERE YEAR(post_date) = 2021\nGROUP BY user_id\nHAVING COUNT(post_id) >= 2\nORDER BY user_id;",

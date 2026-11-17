@@ -60,29 +60,29 @@
   },
   "sample_output": [
     {
-      "user_id": "111",
-      "tweet_date": "06/01/2022 00:00:00",
-      "rolling_avg_3d": "2.00"
+      "user_id": 111,
+      "tweet_date": "2022-06-01",
+      "rolling_avg_3d": 2
     },
     {
-      "user_id": "111",
-      "tweet_date": "06/02/2022 00:00:00",
-      "rolling_avg_3d": "1.50"
+      "user_id": 111,
+      "tweet_date": "2022-06-02",
+      "rolling_avg_3d": 1.5
     },
     {
-      "user_id": "111",
-      "tweet_date": "06/03/2022 00:00:00",
-      "rolling_avg_3d": "2.00"
+      "user_id": 111,
+      "tweet_date": "2022-06-03",
+      "rolling_avg_3d": 2
     },
     {
-      "user_id": "111",
-      "tweet_date": "06/04/2022 00:00:00",
-      "rolling_avg_3d": "2.67"
+      "user_id": 111,
+      "tweet_date": "2022-06-04",
+      "rolling_avg_3d": 2.67
     },
     {
-      "user_id": "111",
-      "tweet_date": "06/05/2022 00:00:00",
-      "rolling_avg_3d": "4.00"
+      "user_id": 111,
+      "tweet_date": "2022-06-05",
+      "rolling_avg_3d": 4
     }
   ],
   "reference_sql": "SELECT \n  user_id,\n  tweet_date,\n  ROUND(AVG(tweet_count) OVER (\n    PARTITION BY user_id \n    ORDER BY tweet_date \n    ROWS BETWEEN 2 PRECEDING AND CURRENT ROW\n  ), 2) AS rolling_avg_3d\nFROM tweets;",
@@ -133,7 +133,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -143,7 +143,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-03",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -153,7 +153,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-05",
-          "rolling_avg_3d": 4.0
+          "rolling_avg_3d": 4
         }
       ],
       "category": "normal"
@@ -219,7 +219,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -229,7 +229,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-03",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -239,12 +239,12 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-05",
-          "rolling_avg_3d": 4.0
+          "rolling_avg_3d": 4
         },
         {
           "user_id": 1111,
           "tweet_date": "2022-06-06",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 1111,
@@ -254,7 +254,7 @@
         {
           "user_id": 1111,
           "tweet_date": "2022-06-08",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 1111,
@@ -264,7 +264,7 @@
         {
           "user_id": 1111,
           "tweet_date": "2022-06-10",
-          "rolling_avg_3d": 4.0
+          "rolling_avg_3d": 4
         }
       ],
       "category": "volume"
@@ -315,7 +315,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -325,7 +325,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-03",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -335,12 +335,12 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-05",
-          "rolling_avg_3d": 4.0
+          "rolling_avg_3d": 4
         },
         {
           "user_id": 5111,
           "tweet_date": "2017-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 5111,
@@ -405,12 +405,17 @@
         {
           "user_id": 9611,
           "tweet_date": "2022-06-02",
-          "rolling_avg_3d": 1.0
+          "rolling_avg_3d": 1
+        },
+        {
+          "user_id": 9111,
+          "tweet_date": "2022-06-01",
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
           "tweet_date": "2022-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -420,7 +425,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-03",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 2
         },
         {
           "user_id": 111,
@@ -430,12 +435,7 @@
         {
           "user_id": 111,
           "tweet_date": "2022-06-05",
-          "rolling_avg_3d": 4.0
-        },
-        {
-          "user_id": 9111,
-          "tweet_date": "2022-06-01",
-          "rolling_avg_3d": 2.0
+          "rolling_avg_3d": 4
         }
       ],
       "category": "edge"
@@ -467,19 +467,19 @@
       },
       "expected_output": [
         {
-          "tweet_date": "2022-07-01",
           "user_id": 99,
-          "rolling_avg_3d": 6.0
+          "tweet_date": "2022-07-01",
+          "rolling_avg_3d": 6
         },
         {
-          "tweet_date": "2022-07-02",
           "user_id": 99,
+          "tweet_date": "2022-07-02",
           "rolling_avg_3d": 4.5
         },
         {
-          "tweet_date": "2022-07-03",
           "user_id": 99,
-          "rolling_avg_3d": 6.0
+          "tweet_date": "2022-07-03",
+          "rolling_avg_3d": 6
         }
       ],
       "category": "boundary"

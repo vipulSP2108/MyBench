@@ -5,20 +5,11 @@
   "difficulty": "Hard",
   "company": "Facebook",
   "premium": false,
-  "question": "Meta advertiser billing operations tracks daily transition changes in advertiser account payment status.\n\nAn advertiser's payment status updates daily based on whether a payment occurred on day T:\n• If an advertiser makes a payment on day T, their status transitions to `'EXISTING'` (or `'RESURRECT'` if their previous status was `'CHURN'`).\n• If an advertiser makes no payment on day T, their status transitions to `'CHURN'`.\n\nWrite a query to output each advertiser's `user_id` and their updated `status`, ordered by `user_id` in ascending order.",
+  "question": "Meta advertiser billing operations tracks how advertisers' payment status changes day to day.\n\n`advertiser` holds each known advertiser's current `status` (`'NEW'`, `'EXISTING'`, `'CHURN'` or `'RESURRECT'`). `daily_pay` has one row for every advertiser that paid today, including advertisers not yet in `advertiser`. The statuses update as follows:\n\n• Advertiser **not** in `advertiser` who paid today → `'NEW'`.\n• Known advertiser who paid today → `'EXISTING'`, or `'RESURRECT'` if their current status is `'CHURN'`.\n• Known advertiser who did **not** pay today → `'CHURN'`.\n\nWrite a query to output each advertiser's `user_id` and updated status (`new_status`), ordered by `user_id`.",
   "notes": [
-    "New: Advertisers who are newly registered and have made their first payment.",
-    "Existing: Advertisers who have made payments in the past and have recently made a current payment.",
-    "Churn: Advertisers who have made payments in the past but have not made any recent payment.",
-    "Resurrect: Advertisers who have not made a recent payment but may have made a previous payment and have made a payment again recently.",
-    "\"Current Status\" column: Represents the advertiser's current status.",
-    "\"Payment Status\" column: Represents the updated payment status based on the conditions",
-    "\"Payment on Day T\" column: Indicates whether the advertiser made a payment on a specific day (T) or not.",
-    "Rows 2, 4, 6, and 8: If an advertiser does not make a payment on day T, regardless of their previous status, their payment status transitions to \"CHURN\" as the updated status.",
-    "Rows 1, 3, 5, and 7: If an advertiser makes a payment on day T, the status is updated to either \"EXISTING\" or \"RESURRECT\" based on their previous status. If the previous status was \"CHURN,\" the updated status is \"RESURRECT.\" For any other previous status, the updated status is \"EXISTING.\"",
-    "The advertiser \"bing\" is classified as \"CHURN\" because no payment record is found in the daily_pay table.",
-    "The advertiser \"yahoo\" is labeled as \"EXISTING\" since they have made a recent payment, as indicated by the presence of their payment record.",
-    "Similarly, the advertiser \"alibaba\" is also classified as \"EXISTING\" due to their recent payment."
+    "'bing' is a known advertiser with no payment in `daily_pay`, so it becomes CHURN.",
+    "'yahoo' and 'alibaba' are known advertisers who paid, so they stay EXISTING (a CHURN advertiser who pays again becomes RESURRECT).",
+    "'target' paid but is not yet in `advertiser`, so it is NEW."
   ],
   "tables": [
     {
@@ -96,7 +87,7 @@
       "new_status": "EXISTING"
     }
   ],
-  "reference_sql": "SELECT \n  COALESCE(a.user_id, d.user_id) AS user_id,\n  CASE \n    WHEN a.status IS NULL THEN 'NEW'\n    WHEN d.paid IS NULL THEN 'CHURN'\n    WHEN a.status = 'CHURN' AND d.paid > 0 THEN 'RESURRECT'\n    ELSE 'EXISTING'\n  END AS new_status\nFROM advertiser a\nFULL OUTER JOIN daily_pay d ON a.user_id = d.user_id\nORDER BY user_id;",
+  "reference_sql": "SELECT a.user_id,\n       CASE WHEN d.user_id IS NULL THEN 'CHURN'\n            WHEN a.status = 'CHURN' THEN 'RESURRECT'\n            ELSE 'EXISTING' END AS new_status\nFROM advertiser a\nLEFT JOIN daily_pay d ON a.user_id = d.user_id\nUNION ALL\nSELECT d.user_id, 'NEW' AS new_status\nFROM daily_pay d\nLEFT JOIN advertiser a ON a.user_id = d.user_id\nWHERE a.user_id IS NULL\nORDER BY user_id;",
   "tags": [
     "date-manipulation",
     "facebook",
@@ -367,7 +358,7 @@
       "expected_output": [
         {
           "user_id": "X",
-          "new_status": "EXISTING"
+          "new_status": "RESURRECT"
         }
       ],
       "category": "boundary"

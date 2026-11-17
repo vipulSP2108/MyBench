@@ -7,7 +7,7 @@
   "premium": false,
   "question": "UnitedHealth member service managers want to detect policy holders who experience recurring healthcare claim issues.\n\nSpecifically, the team wants to count policy holders who placed **two or more support calls within a 7-day rolling window** (where the second call happened within 7 calendar days of the first).\n\nWrite a query to count the number of unique policy holders who placed multiple calls within 7 days. Output the result as `policy_holder_count`.",
   "notes": [
-    "Policy holder IDs 14 and 15 each made two calls within a 7-day interval. For example, ID 14 made calls on 02/17/2023 and 02/21/2023, and ID 14 on 01/08/2023 and 01/09/2023 consecutively. Hence, the count of unique callers is two."
+    "Policy holder IDs 14 and 15 each made two calls within a 7-day interval. For example, ID 14 made calls on 02/17/2023 and 02/21/2023, and ID 15 on 01/08/2023 and 01/09/2023. Hence the count of unique callers is two."
   ],
   "tables": [
     {
